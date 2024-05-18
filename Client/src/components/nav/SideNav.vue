@@ -40,6 +40,15 @@ const openSideNav = ref(false)
           </li>
           <li>
             <a href="#">
+              <RouterLink to="/admin">
+                <i class="bx bx-grid-alt"></i>
+                <span class="links_name">Admin Dashboard</span>
+              </RouterLink>
+            </a>
+            <span class="tooltip">Admin Dashboard</span>
+          </li>
+          <li>
+            <a href="#">
               <RouterLink to="/">
                 <i class="bx bx-grid-alt"></i>
                 <span class="links_name">Dashboard</span>

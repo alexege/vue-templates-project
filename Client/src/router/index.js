@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import AdminDashboard from '@/views/AdminDashboard.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Drag from '../views/Drag.vue'
 import DragAndDrop from '../views/DragAndDrop.vue'
@@ -11,6 +12,11 @@ import MessagesView from '@/views/MessagesView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/admin',
+      name: 'admin-dashboard',
+      component: AdminDashboard
+    },
     {
       path: '/',
       name: 'dashboard',

@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const boydParser = require("body-parser");
-// const brcypt = require("bcryptjs");
+const brcypt = require("bcryptjs");
 
 const app = express();
 
@@ -12,10 +11,10 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json());
+app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 const db = require("./models");
 const dbConfig = require("./config/db.config");
@@ -23,10 +22,7 @@ const dbConfig = require("./config/db.config");
 //Model Connection
 // const User = require("./models/user.model")
 
-db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`)
 .then(() => {
   console.log("Successfully connected to Mongodb!");
   //Triggering the database seeding if no items exist
