@@ -10,7 +10,7 @@ exports.findAllTodos = (req, res) => {
     .catch((error) => {
         console.log("error:", error)
         res.status(500).send({ message: error })
-    }
+    })
 }
 
 exports.findById = (req, res) => {

@@ -1,5 +1,6 @@
 <script setup>
 import Todo from '@/components/todo/todo.vue'
+import AddTodo from '@/components/todo/addTodo.vue'
 import { storeToRefs } from 'pinia'
 import { ref, computed, onMounted } from 'vue'
 import { useTodoListStore } from '../stores/todo.store'
@@ -9,12 +10,7 @@ const todoStore = useTodoListStore()
 const { todoList } = storeToRefs(todoStore)
 const { dropZones } = storeToRefs(todoStore)
 
-const addItemAndClear = (item) => {
-  if (item.length === 0) return
-  todoStore.addTodo(item)
-  todo.value = ''
-  //   dropZones.value.push({ zoneId: todoList.value.length - 1 })
-}
+
 
 const startZoneId = ref()
 
@@ -39,7 +35,19 @@ const onDrop = (event, zoneId) => {
   start.todo = temp
 }
 
+const initialTodos = ref({})
+const todos = ref({})
+
 onMounted(() => {
+
+  todoStore.fetchTodos()
+  .then(res => {
+    if (res) {
+      initialTodos = [...todoStore.getTodos]
+      todos.value = [...todoStore.getTodos]
+    }
+  })
+
   //Seed with default data for testing purposes
   if (todoStore.todoList.length == 0) {
     todoStore.addTodo('one')
@@ -50,10 +58,11 @@ onMounted(() => {
 </script>
 <template>
   <div class="todo-container">
+
+    Initial Todos: {{ initialTodos }}
+
     <!-- Add Todo List Item Form -->
-    <form @submit.prevent="addItemAndClear(todo)" class="add-todo-form">
-      <input v-model="todo" type="text" /><button>Add</button>
-    </form>
+    <AddTodo />
     <template v-for="(zone, idx) in dropZones" :key="zone.id">
       <div class="drop-zone" @drop="onDrop($event, idx)" @dragenter.prevent @dragover.prevent>
         <Todo :todo="zone.todo" draggable="true" @dragstart="startDrag($event, idx)" />

@@ -21,6 +21,20 @@ const updateTodo = (todo) => {
 const deleteTodoItem = (itemId) => {
   todoStore.deleteTodo(itemId)
 }
+
+const addTodo = () => {
+
+  const newTodo = {
+    title: "",
+    zone: 0,
+    completed: false
+  }
+
+  todoStore.addTodo(todo)
+  .then((res) => {
+
+  })
+}
 </script>
 
 <template>
