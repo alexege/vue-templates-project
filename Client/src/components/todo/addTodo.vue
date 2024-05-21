@@ -3,12 +3,25 @@
     import { useTodoListStore } from "../../stores/todo.store"
     const todoStore = useTodoListStore()
 
-    const todo = ref()
+    const newTodo = ref({
+        title: '',
+    })
     
-    const addItemAndClear = (item) => {
-        if (item.length === 0) return
-        todoStore.addTodo(item)
-        todo.value = ''
+    const addItemAndClear = () => {
+        let todo = {
+            title: newTodo.value.title,
+            category: newTodo.value.category,
+            priority: newTodo.value.priority,
+            completed: newTodo.value.completed,
+            author: newTodo.value.author
+        }
+        
+        //Add new Todo to Pinia
+        todoStore.addTodo(todo)
+
+        //Reset properties to their starting values
+        newTodo.value.title = ''
+        newTodo.value.completed = false
         //   dropZones.value.push({ zoneId: todoList.value.length - 1 })
     }
 </script>
@@ -16,8 +29,11 @@
 
 <template>
     <div>
-        <form @submit.prevent="addItemAndClear(todo)" class="add-todo-form">
-            <input v-model="todo" type="text" /><button>Add</button>
+        {{ newTodo }}
+        <form @submit.prevent="addItemAndClear(newTodo)" class="add-todo-form">
+            <input type="text" v-model="newTodo.title" />
+            <input type="checkbox" v-model="newTodo.completed">
+            <button>Add</button>
         </form>
     </div>
 </template>

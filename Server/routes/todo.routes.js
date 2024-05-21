@@ -15,7 +15,7 @@ module.exports = (app) => {
     app.get("/api/todo/:id", controller.findById)
 
     //Add a Todo
-    app.post("/api/todo/", controller.addTodo)
+    app.post("/api/todo/addTodo", controller.addTodo)
     
     //Update a Todo
     app.patch("/api/todo/update/:id", controller.updateTodo)

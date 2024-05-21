@@ -11,7 +11,7 @@ export const useTodoListStore = defineStore('todoList', {
   }),
   getters: {
     allTodos: (state) => {
-      return state.todos;
+      return state.todoList;
     }
   },
   actions: {
@@ -19,16 +19,19 @@ export const useTodoListStore = defineStore('todoList', {
       try {
         await axios.get(`${API_URL}/todo/allTodos`)
         .then((res) => {
-          this.todos = res.data
+          this.todoList = res.data
         })
       } catch (error) {
         console.log("Error: ", error)
       }
     },
 
-    addTodo(title) {
-      let todo = { id: this.todoIndex, title, completed: false, zone: this.todoIndex++ }
-      this.todoList.push(todo)
+    async addTodo(todo) {
+      console.log("todo.store.js - ", todo)
+      const todoItem = await axios.post(`${API_URL}/todo/addTodo`, todo)
+      console.log("response:", todoItem.data)
+      await this.todoList.push(todoItem.data)
+      
       this.dropZones.push({ todo, zoneId: this.dropZoneIndex++ })
     },
     deleteTodo(itemId) {

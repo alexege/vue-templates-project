@@ -27,24 +27,32 @@ exports.findById = (req, res) => {
 }
 
 exports.addTodo = (req, res) => {
+    console.log("todo req.body:", req.body)
 
     //Create the new Todo Object using info from the req.body
     const newTodo = new Todo({
         title: req.body.title,
         category: req.body.category,
         priority: req.body.priority,
-        completed: req.body.completed
+        completed: req.body.completed,
+        author: "Author"
     })
 
     //Find Author by _id
-    User.findOne({ _id: req.body.author })
-    .then((user) => {
-        newTodo.author = user
-        newTodo.save()
-        .then((todo) => {
-            res.status(200).send(todo)
-        })
-    })
+    // User.findOne({ _id: req.body.author })
+    // .then((user) => {
+    //     newTodo.author = user
+    //     newTodo.save()
+    //     .then((todo) => {
+    //         res.status(200).send(todo)
+    //     })
+    // })
+
+    console.log("new todo: ", newTodo)
+
+    newTodo.save()
+
+    res.status(200).send(newTodo)
 }
 
 exports.updateTodo = (req, res) => {
