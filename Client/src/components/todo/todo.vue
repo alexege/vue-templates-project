@@ -16,7 +16,8 @@ const toggleEditMode = (todo) => {
 const updateTodo = (todo) => {
   todo.title = editItem.value
   isEditing.value = !isEditing.value
-  console.log('updating', isEditing.value)
+
+  todoStore.editTodo(todo._id, todo)
 }
 
 const deleteTodoItem = (itemId) => {
@@ -43,7 +44,7 @@ const deleteTodoItem = (itemId) => {
         @dblclick="toggleEditMode(todo)"
       >
         <!-- {{ todo.id }} {{ todo.title }} {{ todo.zone }} -->
-        {{ todo.title }}
+        {{ todo._id.slice(-5) }} {{ todo.title }} - {{ todo.author }} - {{ todo.completed }}
       </span>
     </template>
     <!-- <span @click.stop="toggleCompleted(todo.id)">&#10004;</span> -->
@@ -51,7 +52,7 @@ const deleteTodoItem = (itemId) => {
       <span @click="toggleEditMode(todo)">
         <i class="bx bx-edit"></i>
       </span>
-      <span @click="deleteTodoItem(todo.id)">
+      <span @click="deleteTodoItem(todo._id)">
         <i class="bx bx-trash"></i>
       </span>
     </div>

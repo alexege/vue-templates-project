@@ -34,14 +34,33 @@ export const useTodoListStore = defineStore('todoList', {
       
       this.dropZones.push({ todo, zoneId: this.dropZoneIndex++ })
     },
-    deleteTodo(itemId) {
+    async deleteTodo(itemId) {
       console.log('Deleting todo: ', itemId)
+
+      await axios.delete(`${API_URL}/todo/${itemId}`)
+
+      .then(() => {
+        const todoIndex = this.todoList.findIndex(todo => todo._id === itemId)
+        console.log(`todoIndex: ${todoIndex}`)
+        if(todoIndex !== -1) {
+          this.todoList.splice(todoIndex, 1)
+        }
+      })
+      .catch((error) => {
+        console.log("Error: ", error)
+      })
+
       this.todoList = this.todoList.filter((item) => item.id != itemId)
       this.dropZones = this.dropZones.filter((zone) => zone.todo.id != itemId)
     },
-    editTodo(itemId) {
+    async editTodo(itemId, item) {
       //   this.todoList = this.todoList.filter((item) => item.id != itemId)
       console.log('Attempting to edit todo with id: ', itemId)
+      const response = await axios.patch(`${API_URL}/todo/update/${itemId}`, item)
+      
+      const todoIndex = this.todoList.findIndex(todo => todo._id === itemId)
+      this.todoList.splice(todoIndex, 1, item)
+
     },
     toggleCompleted(itemId) {
       console.log('toggling for : ', itemId)

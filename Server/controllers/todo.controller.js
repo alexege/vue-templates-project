@@ -35,8 +35,10 @@ exports.addTodo = (req, res) => {
         category: req.body.category,
         priority: req.body.priority,
         completed: req.body.completed,
-        author: "Author"
+        author: req.body.author || "Author"
     })
+
+    Todo.create(newTodo)
 
     //Find Author by _id
     // User.findOne({ _id: req.body.author })
@@ -50,7 +52,7 @@ exports.addTodo = (req, res) => {
 
     console.log("new todo: ", newTodo)
 
-    newTodo.save()
+    // newTodo.save()
 
     res.status(200).send(newTodo)
 }
@@ -59,6 +61,7 @@ exports.updateTodo = (req, res) => {
 
     //Updated Fields / Fields to Update
     let updateData = {
+        title: req.body.title,
         completed: req.body.completed
     }
 

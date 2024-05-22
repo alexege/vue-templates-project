@@ -44,19 +44,9 @@ const onDrop = (event, zoneId) => {
     <AddTodo />
 
     <div v-for="todo in todoList" :key="todo._id">
-      <pre>{{ todo.title }} - {{ todo.completed }}</pre>
+      <Todo :todo="todo" />
     </div>
 
-    <template v-for="(zone, idx) in dropZones" :key="zone.id">
-      <div
-        class="drop-zone"
-        @drop="onDrop($event, idx)"
-        @dragenter.prevent
-        @dragover.prevent
-      >
-        <Todo :todo="zone.todo" draggable="true" @dragstart="startDrag($event, idx)" />
-      </div>
-    </template>
   </div>
 </template>
 <style scoped>
