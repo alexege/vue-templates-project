@@ -35,10 +35,12 @@ exports.addTodo = (req, res) => {
         category: req.body.category,
         priority: req.body.priority,
         completed: req.body.completed,
-        author: req.body.author || "Author"
+        author: req.body.author,
+        createdAt: new Date() //This fixes the Invalid Date problem
     })
 
     Todo.create(newTodo)
+    // res.status(200).send(newTodo)
 
     //Find Author by _id
     // User.findOne({ _id: req.body.author })

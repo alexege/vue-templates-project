@@ -11,7 +11,7 @@ const { todoList } = storeToRefs(todoStore);
 const { dropZones } = storeToRefs(todoStore);
 
 const { fetchTodos } = useTodoListStore();
-fetchTodos()
+fetchTodos();
 
 const startZoneId = ref();
 
@@ -35,10 +35,10 @@ const onDrop = (event, zoneId) => {
   end.todo = start.todo;
   start.todo = temp;
 };
-
 </script>
 <template>
   <div class="todo-container">
+    <h2>Add a new Todo Item</h2>
 
     <!-- Add Todo List Item Form -->
     <AddTodo />
@@ -46,7 +46,6 @@ const onDrop = (event, zoneId) => {
     <div v-for="todo in todoList" :key="todo._id">
       <Todo :todo="todo" />
     </div>
-
   </div>
 </template>
 <style scoped>
@@ -54,7 +53,6 @@ const onDrop = (event, zoneId) => {
   text-align: center;
   padding: 1em;
 }
-
 
 .add-todo-form {
   padding: 1em;

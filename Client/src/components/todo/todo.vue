@@ -26,8 +26,8 @@ const deleteTodoItem = (itemId) => {
 </script>
 
 <template>
-  <div class="todo-container">
-    <input type="checkbox" class="checkbox" @click="toggleCompleted(todo.id)" />
+  <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
+    <input type="checkbox" class="checkbox" @click="toggleCompleted(todo)" :checked="todo.completed" />
     <template v-if="isEditing">
       <input
         class="todo-body"
@@ -40,11 +40,13 @@ const deleteTodoItem = (itemId) => {
     <template v-else>
       <span
         class="todo-body"
-        :class="{ completed: todo.completed }"
         @dblclick="toggleEditMode(todo)"
       >
         <!-- {{ todo.id }} {{ todo.title }} {{ todo.zone }} -->
-        {{ todo._id.slice(-5) }} {{ todo.title }} - {{ todo.author }} - {{ todo.completed }}
+        <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
+        <template v-if="todo.author">- {{ todo.author }}</template>
+        <!-- <span class="updated-at">{{ new Date(todo.updatedAt).toDateString() }}</span> -->
+        <span class="created-at">Posted: {{ new Date(todo.createdAt).toLocaleString() }}</span>
       </span>
     </template>
     <!-- <span @click.stop="toggleCompleted(todo.id)">&#10004;</span> -->
@@ -65,12 +67,13 @@ const deleteTodoItem = (itemId) => {
   /* outline: 1px solid black; */
   padding: 5px;
   margin: 3px auto;
+  position: relative;
 
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 
-  outline: 1px solid black;
+  /* outline: 1px solid black; */
   border-radius: 5px;
 }
 
@@ -96,4 +99,26 @@ const deleteTodoItem = (itemId) => {
 .completed {
   text-decoration: line-through;
 }
+
+.updated-at, .created-at {
+  font-size: 10px;
+}
+
+.is-completed {
+  outline: 2px solid lime;
+  background-color:rgba(50, 205, 50, 0.25)
+}
+
+.is-incomplete {
+  outline: 2px solid red;
+  background-color: rgba(255, 0, 0, 0.25)
+}
+
+.created-at {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 </style>
