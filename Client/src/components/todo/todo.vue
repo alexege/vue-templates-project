@@ -2,7 +2,7 @@
 defineProps(['todo'])
 
 import { useTodoListStore } from '../../stores/todo.store'
-import { ref } from 'vue'
+import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from 'vue'
 
 const todoStore = useTodoListStore()
 const { toggleCompleted, editTodo, deleteTodo } = todoStore
@@ -23,6 +23,40 @@ const updateTodo = (todo) => {
 const deleteTodoItem = (itemId) => {
   todoStore.deleteTodo(itemId)
 }
+
+const timeDiff = (date1, date2) => {
+  if (date1 > date2) {
+    [date1, date2] = [date2, date1]
+  }
+
+  // Get the total difference in milliseconds
+  const diffInMs = date2 - date1;
+
+  // Calculate the differences
+  const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const minutes = Math.floor((diffInMs % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diffInMs % (1000 * 60)) / 1000);
+
+  return { days, hours, minutes, seconds };
+}
+
+const timer = ref()
+
+function timeSince() {
+  console.log("tick tick tick")
+}
+
+onMounted(() => {
+  timer.value = setInterval(() => {
+    timeSince()
+  }, 3000)
+})
+
+onBeforeUnmount(() => {
+  timer.value = null;
+})
+
 </script>
 
 <template>
@@ -46,7 +80,26 @@ const deleteTodoItem = (itemId) => {
         <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
         <template v-if="todo.author">- {{ todo.author }}</template>
         <!-- <span class="updated-at">{{ new Date(todo.updatedAt).toDateString() }}</span> -->
-        <span class="created-at">Posted: {{ new Date(todo.createdAt).toLocaleString() }}</span>
+        
+        
+      
+      <!-- <span class="created-at">Posted: {{ new Date(todo.createdAt).toLocaleString() }}</span> -->
+      <div class="created-at" style="font-size: 8px;">
+        <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).hours">
+          {{ timeDiff(new Date(), new Date(todo.createdAt)).hours }} Hours
+        </template>
+        
+        <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).minutes">
+          {{ timeDiff(new Date(), new Date(todo.createdAt)).minutes }} Minutes
+        </template>
+        
+        <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).seconds">
+          {{ timeDiff(new Date(), new Date(todo.createdAt)).seconds }} Seconds
+        </template>
+
+          <span v-if="timeDiff(new Date(), new Date(todo.createdAt))">ago</span>
+      </div>
+
       </span>
     </template>
     <!-- <span @click.stop="toggleCompleted(todo.id)">&#10004;</span> -->
@@ -58,7 +111,6 @@ const deleteTodoItem = (itemId) => {
         <i class="bx bx-trash"></i>
       </span>
     </div>
-    <!-- <span @click="deleteTodo(todo.id)">&#10060;</span> -->
   </div>
 </template>
 <style scoped>

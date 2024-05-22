@@ -7,7 +7,7 @@ import { useTodoListStore } from "../stores/todo.store";
 
 const todo = ref("");
 const todoStore = useTodoListStore();
-const { todoList } = storeToRefs(todoStore);
+const { todoList, completedTodos, incompleteTodos } = storeToRefs(todoStore);
 const { dropZones } = storeToRefs(todoStore);
 
 const { fetchTodos } = useTodoListStore();
@@ -43,12 +43,45 @@ const onDrop = (event, zoneId) => {
     <!-- Add Todo List Item Form -->
     <AddTodo />
 
-    <div v-for="todo in todoList" :key="todo._id">
+    <!-- <div v-for="todo in todoList" :key="todo._id">
       <Todo :todo="todo" />
+    </div> -->
+
+    <h3 v-if="incompleteTodos.length > 0">Pending ({{ incompleteTodos.length }})</h3>
+
+    <!-- Incomplete Todos -->
+
+    <div class="incomplete-items" v-if="incompleteTodos.length > 0 ">
+      <div v-for="todo in incompleteTodos" :key="todo._id">
+        <Todo :todo="todo" />
+      </div>
     </div>
+
+    <br>
+
+    <h3 v-if="completedTodos.length > 0">Completed ({{ completedTodos.length }})</h3>
+
+    <!-- Completed Todos -->
+    <div class="completed-items">
+      <div v-for="todo in completedTodos" :key="todo._id">
+        <Todo :todo="todo" />
+      </div>
+    </div>
+    
   </div>
 </template>
 <style scoped>
+
+.incomplete-items {
+  height: 30vh;
+  overflow-y: scroll;
+}
+
+.completed-items {
+  height: 30vh;
+  overflow-y: scroll;
+}
+
 .todo-container {
   text-align: center;
   padding: 1em;

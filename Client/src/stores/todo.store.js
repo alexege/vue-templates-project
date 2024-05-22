@@ -12,6 +12,12 @@ export const useTodoListStore = defineStore('todoList', {
   getters: {
     allTodos: (state) => {
       return state.todoList;
+    },
+    completedTodos: (state) => {
+      return state.todoList.filter(todo => todo.completed).reverse()
+    },
+    incompleteTodos: (state) => {
+      return state.todoList.filter(todo => !todo.completed).reverse()
     }
   },
   actions: {
