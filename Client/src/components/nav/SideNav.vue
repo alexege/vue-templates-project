@@ -10,6 +10,13 @@ const theme = computed(() => {
 })
 
 const openSideNav = ref(false)
+
+import { useAuthStore } from '@/stores/auth.store';
+const authStore = useAuthStore();
+
+const logout = () => {
+  authStore.logout()
+}
 </script>
 <template>
   <html lang="en" dir="ltr">
@@ -146,7 +153,7 @@ const openSideNav = ref(false)
                 <div class="job">Software Developer</div>
               </div>
             </div>
-            <i class="bx bx-log-out" id="log_out"></i>
+            <i class="bx bx-log-out" id="log_out" @click="logout"></i>
           </li>
         </ul>
       </div>

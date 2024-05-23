@@ -8,6 +8,10 @@ import Profile from '../views/Profile.vue'
 import NotesView from '@/views/NotesView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
+import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
+
+import { useAuthStore } from '@/stores/auth.store'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +20,16 @@ const router = createRouter({
       path: '/admin',
       name: 'admin-dashboard',
       component: AdminDashboard
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView
     },
     {
       path: '/',
@@ -59,5 +73,20 @@ const router = createRouter({
     }
   ]
 })
+
+router.beforeEach(async (to) => {
+  console.log("redirecting you to :", to.path)
+
+  // redirect to login page if not logged in and trying to access a restricted page
+  const publicPages = ['/login', '/register'];
+  const authRequired = !publicPages.includes(to.path);
+  const auth = useAuthStore();
+
+  if (authRequired && !auth.user) {
+      auth.returnUrl = to.fullPath;
+      return '/login';
+  }
+});
+
 
 export default router

@@ -19,6 +19,8 @@ app.use(express.urlencoded({ extended: true }));
 const db = require("./models");
 const dbConfig = require("./config/db.config");
 
+const Role = require("./models/role.model");
+
 //Model Connection
 // const User = require("./models/user.model")
 
@@ -26,7 +28,7 @@ db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`
 .then(() => {
   console.log("Successfully connected to Mongodb!");
   //Triggering the database seeding if no items exist
-  // init();
+  initial();
 })
 .catch((err) => {
   console.log("Connection error", err);
@@ -39,6 +41,7 @@ app.get("/", (req, res) => {
 });
 
 // routes
+require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
 require('./routes/todo.routes')(app);
 
@@ -49,8 +52,54 @@ app.listen(PORT, () => {
 });
 
 //Seed the database
-function init() {
-  //TODO
+function initial() {
+  
+  //Setup default roles
+  Role.estimatedDocumentCount()
+  .then((count) => {
+    if (count === 0){
+
+      //User
+      const user = new Role({
+        name: "user"
+      })
+
+      user.save(user)
+      .then(() => {
+        console.log("Adding User role to database!");
+      })
+      .catch(err => {
+        console.log("err:", err);
+      })
+
+      //Moderator
+      const moderator = new Role({
+        name: "moderator"
+      })
+
+      moderator.save(moderator)
+      .then(() => {
+        console.log("Adding Moderator role to database!");
+      })
+      .catch(err => {
+        console.log("err:", err);
+      })
+
+      //Admin
+      const admin = new Role({
+        name: "admin"
+      })
+
+      admin.save(admin)
+      .then(() => {
+        console.log("Adding Admin role to database!");
+      })
+      .catch(err => {
+        console.log("err:", err);
+      })
+    }
+  })
+  
 }
 
 // https://www.bezkoder.com/node-express-mongodb-crud-rest-api/
