@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import { useThemeStore } from '../../stores/theme.store'
 const themeStore = useThemeStore()
@@ -13,10 +14,12 @@ const openSideNav = ref(false)
 
 import { useAuthStore } from '@/stores/auth.store';
 const authStore = useAuthStore();
+const { user } = storeToRefs(authStore)
 
 const logout = () => {
   authStore.logout()
 }
+
 </script>
 <template>
   <html lang="en" dir="ltr">
@@ -149,7 +152,7 @@ const logout = () => {
             <div class="profile-details">
               <!-- <img src="profile.jpg" alt="profileImg" /> -->
               <div class="name_job">
-                <div class="name">Alexander Ege</div>
+                <div class="name">{{ user?.data.username }}</div>
                 <div class="job">Software Developer</div>
               </div>
             </div>
