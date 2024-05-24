@@ -50,7 +50,7 @@ async function onRegister() {
     color: white;
     width: 50%;
     height: 50%;
-    margin: 2em auto;
+    margin: 0 auto;
     padding: 2em;
     background-color: black;
     display: flex;

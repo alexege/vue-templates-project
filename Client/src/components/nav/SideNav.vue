@@ -152,7 +152,7 @@ const logout = () => {
             <div class="profile-details">
               <!-- <img src="profile.jpg" alt="profileImg" /> -->
               <div class="name_job">
-                <div class="name">{{ user?.data.username }}</div>
+                <div class="name" v-if="user && user.data">{{ user?.data.username }}</div>
                 <div class="job">Software Developer</div>
               </div>
             </div>

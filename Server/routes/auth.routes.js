@@ -10,6 +10,8 @@ module.exports = function(app) {
         next();
     });
 
+    app.get("/api/auth/getAllUsers", controller.allUsers);
+
     app.post(
         "/api/auth/signup",
         [

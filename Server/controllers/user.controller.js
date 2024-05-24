@@ -17,7 +17,6 @@ exports.allUsers = (req, res) => {
 
 exports.getById = (req, res) => {
     User.findOne({ _id: req.params.id})
-    
 }
 
 exports.signup = (req, result) => {
@@ -59,3 +58,14 @@ exports.signup = (req, result) => {
     .catch((err) => console.log("error:", err))
   
   };
+
+exports.deleteUser = (req, res) => {
+  User.deleteOne({ _id: req.params.id })
+  .then(() => {
+    res.status(200).send({ message: "User deleted"});
+  })
+  .catch(err => {
+    res.status(500).send({ message: err });
+    return;
+  })
+}

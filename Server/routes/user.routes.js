@@ -13,4 +13,5 @@ module.exports = function(app) {
   app.get("/api/users/allUsers", controller.allUsers);
   app.get("/api/users/:id", controller.getById);
   app.post("/api/users/signup", [verifySignUp.checkDuplicateUsernameOrEmail, verifySignUp.checkRolesExisted], controller.signup);
+  app.delete("/api/users/:id", controller.deleteUser);
 };

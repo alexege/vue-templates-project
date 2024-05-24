@@ -7,6 +7,17 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const { refreshToken: RefreshToken } = require("../models");
 
+exports.allUsers = async (req, res) => {
+  User.find()
+  .populate("roles")
+  .then((users) => {
+    res.status(200).send(users)
+  })
+  .catch((error) => {
+    console.log("Error: ", error)
+  })
+}
+
 exports.signup = (req, result) => {
   const user = new User({
     username: req.body.username,

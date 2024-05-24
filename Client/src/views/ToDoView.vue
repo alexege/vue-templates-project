@@ -73,12 +73,12 @@ const onDrop = (event, zoneId) => {
 <style scoped>
 
 .incomplete-items {
-  height: 30vh;
+  max-height: 40vh;
   overflow-y: scroll;
 }
 
 .completed-items {
-  height: 30vh;
+  height: 40vh;
   overflow-y: scroll;
 }
 
