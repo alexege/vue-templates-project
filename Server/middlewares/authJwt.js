@@ -1,3 +1,5 @@
+// Reference: https://www.bezkoder.com/node-js-jwt-authentication-mysql/
+
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const db = require("../models/index.js");

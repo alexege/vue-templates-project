@@ -9,7 +9,7 @@ const { refreshToken: RefreshToken } = require("../models");
 
 exports.allUsers = async (req, res) => {
   User.find()
-  .populate("roles")
+  .populate("roles", "-__v")
   .then((users) => {
     res.status(200).send(users)
   })

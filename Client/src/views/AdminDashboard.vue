@@ -4,10 +4,23 @@ import { storeToRefs } from "pinia";
 import { useUsersStore } from "@/stores/user.store";
 const userStore = useUsersStore();
 const { users } = storeToRefs(userStore);
+const { getAll } = useUsersStore();
+getAll()
 
 const deleteAUser = (userId) => {
   userStore.deleteUser(userId)
 }
+
+import { useTodoListStore } from "@/stores/todo.store";
+const todoStore = useTodoListStore();
+const { todoList } = storeToRefs(todoStore);
+const { fetchTodos } =  useTodoListStore();
+fetchTodos()
+
+const deleteATodo = (todoId) => {
+  todoStore.deleteTodo(todoId)
+}
+
 </script>
 <template>
   <div>
@@ -33,8 +46,31 @@ const deleteAUser = (userId) => {
         </td>
       </tr>
     </table>
+    
+    <h3>All Todos:</h3>
 
-    <pre>{{ users }}</pre>
+    <table>
+      <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>completed</th>
+        <th>author</th>
+        <th>createdAt</th>
+        <th>actions</th>
+      </tr>
+      <tr v-for="todo in todoList" :key="todo._id">
+        <td v-if="todo._id">{{ todo._id.slice(-5) }}</td>
+        <td>{{ todo.title }}</td>
+        <td>{{ todo.completed }}</td>
+        <td>{{ todo.author }}</td>
+        <td>{{ todo.createdAt }}</td>
+        <td>
+          <a @click="deleteATodo(todo._id)">Delete</a>
+        </td>
+      </tr>
+    </table>
+
+    <!-- <pre>{{ users }}</pre> -->
   </div>
 </template>
 <style scoped>

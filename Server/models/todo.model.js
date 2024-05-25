@@ -7,7 +7,10 @@ const Todo = mongoose.model(
         category: String,
         priority: String,
         completed: Boolean,
-        author: String,
+        author: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
         comments: String
     },
     { timestamps: true})

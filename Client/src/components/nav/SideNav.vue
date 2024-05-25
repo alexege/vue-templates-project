@@ -20,6 +20,14 @@ const logout = () => {
   authStore.logout()
 }
 
+//Show Admin Page
+const showAdminPage = computed(() => {
+  if(user.value && user.value.roles) {
+    return user.value.roles.includes('ROLE_ADMIN');
+  }
+  return false
+})
+
 </script>
 <template>
   <html lang="en" dir="ltr">
@@ -48,7 +56,7 @@ const logout = () => {
             <input type="text" placeholder="Search..." />
             <span class="tooltip">Search</span>
           </li>
-          <li>
+          <li v-if="showAdminPage">
             <a href="#">
               <RouterLink to="/admin">
                 <i class="bx bx-grid-alt"></i>
