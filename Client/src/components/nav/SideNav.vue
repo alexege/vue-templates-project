@@ -76,7 +76,7 @@ const showAdminPage = computed(() => {
           </li>
           <li>
             <a href="#">
-              <RouterLink to="/draganddrop">
+              <RouterLink to="/timers">
                 <i class="bx bx-timer"></i>
                 <span class="links_name">Timers</span>
               </RouterLink>
