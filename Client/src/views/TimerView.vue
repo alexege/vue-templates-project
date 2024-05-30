@@ -9,8 +9,7 @@ import { storeToRefs } from 'pinia';
 
 //Store Imports
 import { useTimersStore } from '@/stores/timer.store.js'
-
-
+const { fetchTimers, addTimer, deleteTimer } = useTimerStore()
 
 </script>
 <template>
