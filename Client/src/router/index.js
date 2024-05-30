@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AdminDashboard from '@/views/AdminDashboard.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Drag from '../views/Drag.vue'
-import DragAndDrop from '../views/DragAndDrop.vue'
+// import DragAndDrop from '../views/DragAndDrop.vue'
 import ToDoView from '@/views/ToDoView.vue'
 import Profile from '../views/Profile.vue'
 import NotesView from '@/views/NotesView.vue'
@@ -12,6 +12,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 
 import { useAuthStore } from '@/stores/auth.store'
+import TimerView from '@/views/TimerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,10 +42,15 @@ const router = createRouter({
       name: 'drag',
       component: Drag
     },
+    // {
+    //   path: '/draganddrop',
+    //   name: 'draganddrop',
+    //   component: DragAndDrop
+    // },
     {
-      path: '/draganddrop',
-      name: 'draganddrop',
-      component: DragAndDrop
+      path: '/timers',
+      name: 'timers',
+      component: TimerView
     },
     {
       path: '/todo',

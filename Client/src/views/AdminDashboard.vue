@@ -23,7 +23,7 @@ const deleteATodo = (todoId) => {
 
 </script>
 <template>
-  <div>
+  <div class="main">
     Admin Dashboard
 
     <h3>All Users:</h3>
@@ -74,6 +74,14 @@ const deleteATodo = (todoId) => {
   </div>
 </template>
 <style scoped>
+.main {
+  text-align: center;
+  max-width: 1024px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
 table {
   border-collapse: collapse;
 }
