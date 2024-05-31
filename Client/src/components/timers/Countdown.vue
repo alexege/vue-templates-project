@@ -8,7 +8,7 @@ const hours = ref(0)
 const minutes = ref(0)
 const seconds = ref(0)
 
-const timeOut = ref(0)
+const time_out = ref(0)
 const timeToZero = ref(0)
 const startDuration = ref(0)
 
@@ -18,7 +18,7 @@ const timesUp = ref(false)
 const props = defineProps(['timer'])
 const emit = defineEmits(['close'])
 
-const isPaused = ref(false)
+const isPaused = ref(true)
 const isEditing = ref(false)
 const isHovering = ref(false)
 
@@ -71,7 +71,7 @@ function start() {
 
   percentLeft.value = Math.floor(timeToZero.value / startDuration.value * 100);
 
-  timeOut.value = setTimeout(() => {
+  time_out.value = setTimeout(() => {
 
     var actual = Date.now() - startTime;
     actualDelay = desiredDelay - (actual - desiredDelay);
@@ -94,18 +94,18 @@ function updateStart() {
 
 function stop() {
   isPaused.value = true
-  clearTimeout(timeOut.value)
+  clearTimeout(time_out.value)
 }
 
 function reset() {
   isPaused.value = true
-  clearTimeout(timeOut.value)
+  clearTimeout(time_out.value)
   timeToZero.value = inputStartTime.value
 }
 
 function clear() {
   isPaused.value = true
-  clearTimeout(timeOut.value)
+  clearTimeout(time_out.value)
   days.value = 0;
   hours.value = 0;
   minutes.value = 0;
@@ -163,7 +163,7 @@ const closeModal = () => {
   <div class="timer">
 
     <!-- Modal -->
-    <button @click="openModal">Edit</button>
+    <button @click="openModal">Select Image</button>
     <teleport to='#modals'>
       <div class="modal-bg" v-if="showModal" @click.self="closeModal">
         <div class="modal">
@@ -253,6 +253,445 @@ const closeModal = () => {
 /* Modals */
 .modal {
   color: lime;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 80%;
+  width: 80%;
+  background: black;
+  outline: 1px solid white;
+  text-align: center;
+  position: fixed;
+  overflow: auto;
+}
+
+.modal-bg {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(3px);
+}
+
+/* Animate open */
+.fadeHeight-enter-active,
+.fadeHeight-leave-active {
+  transition: all 0.5s;
+  max-height: 430px;
+}
+
+.fadeHeight-enter,
+.fadeHeight-leave-to {
+  opacity: 0;
+  max-height: 0px;
+}
+
+
+
+
+
+.timer {
+  font-family: "Share Tech Mono", sans-serif;
+  /* margin: .5em;  */
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  width: 100%;
+}
+
+.timer-name {
+  color: lime;
+}
+
+.timer-name-input {
+  color: white;
+  background-color: black;
+  border: none;
+  font-size: 1.5em;
+  text-align: center;
+  border: 1px solid white;
+}
+
+/* Timer Settings Buttons */
+.edit-button {
+  position: absolute;
+  top: 0;
+  right: 2em;
+}
+
+.time-left {
+  color: white;
+}
+
+.toggleButton {
+  position: absolute;
+  top: 10px;
+  right: 35px;
+  cursor: pointer;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  color: white;
+}
+
+button {
+  margin: 0.5em;
+}
+
+input[type="number"] {
+  font-size: 1em;
+  padding: 0.5em 0.6em;
+  /* width: 100px; */
+  width: 65px;
+  /* width: 55px; */
+  /* background-color: black;
+    color: lime;
+    border: 2px solid lime; */
+}
+
+.progress-bar {
+  transition: width 1s;
+  background-color: limegreen;
+
+  animation: colorChange;
+}
+
+.timerFinished {
+  animation: shake 0.5s;
+  animation-iteration-count: 5;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
+
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+}
+
+.progress-bar {
+  position: absolute;
+  top: 0;
+  height: 25px;
+}
+
+.progress-bar-text {
+  position: absolute;
+  top: 0;
+  color: white;
+  width: 100%;
+  font-weight: bold;
+  z-index: 1;
+  text-shadow: 2px 2px black;
+}
+
+.progress-bar-background {
+  background-color: black;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  color: white;
+  font-weight: bold;
+}
+
+/* Circular ProgressBar */
+.circular-progress {
+  text-align: center;
+  margin: 20px auto;
+}
+
+@keyframes growProgressBar {
+
+  0%,
+  33% {
+    --pgPercentage: 0;
+  }
+
+  /* 100% { --pgPercentage: var(--value); } */
+  100% {
+    --pgPercentage: v-bind(percentLeft);
+  }
+}
+
+@property --pgPercentage {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+div[role="progressbar"] {
+  --size: 12rem;
+  --fg: lime;
+  --bg: black;
+  --pgPercentage: var(--value);
+  animation: growProgressBar 2s 1 forwards;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(closest-side, #181818 80%, transparent 0 99.9%, #181818 0),
+    conic-gradient(var(--fg) calc(var(--pgPercentage) * 1%), var(--bg) 0);
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: calc(var(--size) / 5);
+  color: var(--fg);
+}
+
+div[role="progressbar"]::before {
+  counter-reset: percentage v-bind(percentLeft);
+  content: counter(percentage) "%";
+}
+
+/* compact-timer */
+.compact-timer {
+  outline: 1px dashed lime;
+  position: relative;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 3;
+}
+
+.main {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.main img {
+  flex: 1;
+}
+
+/* .options {
+    position: absolute;
+    z-index: 999999;
+    background-color: rgba(14, 161, 219, 0.3);
+    backdrop-filter: blur(3px);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.options button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 36px;
+} */
+
+/* Nav Timer Layout */
+
+.nav-timer {
+  display: flex;
+  flex-direction: row;
+  outline: 1px solid lime;
+  background-color: #041e27de;
+}
+
+.nav-img {
+  display: flex;
+  justify-content: stretch;
+  align-items: center;
+  flex: 1fr;
+  background-color: rgb(0, 0, 0);
+  border: 1px solid lime;
+  position: relative;
+}
+
+.nav-img img {
+  min-width: 10px;
+  max-width: 100px;
+  aspect-ratio: 1;
+  padding: 10px;
+}
+
+.edit-nav-img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 255, 0, 0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.hide {
+  display: none;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex: 3;
+}
+
+.time-left {
+  font-size: 36px;
+}
+
+.edit-button {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  color: white;
+}
+
+.time-left-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.input-control {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-control-value {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Action buttons */
+.options {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.options-button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Share Tech Mono", sans-serif;
+  color: #ebebeba3;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 5px 15px;
+  background-color: transparent;
+  border: none;
+}
+
+.options-button span {
+  padding: 0.25em;
+  font-size: 0.65em;
+}
+
+.options-button:hover {
+  color: white;
+}
+
+.disabled {
+  color: black !important;
+}
+
+.add-time {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-time-button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Share Tech Mono", sans-serif;
+  color: #ebebeba3;
+  cursor: pointer;
+  font-size: 1em;
+  /* padding: 5px 15px; */
+  /* margin: 10px; */
+  background-color: transparent;
+  border: none;
+}
+
+.add-time-button:hover {
+  color: white;
+}
+
+/* Modals */
+.modal {
   position: absolute;
   top: 50%;
   left: 50%;
