@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useTodoListStore } from "../../stores/todo.store";
+import { useUsersStore } from "@/stores/user.store";
 const todoStore = useTodoListStore();
+const userStore = useUsersStore();
+
+userStore.getAll()
 
 const newTodo = ref({
   title: "",
@@ -33,6 +37,11 @@ const addItemAndClear = () => {
 <template>
   <form @submit.prevent="addItemAndClear(newTodo)" class="add-todo-form">
     <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
+    <select type="text" v-model="newTodo.author" placeholder="Author">
+      <option value="" v-for="author in userStore.users" :key="author._id">
+        {{ author.username }}
+      </option>
+    </select>
     <!-- <input type="checkbox" v-model="newTodo.completed"> -->
     <button>Add</button>
   </form>

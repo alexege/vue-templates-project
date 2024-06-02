@@ -1,29 +1,24 @@
 const mongoose = require("mongoose");
 
 const Todo = mongoose.model(
-    "Todo",
-    new mongoose.Schema({
-        title: String,
-        category: String,
-        priority: String,
-        completed: Boolean,
-        author: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        },
-        comments: String
+  "Todo",
+  new mongoose.Schema(
+    {
+      title: String,
+      category: String,
+      priority: String,
+      completed: Boolean,
+      author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      comments: String,
     },
-    { timestamps: true})
+    { timestamps: true }
+  )
 );
 
 module.exports = Todo;
-
-//TODO: Update existing author from string to User Object
-
-// author: {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: "User"
-// },
 
 //TODO: Update existing comments from array of strings to array of Comment Objects
 

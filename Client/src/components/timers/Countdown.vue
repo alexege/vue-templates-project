@@ -296,6 +296,9 @@ const closeModal = () => {
 .timer {
   font-family: "Share Tech Mono", sans-serif;
   /* margin: .5em;  */
+  background-color: black;
+  border: 1px solid lime;
+  color: lime;
   border-radius: 10px;
   text-align: center;
   position: relative;

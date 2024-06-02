@@ -32,6 +32,12 @@ const timeDiff = (date1, date2) => {
   // Get the total difference in milliseconds
   const diffInMs = date2 - date1;
 
+  // Return false if value is too small (nothing shows up)
+  if (diffInMs == 0 || diffInMs < 1000) {
+    console.log("Diff in time too small, not rendering time since posted")
+    return false;
+  }
+
   // Calculate the differences
   const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
   const hours = Math.floor(diffInMs / (1000 * 60 * 60));
@@ -56,30 +62,23 @@ onMounted(() => {
 onBeforeUnmount(() => {
   timer.value = null;
 });
+
 </script>
 
 <template>
   <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
-    <input
-      type="checkbox"
-      class="checkbox"
-      @click="toggleCompleted(todo)"
-      :checked="todo.completed"
-    />
+    <input type="checkbox" class="checkbox" @click="toggleCompleted(todo)" :checked="todo.completed" />
     <template v-if="isEditing">
-      <input
-        class="todo-body"
-        type="text"
-        v-model="editItem"
-        @blur="updateTodo(todo)"
-        @keydown.enter="$event.target.blur()"
-      />
+      <input class="todo-body" type="text" v-model="editItem" @blur="updateTodo(todo)"
+        @keydown.enter="$event.target.blur()" />
     </template>
     <template v-else>
       <span class="todo-body" @dblclick="toggleEditMode(todo)">
         <!-- {{ todo.id }} {{ todo.title }} {{ todo.zone }} -->
         <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
-        <template v-if="todo.author">- {{ todo.author }}</template>
+        <template v-if="todo.author && todo.author.username">
+          - {{ todo.author.username }}
+        </template>
         <!-- <span class="updated-at">{{ new Date(todo.updatedAt).toDateString() }}</span> -->
 
         <!-- <span class="created-at">Posted: {{ new Date(todo.createdAt).toLocaleString() }}</span> -->
@@ -95,7 +94,6 @@ onBeforeUnmount(() => {
           <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).seconds">
             {{ timeDiff(new Date(), new Date(todo.createdAt)).seconds }} Seconds
           </template>
-
           <span v-if="timeDiff(new Date(), new Date(todo.createdAt))">ago</span>
         </div>
       </span>
