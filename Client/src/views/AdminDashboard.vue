@@ -1,26 +1,25 @@
 <script setup>
-import { ref } from "vue"
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useUsersStore } from "@/stores/user.store";
 const userStore = useUsersStore();
 const { users } = storeToRefs(userStore);
 const { getAll } = useUsersStore();
-getAll()
+getAll();
 
 const deleteAUser = (userId) => {
-  userStore.deleteUser(userId)
-}
+  userStore.deleteUser(userId);
+};
 
 import { useTodoListStore } from "@/stores/todo.store";
 const todoStore = useTodoListStore();
 const { todoList } = storeToRefs(todoStore);
-const { fetchTodos } =  useTodoListStore();
-fetchTodos()
+const { fetchTodos } = useTodoListStore();
+fetchTodos();
 
 const deleteATodo = (todoId) => {
-  todoStore.deleteTodo(todoId)
-}
-
+  todoStore.deleteTodo(todoId);
+};
 </script>
 <template>
   <div class="main">
@@ -46,7 +45,7 @@ const deleteATodo = (todoId) => {
         </td>
       </tr>
     </table>
-    
+
     <h3>All Todos:</h3>
 
     <table>
@@ -62,7 +61,10 @@ const deleteATodo = (todoId) => {
         <td v-if="todo._id">{{ todo._id.slice(-5) }}</td>
         <td>{{ todo.title }}</td>
         <td>{{ todo.completed }}</td>
-        <td>{{ todo.author }}</td>
+        <td>
+          <span v-if="todo.author">{{ todo.author.username }}</span>
+          <span v-else>-</span>
+        </td>
         <td>{{ todo.createdAt }}</td>
         <td>
           <a @click="deleteATodo(todo._id)">Delete</a>

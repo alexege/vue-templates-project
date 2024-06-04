@@ -3,6 +3,7 @@ import axios from 'axios'
 const API_URL = 'http://localhost:8080/api'
 
 import { useUsersStore } from '@/stores/user.store'
+import { useAuthStore } from '@/stores/auth.store'
 
 export const useTodoListStore = defineStore('todoList', {
   state: () => ({
@@ -18,6 +19,12 @@ export const useTodoListStore = defineStore('todoList', {
     },
     incompleteTodos: (state) => {
       return state.todoList.filter((todo) => !todo.completed).reverse()
+    },
+    myTodos: (state) => {
+      console.log(state.todoList[0].author._id)
+      console.log(useAuthStore.user)
+      // return state.todoList.filter((todo) => todo.author._id == )
+      return
     }
   },
   actions: {

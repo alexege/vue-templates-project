@@ -5,7 +5,6 @@ import { useUsersStore } from '@/stores/user.store';
 const userStore = useUsersStore()
 const { getAll } = useUsersStore()
 getAll()
-
 </script>
 
 <template>

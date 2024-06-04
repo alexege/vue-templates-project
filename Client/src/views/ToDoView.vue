@@ -51,7 +51,7 @@ const onDrop = (event, zoneId) => {
 
     <!-- Incomplete Todos -->
 
-    <div class="incomplete-items" v-if="incompleteTodos.length > 0 ">
+    <div class="incomplete-items" v-if="incompleteTodos.length > 0">
       <div v-for="todo in incompleteTodos" :key="todo._id">
         <Todo :todo="todo" />
       </div>
@@ -67,11 +67,10 @@ const onDrop = (event, zoneId) => {
         <Todo :todo="todo" />
       </div>
     </div>
-    
+
   </div>
 </template>
 <style scoped>
-
 .incomplete-items {
   max-height: 40vh;
   overflow-y: scroll;

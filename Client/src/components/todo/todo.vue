@@ -1,14 +1,20 @@
 <script setup>
+import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
+import { storeToRefs } from 'pinia'
 defineProps(["todo"]);
 
-import { useTodoListStore } from "../../stores/todo.store";
-import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
+// Auth Store
+import { useAuthStore } from "@/stores/auth.store";
+const { activeUser } = storeToRefs(useAuthStore());
 
+// Todo List Store
+import { useTodoListStore } from "../../stores/todo.store";
 const todoStore = useTodoListStore();
 const { toggleCompleted, editTodo, deleteTodo } = todoStore;
 
 const isEditing = ref(false);
 const editItem = ref();
+
 const toggleEditMode = (todo) => {
   editItem.value = todo.title;
   isEditing.value = !isEditing.value;
@@ -47,41 +53,49 @@ const timeDiff = (date1, date2) => {
   return { days, hours, minutes, seconds };
 };
 
-const timer = ref();
+// Permission to interact / edit content
+const permissionToManage = (todo) => {
 
-// function timeSince() {
-//   console.log("tick tick tick")
-// }
+  // Admin, Moderator, Author/Owner
 
-onMounted(() => {
-  // timer.value = setInterval(() => {
-  //   timeSince()
-  // }, 3000)
-});
+  if (activeUser.value) {
 
-onBeforeUnmount(() => {
-  timer.value = null;
-});
+    // Is Owner?
+    if (todo.author && activeUser.value.id === todo.author._id) {
+      //Has full access, as is owner
+    } else if (activeUser.value.roles.includes("ROLE_ADMIN")) {
+      //Has full access, as is admin
+    } else if (activeUser.value.roles.includes("ROLE_MODERATOR")) {
+      //Has full access, as is moderator
+    } else {
+      return false
+    } return true
+  }
+}
 
 </script>
 
 <template>
   <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
+
     <input type="checkbox" class="checkbox" @click="toggleCompleted(todo)" :checked="todo.completed" />
-    <template v-if="isEditing">
+
+    <!-- Editing Mode -->
+    <template v-if="isEditing && permissionToManage(todo)">
       <input class="todo-body" type="text" v-model="editItem" @blur="updateTodo(todo)"
-        @keydown.enter="$event.target.blur()" />
+        @keydown.enter="$event.target.blur()" autofocus @focus="$event.target.select()">
     </template>
     <template v-else>
+
+      <!-- Todo Body -->
       <span class="todo-body" @dblclick="toggleEditMode(todo)">
         <!-- {{ todo.id }} {{ todo.title }} {{ todo.zone }} -->
         <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
         <template v-if="todo.author && todo.author.username">
           - {{ todo.author.username }}
         </template>
-        <!-- <span class="updated-at">{{ new Date(todo.updatedAt).toDateString() }}</span> -->
 
-        <!-- <span class="created-at">Posted: {{ new Date(todo.createdAt).toLocaleString() }}</span> -->
+        <!-- Created At Time Since Dsiplay -->
         <div class="created-at" style="font-size: 8px">
           <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).hours">
             {{ timeDiff(new Date(), new Date(todo.createdAt)).hours }} Hours
@@ -98,8 +112,9 @@ onBeforeUnmount(() => {
         </div>
       </span>
     </template>
-    <!-- <span @click.stop="toggleCompleted(todo.id)">&#10004;</span> -->
-    <div class="todo-actions">
+
+    <!-- Todo Actions Container -->
+    <div class="todo-actions" v-if="permissionToManage(todo)">
       <span @click="toggleEditMode(todo)">
         <i class="bx bx-edit"></i>
       </span>
@@ -111,10 +126,11 @@ onBeforeUnmount(() => {
 </template>
 <style scoped>
 .todo-container {
-  width: 50%;
+  min-width: 50%;
+  max-width: 80%;
   /* outline: 1px solid black; */
   padding: 5px;
-  margin: 3px auto;
+  margin: 10px auto;
   position: relative;
 
   display: flex;
@@ -122,7 +138,7 @@ onBeforeUnmount(() => {
   justify-content: space-between;
 
   /* outline: 1px solid black; */
-  border-radius: 5px;
+  border-radius: 2px;
 }
 
 .checkbox {
