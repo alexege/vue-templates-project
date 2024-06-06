@@ -35,6 +35,11 @@ const onDrop = (event, zoneId) => {
   end.todo = start.todo;
   start.todo = temp;
 };
+
+//Custom Dropdown
+const selectedOption = ref()
+const customValue = ref()
+
 </script>
 <template>
   <div class="todo-container">
@@ -42,6 +47,16 @@ const onDrop = (event, zoneId) => {
 
     <!-- Add Todo List Item Form -->
     <AddTodo />
+
+    <!-- Custom Input / DropDown -->
+    <select v-model="selectedOption">
+      <option value="">Select an option</option>
+      <option value="option1">Option 1</option>
+      <option value="option2">Option 2</option>
+      <option value="option3">Option 3</option>
+      <option value="custom">Custom</option>
+    </select>
+    <input type="text" v-model="customValue" v-show="selectedOption === 'custom'">
 
     <!-- <div v-for="todo in todoList" :key="todo._id">
       <Todo :todo="todo" />
@@ -51,7 +66,7 @@ const onDrop = (event, zoneId) => {
 
     <!-- Incomplete Todos -->
 
-    <div class="incomplete-items" v-if="incompleteTodos.length > 0">
+    <div class="incomplete-items" v-if="incompleteTodos.length">
       <div v-for="todo in incompleteTodos" :key="todo._id">
         <Todo :todo="todo" />
       </div>
@@ -62,7 +77,7 @@ const onDrop = (event, zoneId) => {
     <h3 v-if="completedTodos.length > 0">Completed ({{ completedTodos.length }})</h3>
 
     <!-- Completed Todos -->
-    <div class="completed-items">
+    <div class="completed-items" v-if="completedTodos.length">
       <div v-for="todo in completedTodos" :key="todo._id">
         <Todo :todo="todo" />
       </div>
@@ -72,12 +87,12 @@ const onDrop = (event, zoneId) => {
 </template>
 <style scoped>
 .incomplete-items {
-  max-height: 40vh;
+  /* max-height: 40vh; */
   overflow-y: scroll;
 }
 
 .completed-items {
-  height: 40vh;
+  /* height: 40vh; */
   overflow-y: scroll;
 }
 

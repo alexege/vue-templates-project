@@ -37,7 +37,7 @@ const addItemAndClear = () => {
 <template>
   <form @submit.prevent="addItemAndClear(newTodo)" class="add-todo-form">
     <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
-    <select type="text" v-model="newTodo.author" placeholder="Author">
+    <select v-model="newTodo.author" placeholder="Author">
       <option value="" v-for="author in userStore.users" :key="author._id">
         {{ author.username }}
       </option>

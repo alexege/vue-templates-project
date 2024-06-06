@@ -28,6 +28,9 @@ const showAdminPage = computed(() => {
   return false
 })
 
+//Search Bar
+const sideNavSearch = ref()
+
 </script>
 <template>
   <html lang="en" dir="ltr">
@@ -52,7 +55,7 @@ const showAdminPage = computed(() => {
       <ul class="nav-list">
         <li>
           <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>
-          <input type="text" placeholder="Search..." />
+          <input type="text" placeholder="Search..." v-model="sideNavSearch" />
           <span class="tooltip">Search</span>
         </li>
         <li v-if="showAdminPage">

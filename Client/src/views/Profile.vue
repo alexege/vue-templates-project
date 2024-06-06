@@ -1,6 +1,10 @@
 <script setup>
+
+//Auth Store
 import { useAuthStore } from '@/stores/auth.store';
 const authStore = useAuthStore();
+
+import FileUpload from '@/components/fileUpload/FileUpload.vue';
 
 const roleConverter = (role) => {
 
@@ -25,9 +29,7 @@ const roleConverter = (role) => {
     <p>Roles:</p>
     <span>{{ roleConverter(authStore.user.roles) }}</span>
     <span style="font-size: 3em" class="profile-image">
-      <img
-        src="https://media.istockphoto.com/id/1393750072/vector/flat-white-icon-man-for-web-design-silhouette-flat-illustration-vector-illustration-stock.jpg?s=612x612&w=0&k=20&c=s9hO4SpyvrDIfELozPpiB_WtzQV9KhoMUP9R9gVohoU="
-        alt="" width="200px;" height="200px;">
+      <img :src="authStore.user.img" alt="" width="200px;" height="200px;">
     </span>
 
     <!-- Info Boxes -->
@@ -45,6 +47,8 @@ const roleConverter = (role) => {
         <p v-if="authStore.user.timers">{{ authStore.user.timers.length }}</p>
       </div>
     </div>
+
+    <FileUpload />
 
   </div>
 </template>

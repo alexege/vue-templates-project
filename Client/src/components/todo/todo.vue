@@ -60,7 +60,7 @@ const permissionToManage = (todo) => {
 
   if (activeUser.value) {
 
-    // Is Owner?
+    // Content Owner
     if (todo.author && activeUser.value.id === todo.author._id) {
       //Has full access, as is owner
     } else if (activeUser.value.roles.includes("ROLE_ADMIN")) {
@@ -69,34 +69,54 @@ const permissionToManage = (todo) => {
       //Has full access, as is moderator
     } else {
       return false
-    } return true
+    }
+    return true
   }
 }
-
 </script>
 
 <template>
   <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
 
-    <input type="checkbox" class="checkbox" @click="toggleCompleted(todo)" :checked="todo.completed" />
+    <!-- Checkbox -->
+    <input type="checkbox" v-if="permissionToManage(todo)" class="checkbox" @click="toggleCompleted(todo)"
+      :checked="todo.completed" />
 
-    <!-- Editing Mode -->
-    <template v-if="isEditing && permissionToManage(todo)">
-      <input class="todo-body" type="text" v-model="editItem" @blur="updateTodo(todo)"
-        @keydown.enter="$event.target.blur()" autofocus @focus="$event.target.select()">
-    </template>
-    <template v-else>
+    <!-- Todo Category -->
+    <span class="category" v-if="todo.category">
+      {{ todo.category }}
+    </span>
 
-      <!-- Todo Body -->
-      <span class="todo-body" @dblclick="toggleEditMode(todo)">
-        <!-- {{ todo.id }} {{ todo.title }} {{ todo.zone }} -->
-        <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
-        <template v-if="todo.author && todo.author.username">
-          - {{ todo.author.username }}
+    <!-- Body -->
+    <div class="todo-body">
+      <div class="todo-top">
+
+
+        <!-- Editing Mode -->
+        <template v-if="isEditing && permissionToManage(todo)">
+          <input class="todo-body" type="text" v-model="editItem" @blur="updateTodo(todo)"
+            @keydown.enter="$event.target.blur()" autofocus @focus="$event.target.select()">
+        </template>
+        <template v-else>
+          <!-- Todo Body -->
+          <span class="todo-body" @dblclick="toggleEditMode(todo)">
+            <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
+          </span>
         </template>
 
-        <!-- Created At Time Since Dsiplay -->
-        <div class="created-at" style="font-size: 8px">
+      </div>
+
+
+      <!-- Bottom -->
+      <div class="todo-bottom">
+        <template v-if="todo.author && todo.author.username">
+          {{ todo.author.username }}
+        </template>
+
+        ·
+
+        <!-- Created At Time Since Display -->
+        <div class="created-at">
           <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).hours">
             {{ timeDiff(new Date(), new Date(todo.createdAt)).hours }} Hours
           </template>
@@ -110,10 +130,11 @@ const permissionToManage = (todo) => {
           </template>
           <span v-if="timeDiff(new Date(), new Date(todo.createdAt))">ago</span>
         </div>
-      </span>
-    </template>
+      </div>
 
-    <!-- Todo Actions Container -->
+    </div>
+
+    <!-- Actions -->
     <div class="todo-actions" v-if="permissionToManage(todo)">
       <span @click="toggleEditMode(todo)">
         <i class="bx bx-edit"></i>
@@ -122,8 +143,12 @@ const permissionToManage = (todo) => {
         <i class="bx bx-trash"></i>
       </span>
     </div>
+
   </div>
+
+
 </template>
+
 <style scoped>
 .todo-container {
   min-width: 50%;
@@ -145,6 +170,12 @@ const permissionToManage = (todo) => {
   margin: 5px;
 }
 
+.category {
+  padding: 1em;
+  border-radius: 3px;
+  outline: 1px solid black;
+}
+
 .todo-body {
   flex: 1;
 }
@@ -164,10 +195,10 @@ const permissionToManage = (todo) => {
   text-decoration: line-through;
 }
 
-.updated-at,
+/* .updated-at,
 .created-at {
   font-size: 10px;
-}
+} */
 
 .is-completed {
   outline: 2px solid lime;
@@ -179,10 +210,20 @@ const permissionToManage = (todo) => {
   background-color: rgba(255, 0, 0, 0.25);
 }
 
-.created-at {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.todo-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  height: 75%;
+}
+
+.todo-bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  height: 25%;
 }
 </style>

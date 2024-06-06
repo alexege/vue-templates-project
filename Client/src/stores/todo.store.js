@@ -44,9 +44,11 @@ export const useTodoListStore = defineStore('todoList', {
 
       var todoItem = await axios.post(`${API_URL}/todo/addTodo`, todo)
 
-      //Show username of todo's author
+      //Newly created todo will have author as an ID reference.
+      //For the sake of functionality, we will add in the user object using the id
       if (author) {
-        todoItem.data.author = { username: author.username }
+        // todoItem.data.author = { username: author.username }
+        todoItem.data.author = author
       }
 
       console.log('response:', todoItem.data)
