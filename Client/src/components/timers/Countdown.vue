@@ -20,7 +20,7 @@ const emit = defineEmits(["close"]);
 
 const isPaused = ref(true);
 const isEditing = ref(false);
-const isHovering = ref(false);
+const timerActive = ref(false);
 
 //Modal
 const timeIsEmpty = computed(() => {
@@ -70,7 +70,7 @@ watch(
   }
 );
 
-function start() {
+function startTimer() {
   isPaused.value = false;
   isEditing.value = false;
 
@@ -100,7 +100,7 @@ function updateStart() {
   startDuration.value = timeToZero.value;
 }
 
-function stop() {
+function pauseTimer() {
   isPaused.value = true;
   clearTimeout(time_out.value);
 }
@@ -111,7 +111,7 @@ function reset() {
   timeToZero.value = inputStartTime.value;
 }
 
-function clear() {
+function restartTimer() {
   isPaused.value = true;
   clearTimeout(time_out.value);
   days.value = 0;
@@ -133,7 +133,7 @@ function addTime(mins) {
 
 function toggleSettings(timerId) {
   console.log("id:", timerId);
-  this.isHovering = !this.isHovering;
+  this.timerActive = !this.timerActive;
 }
 
 function deleteTimer(timerId) {
@@ -160,535 +160,157 @@ const inputStartTime = computed(() => {
     seconds.value * 1000
   );
 });
-
 </script>
 <template>
-  <div class="countdown">
+  <div class="countdown-timer">
 
-    <div class="timer-value">
-      <div v-if="isHovering">
-        <h2 class="time-left">{{ msToTime(timeToZero) }}</h2>
+    <!-- Top -->
+    <div class="timer-top">
 
-        <div class="time-left-controls">
-          <div class="input-control">
-            <label for="days">day</label>
-            <div class="input-control-value">
-              <input type="number" min="0" max="100" v-model="days" placeholder="Days" @change="updateStart()" />
-              <span>:</span>
-            </div>
-          </div>
-          <div class="input-control">
-            <label for="hours">hrs</label>
-            <div class="input-control-value">
-              <input type="number" min="0" max="24" v-model="hours" placeholder="Hours" @change="updateStart()" />
-              <span>:</span>
-            </div>
-          </div>
-          <div class="input-control">
-            <label for="minutes">min</label>
-            <div class="input-control-value">
-              <input type="number" min="0" max="60" v-model="minutes" placeholder="Minutes" @change="updateStart()" />
-              <span>:</span>
-            </div>
-          </div>
-          <div class="input-control">
-            <label for="seconds">sec</label>
-            <input type="number" min="0" max="60" v-model="seconds" placeholder="Seconds" @change="updateStart()" />
-          </div>
-        </div>
+      <div class="timer-title">
+        {{ timer.name }}
       </div>
-      <div v-else>
-        <h2 class="time-left">{{ msToTime(timeToZero) }}</h2>
+
+      <div class="controls">
+        <span class="material-symbols-outlined">settings</span>
+        <span class="material-symbols-outlined">close</span>
       </div>
-      <div v-if="isHovering" class="add-time">
+
+    </div>
+
+    <!-- Middle -->
+    <div class="timer-middle">
+
+      <div class="time-remaining">
+        <template v-if="timerActive">
+          <h2>{{ msToTime(timeToZero) }}</h2>
+        </template>
+        <template v-else>
+
+        </template>
+
+      </div>
+
+      <!-- <div class="optional-time-controls">
         <button @click="addTime(1)" class="add-time-button">+1</button>
         <button @click="addTime(5)" class="add-time-button">+5</button>
         <button @click="addTime(15)" class="add-time-button">+15</button>
         <span>mins</span>
+      </div> -->
+
+      <div class="timer-controls">
+        <span @click="startTimer" class="material-symbols-outlined">
+          play_arrow
+        </span>
+        <span @click="pauseTimer" class="material-symbols-outlined">
+          pause
+        </span>
+        <span @click="restartTimer" class="material-symbols-outlined">
+          replay
+        </span>
       </div>
 
-      <transition name="fadeHeight" mode="out-in">
-        <div v-if="isHovering" class="options">
-          <template v-if="isPaused">
-            <button @click="start" class="options-button" :class="{ disabled: timeIsEmpty }" :disabled="timeIsEmpty">
-              &#9654;<br />Start
-            </button>
-          </template>
-          <template v-else>
-            <button @click="stop" class="options-button">||<span>Pause</span></button>
-          </template>
-          <button @click="reset" class="options-button">&#8634;<br />reset</button>
-          <button @click="clear" class="options-button">&#9932;<br />clear</button>
-        </div>
-      </transition>
-
-      <a @click="toggleSettings(timer._id)" class="toggleButton">
-        <span class="material-symbols-outlined">settings</span></a>
-      <a @click="deleteTimer(timer._id)" class="deleteButton">&#9932;</a>
     </div>
-    <div class="timer-progress">
-      <div class="progress-bar-container">
-        <div class="progress-bar-text">{{ percentLeft }} %</div>
-        <div class="progress-bar-background">{{ percentLeft }} %</div>
-        <div class="progress-bar" :style="[
+
+    <!-- Bottom -->
+    <div class="timer-bottom">
+      <div class="progressbar">
+        <div class="text">{{ percentLeft }} %</div>
+        <div class="background">{{ percentLeft }} %</div>
+        <div class="bar" :style="[
           { width: percentLeft + '%' },
           { animation: 'colorChange 2s both' },
-          { 'background-color': progressColor },
+          { 'background-color': progressColor }
         ]"></div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
-/* Animate open */
-.fadeHeight-enter-active,
-.fadeHeight-leave-active {
-  transition: all 0.5s;
-  max-height: 430px;
-}
-
-.fadeHeight-enter,
-.fadeHeight-leave-to {
-  opacity: 0;
-  max-height: 0px;
-}
-
-.countdown {
-  font-family: "Share Tech Mono", sans-serif;
-  /* margin: .5em;  */
-  background-color: black;
-  border: 1px solid lime;
-  color: lime;
-  border-radius: 5px;
-  text-align: center;
-  position: relative;
+.countdown-timer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
+  outline: 1px solid red;
+  position: relative;
 }
 
-.timer-name {
-  color: lime;
+.timer-top,
+.timer-middle,
+.timer-bottom {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
-.timer-name-input {
+/* Generic */
+.material-symbols-outlined {
+  cursor: pointer;
+}
+
+.material-symbols-outlined:hover {
   color: white;
-  background-color: black;
-  border: none;
-  font-size: 1.5em;
-  text-align: center;
-  border: 1px solid white;
 }
 
-/* Timer Settings Buttons */
-.edit-button {
+/* Top */
+.timer-top {
+  flex: 1;
+  outline: 1px solid red;
+  width: 100%;
+}
+
+.timer-top .close {
   position: absolute;
   top: 0;
-  right: 2em;
+  right: 0;
+  margin: 2.5px 5px;
 }
 
-.time-left {
+.timer-top .controls {
+  display: flex;
+  outline: 1px solid white;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* Middle */
+.timer-middle {
+  flex: 2;
+  flex-direction: column;
+  outline: 1px solid lime;
+}
+
+/* Bottom */
+.timer-bottom {
+  flex: 1;
+  outline: 1px solid blue;
+}
+
+.timer-bottom .progressbar {
+  position: relative;
+  outline: 1px solid yellow;
+  width: 100%;
+  text-align: center;
+}
+
+.timer-bottom .text {
+  position: absolute;
+  top: 0;
+}
+
+.timer-bottom .background {
+  background-color: black;
   color: white;
 }
 
-.toggleButton {
-  position: absolute;
-  top: 10px;
-  right: 35px;
-  cursor: pointer;
-}
-
-.deleteButton {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  cursor: pointer;
-}
-
-.deleteButton:hover {
-  color: white;
-}
-
-button {
-  margin: 0.5em;
-}
-
-input[type="number"] {
-  font-size: 1em;
-  padding: 0.5em 0.6em;
-  /* width: 100px; */
-  width: 65px;
-  /* width: 55px; */
-  /* background-color: black;
-    color: lime;
-    border: 2px solid lime; */
-}
-
-.progress-bar {
+/* .timer-bottom .bar {
   transition: width 1s;
   background-color: limegreen;
-
   animation: colorChange;
-}
-
-.timerFinished {
-  animation: shake 0.5s;
-  animation-iteration-count: 5;
-}
-
-@keyframes shake {
-  0% {
-    transform: translate(1px, 1px) rotate(0deg);
-  }
-
-  10% {
-    transform: translate(-1px, -2px) rotate(-1deg);
-  }
-
-  20% {
-    transform: translate(-3px, 0px) rotate(1deg);
-  }
-
-  30% {
-    transform: translate(3px, 2px) rotate(0deg);
-  }
-
-  40% {
-    transform: translate(1px, -1px) rotate(1deg);
-  }
-
-  50% {
-    transform: translate(-1px, 2px) rotate(-1deg);
-  }
-
-  60% {
-    transform: translate(-3px, 1px) rotate(0deg);
-  }
-
-  70% {
-    transform: translate(3px, 1px) rotate(-1deg);
-  }
-
-  80% {
-    transform: translate(-1px, -1px) rotate(1deg);
-  }
-
-  90% {
-    transform: translate(1px, 2px) rotate(0deg);
-  }
-
-  100% {
-    transform: translate(1px, -2px) rotate(-1deg);
-  }
-}
-
-.progress-bar-container {
-  position: relative;
-  width: 100%;
-  height: 25px;
-  text-align: center;
-}
-
-.progress-bar {
-  position: absolute;
-  top: 0;
-  height: 25px;
-}
-
-.progress-bar-text {
-  position: absolute;
-  top: 0;
-  color: white;
-  width: 100%;
-  font-weight: bold;
-  z-index: 1;
-  text-shadow: 2px 2px black;
-}
-
-.progress-bar-background {
-  background-color: black;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  color: white;
-  font-weight: bold;
-}
-
-/* Circular ProgressBar */
-.circular-progress {
-  text-align: center;
-  margin: 20px auto;
-}
-
-@keyframes growProgressBar {
-
-  0%,
-  33% {
-    --pgPercentage: 0;
-  }
-
-  /* 100% { --pgPercentage: var(--value); } */
-  100% {
-    --pgPercentage: v-bind(percentLeft);
-  }
-}
-
-@property --pgPercentage {
-  syntax: "<number>";
-  inherits: false;
-  initial-value: 0;
-}
-
-div[role="progressbar"] {
-  --size: 12rem;
-  --fg: lime;
-  --bg: black;
-  --pgPercentage: var(--value);
-  animation: growProgressBar 2s 1 forwards;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: radial-gradient(closest-side, #181818 80%, transparent 0 99.9%, #181818 0),
-    conic-gradient(var(--fg) calc(var(--pgPercentage) * 1%), var(--bg) 0);
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: calc(var(--size) / 5);
-  color: var(--fg);
-}
-
-div[role="progressbar"]::before {
-  counter-reset: percentage v-bind(percentLeft);
-  content: counter(percentage) "%";
-}
-
-/* compact-timer */
-.compact-timer {
-  outline: 1px dashed lime;
-  position: relative;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  flex: 3;
-}
-
-.main {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.main img {
-  flex: 1;
-}
-
-/* .options {
-    position: absolute;
-    z-index: 999999;
-    background-color: rgba(14, 161, 219, 0.3);
-    backdrop-filter: blur(3px);
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.options button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-weight: 800;
-    cursor: pointer;
-    font-size: 36px;
 } */
-
-/* Nav Timer Layout */
-
-.nav-timer {
-  display: flex;
-  flex-direction: row;
-  outline: 1px solid lime;
-  background-color: #041e27de;
-}
-
-.nav-img {
-  display: flex;
-  justify-content: stretch;
-  align-items: center;
-  flex: 1fr;
-  background-color: rgb(0, 0, 0);
-  border: 1px solid lime;
-  position: relative;
-}
-
-.nav-img img {
-  min-width: 10px;
-  max-width: 100px;
-  aspect-ratio: 1;
-  padding: 10px;
-}
-
-.edit-nav-img {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background-color: rgba(0, 255, 0, 0.25);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.hide {
-  display: none;
-}
-
-.nav-content {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  flex: 3;
-}
-
-.time-left {
-  font-size: 36px;
-}
-
-.edit-button {
-  position: absolute;
-  top: 10px;
-  right: 40px;
-  cursor: pointer;
-}
-
-.edit-button:hover {
-  color: white;
-}
-
-.time-left-controls {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.input-control {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.input-control-value {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Action buttons */
-.options {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-
-.options-button {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: "Share Tech Mono", sans-serif;
-  color: #ebebeba3;
-  cursor: pointer;
-  font-size: 1em;
-  padding: 5px 15px;
-  background-color: transparent;
-  border: none;
-}
-
-.options-button span {
-  padding: 0.25em;
-  font-size: 0.65em;
-}
-
-.options-button:hover {
-  color: white;
-}
-
-.disabled {
-  color: black !important;
-}
-
-.add-time {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.add-time-button {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  font-family: "Share Tech Mono", sans-serif;
-  color: #ebebeba3;
-  cursor: pointer;
-  font-size: 1em;
-  /* padding: 5px 15px; */
-  /* margin: 10px; */
-  background-color: transparent;
-  border: none;
-}
-
-.add-time-button:hover {
-  color: white;
-}
-
-/* Modals */
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: 80%;
-  width: 80%;
-  background: black;
-  outline: 1px solid white;
-  text-align: center;
-  position: fixed;
-  overflow: auto;
-}
-
-.modal-bg {
-  position: fixed;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  backdrop-filter: blur(3px);
-}
-
-/* Animate open */
-.fadeHeight-enter-active,
-.fadeHeight-leave-active {
-  transition: all 0.5s;
-  max-height: 430px;
-}
-
-.fadeHeight-enter,
-.fadeHeight-leave-to {
-  opacity: 0;
-  max-height: 0px;
-}
 </style>
