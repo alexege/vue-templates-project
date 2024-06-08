@@ -20,6 +20,7 @@ const emit = defineEmits(["close"]);
 
 const isPaused = ref(true);
 const isEditing = ref(false);
+const editTime = ref(true);
 const timerActive = ref(false);
 
 //Modal
@@ -71,8 +72,15 @@ watch(
 );
 
 function startTimer() {
+
+  if (timeToZero.value == 0) {
+    return;
+  }
+
   isPaused.value = false;
   isEditing.value = false;
+  editTime.value = false;
+  timerActive.value = true;
 
   var startTime = Date.now();
   var desiredDelay = 1000;
@@ -87,7 +95,7 @@ function startTimer() {
     timeToZero.value -= 1000;
 
     if (timeToZero.value > 0) {
-      start();
+      startTimer();
     } else {
       percentLeft.value = 0;
       alert(`${props.timer.name} timer is up!`);
@@ -102,18 +110,39 @@ function updateStart() {
 
 function pauseTimer() {
   isPaused.value = true;
+  timerActive.value = false;
+  // editTime.value = false;
+
   clearTimeout(time_out.value);
 }
 
 function reset() {
   isPaused.value = true;
   clearTimeout(time_out.value);
+  timerActive.value = false;
   timeToZero.value = inputStartTime.value;
 }
 
 function restartTimer() {
+
+  //Get values from startDuration
+  console.log("start duration: ", msToTime(startDuration.value).split(':'))
+  let startingTime = msToTime(startDuration.value).split(':');
+  timerActive.value = false;
+
   isPaused.value = true;
   clearTimeout(time_out.value);
+  days.value = startingTime[0];
+  hours.value = startingTime[1];
+  minutes.value = startingTime[2];
+  seconds.value = startingTime[3];
+  timeToZero.value = startDuration.value;
+}
+
+function clearTimer() {
+  editTime.value = true;
+  timerActive.value = false;
+  isPaused.value = true;
   days.value = 0;
   hours.value = 0;
   minutes.value = 0;
@@ -132,8 +161,12 @@ function addTime(mins) {
 }
 
 function toggleSettings(timerId) {
-  console.log("id:", timerId);
-  this.timerActive = !this.timerActive;
+  // timerActive.value = false;
+  // isPaused.value = true;
+  editTime.value = !editTime.value;
+  if (editTime.value) {
+    pauseTimer()
+  }
 }
 
 function deleteTimer(timerId) {
@@ -172,8 +205,8 @@ const inputStartTime = computed(() => {
       </div>
 
       <div class="controls">
-        <span class="material-symbols-outlined">settings</span>
-        <span class="material-symbols-outlined">close</span>
+        <span @click="toggleSettings(timer._id)" class="material-symbols-outlined">settings</span>
+        <span @click="deleteTimer(timer._id)" class="material-symbols-outlined">close</span>
       </div>
 
     </div>
@@ -182,11 +215,31 @@ const inputStartTime = computed(() => {
     <div class="timer-middle">
 
       <div class="time-remaining">
-        <template v-if="timerActive">
-          <h2>{{ msToTime(timeToZero) }}</h2>
+        <template v-if="editTime">
+          <div class="time-input">
+            <div class="input-control">
+              <label>days</label>
+              <input type="number" min="0" max="100" v-model="days" placeholder="Days" @change="updateStart()" />
+            </div>
+            <span>:</span>
+            <div class="input-control">
+              <label>hrs</label>
+              <input type="number" min="0" max="100" v-model="hours" placeholder="Hrs" @change="updateStart()" />
+            </div>
+            <span>:</span>
+            <div class="input-control">
+              <label>mins</label>
+              <input type="number" min="0" max="100" v-model="minutes" placeholder="Mins" @change="updateStart()" />
+            </div>
+            <span>:</span>
+            <div class="input-control">
+              <label>sec</label>
+              <input type="number" min="0" max="100" v-model="seconds" placeholder="Sec" @change="updateStart()" />
+            </div>
+          </div>
         </template>
         <template v-else>
-
+          <h2>{{ msToTime(timeToZero) }}</h2>
         </template>
 
       </div>
@@ -199,15 +252,27 @@ const inputStartTime = computed(() => {
       </div> -->
 
       <div class="timer-controls">
-        <span @click="startTimer" class="material-symbols-outlined">
-          play_arrow
-        </span>
-        <span @click="pauseTimer" class="material-symbols-outlined">
-          pause
-        </span>
+
         <span @click="restartTimer" class="material-symbols-outlined">
           replay
         </span>
+
+        <template v-if="timerActive">
+          <span @click="pauseTimer" class="material-symbols-outlined">
+            pause
+          </span>
+        </template>
+
+        <template v-else>
+          <span @click="startTimer" class="material-symbols-outlined">
+            play_arrow
+          </span>
+        </template>
+
+        <span @click="clearTimer" class="material-symbols-outlined">
+          close
+        </span>
+
       </div>
 
     </div>
@@ -224,6 +289,14 @@ const inputStartTime = computed(() => {
         ]"></div>
       </div>
     </div>
+
+    <!-- <span class="debug">
+      editTime: {{ editTime }} <br />
+      time_out: {{ time_out }} <br />
+      timeToZero: {{ timeToZero }} <br />
+      startDuration: {{ startDuration }} <br />
+      percentLeft: {{ percentLeft }} <br />
+    </span> -->
   </div>
 </template>
 <style scoped>
@@ -283,6 +356,27 @@ const inputStartTime = computed(() => {
   flex: 2;
   flex-direction: column;
   outline: 1px solid lime;
+}
+
+.timer-middle .time-remaining .time-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer-middle .time-input .input-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer-middle .time-input .input-control input[type="number"] {
+  font-size: 1em;
+  width: 40px;
+}
+
+.timer-middle .timer-controls .material-symbols-outlined {
+  padding: .10em .25em;
 }
 
 /* Bottom */
