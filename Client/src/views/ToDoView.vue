@@ -98,7 +98,7 @@ const customValue = ref()
 
 .todo-container {
   text-align: center;
-  padding: 1em;
+  /* padding: 1em; */
 }
 
 .add-todo-form {

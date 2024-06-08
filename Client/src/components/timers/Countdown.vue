@@ -1,31 +1,31 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useTimerStore } from '@/stores/timer.store.js'
+import { ref, computed, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useTimerStore } from "@/stores/timer.store.js";
 
-const days = ref(0)
-const hours = ref(0)
-const minutes = ref(0)
-const seconds = ref(0)
+const days = ref(0);
+const hours = ref(0);
+const minutes = ref(0);
+const seconds = ref(0);
 
-const time_out = ref(0)
-const timeToZero = ref(0)
-const startDuration = ref(0)
+const time_out = ref(0);
+const timeToZero = ref(0);
+const startDuration = ref(0);
 
-const percentLeft = ref(0)
-const timesUp = ref(false)
+const percentLeft = ref(0);
+const timesUp = ref(false);
 
-const props = defineProps(['timer'])
-const emit = defineEmits(['close'])
+const props = defineProps(["timer"]);
+const emit = defineEmits(["close"]);
 
-const isPaused = ref(true)
-const isEditing = ref(false)
-const isHovering = ref(false)
+const isPaused = ref(true);
+const isEditing = ref(false);
+const isHovering = ref(false);
 
 //Modal
 const timeIsEmpty = computed(() => {
   return timeToZero.value === 0;
-})
+});
 
 const progressColor = computed(() => {
   if (percentLeft.value > 60) {
@@ -37,75 +37,83 @@ const progressColor = computed(() => {
   }
 });
 
-watch([days, hours, minutes, seconds], ([newDays, newHours, newMinutes, newSeconds], [oldDays, oldHours, oldMinutes, oldSeconds]) => {
+watch(
+  [days, hours, minutes, seconds],
+  (
+    [newDays, newHours, newMinutes, newSeconds],
+    [oldDays, oldHours, oldMinutes, oldSeconds]
+  ) => {
+    if (newHours == 24) {
+      hours.value = 0;
+      days.value++;
+    }
+    if (newMinutes == 60) {
+      minutes.value = 0;
+      hours.value++;
+    }
+    if (newSeconds == 60) {
+      seconds.value = 0;
+      minutes.value++;
+    }
 
-  if (newHours == 24) {
-    hours.value = 0;
-    days.value++;
-  }
-  if (newMinutes == 60) {
-    minutes.value = 0;
-    hours.value++;
-  }
-  if (newSeconds == 60) {
-    seconds.value = 0;
-    minutes.value++;
-  }
+    timeToZero.value =
+      days.value * 86400000 +
+      hours.value * 3600000 +
+      minutes.value * 60000 +
+      seconds.value * 1000;
 
-  timeToZero.value = days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000;
-
-  //Keep track of original start duration.
-  startDuration.value = timeToZero.value;
-  if (timeToZero.value > 0) percentLeft.value = 100;
-  if (timeToZero.value == 0) percentLeft.value = 0;
-  console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
-})
+    //Keep track of original start duration.
+    startDuration.value = timeToZero.value;
+    if (timeToZero.value > 0) percentLeft.value = 100;
+    if (timeToZero.value == 0) percentLeft.value = 0;
+    console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`);
+  }
+);
 
 function start() {
-  isPaused.value = false
-  isEditing.value = false
+  isPaused.value = false;
+  isEditing.value = false;
 
-  var startTime = Date.now()
+  var startTime = Date.now();
   var desiredDelay = 1000;
   var actualDelay = 1000;
 
-  percentLeft.value = Math.floor(timeToZero.value / startDuration.value * 100);
+  percentLeft.value = Math.floor((timeToZero.value / startDuration.value) * 100);
 
   time_out.value = setTimeout(() => {
-
     var actual = Date.now() - startTime;
     actualDelay = desiredDelay - (actual - desiredDelay);
 
     timeToZero.value -= 1000;
 
     if (timeToZero.value > 0) {
-      start()
+      start();
     } else {
       percentLeft.value = 0;
       alert(`${props.timer.name} timer is up!`);
-      isPaused.value = true
+      isPaused.value = true;
     }
-  }, actualDelay)
+  }, actualDelay);
 }
 
 function updateStart() {
-  startDuration.value = timeToZero.value
+  startDuration.value = timeToZero.value;
 }
 
 function stop() {
-  isPaused.value = true
-  clearTimeout(time_out.value)
+  isPaused.value = true;
+  clearTimeout(time_out.value);
 }
 
 function reset() {
-  isPaused.value = true
-  clearTimeout(time_out.value)
-  timeToZero.value = inputStartTime.value
+  isPaused.value = true;
+  clearTimeout(time_out.value);
+  timeToZero.value = inputStartTime.value;
 }
 
 function clear() {
-  isPaused.value = true
-  clearTimeout(time_out.value)
+  isPaused.value = true;
+  clearTimeout(time_out.value);
   days.value = 0;
   hours.value = 0;
   minutes.value = 0;
@@ -115,7 +123,7 @@ function clear() {
 
 function addTime(mins) {
   if (minutes.value >= 60) {
-    minutes.value = minutes.value - 60
+    minutes.value = minutes.value - 60;
     hours.value += 1;
   }
   // startDuration.value += mins * 60;
@@ -124,55 +132,38 @@ function addTime(mins) {
 }
 
 function toggleSettings(timerId) {
-  console.log("id:", timerId)
+  console.log("id:", timerId);
   this.isHovering = !this.isHovering;
 }
 
 function deleteTimer(timerId) {
-  emit('close', timerId)
+  emit("close", timerId);
 }
 
 function msToTime(ms) {
   var seconds = Math.floor((ms / 1000) % 60);
   var minutes = Math.floor((ms / (1000 * 60)) % 60);
   var hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
-  var days = Math.floor((ms / (1000 * 60 * 60)) / 24);
-  days = (days < 10) ? "0" + days : days;
-  hours = (hours < 10) ? "0" + hours : hours;
-  minutes = (minutes < 10) ? "0" + minutes : minutes;
-  seconds = (seconds < 10) ? "0" + seconds : seconds;
+  var days = Math.floor(ms / (1000 * 60 * 60) / 24);
+  days = days < 10 ? "0" + days : days;
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
   return `${days}:${hours}:${minutes}:${seconds}`;
 }
 
 const inputStartTime = computed(() => {
-  return days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000;
-})
-
-// Modal
-import Modal from '@/components/Modal.vue'
-const showModal = ref(false)
-const openModal = () => {
-  showModal.value = true
-}
-const closeModal = () => {
-  showModal.value = false
-}
+  return (
+    days.value * 86400000 +
+    hours.value * 3600000 +
+    minutes.value * 60000 +
+    seconds.value * 1000
+  );
+});
 
 </script>
 <template>
-  <div class="timer">
-
-    <!-- Modal -->
-    <button @click="openModal">Select Image</button>
-    <teleport to='#modals'>
-      <div class="modal-bg" v-if="showModal" @click.self="closeModal">
-        <div class="modal">
-          <Modal @close="closeModal">
-            <h2>Search Images</h2>
-          </Modal>
-        </div>
-      </div>
-    </teleport>
+  <div class="countdown">
 
     <div class="timer-value">
       <div v-if="isHovering">
@@ -246,36 +237,9 @@ const closeModal = () => {
         ]"></div>
       </div>
     </div>
-
   </div>
 </template>
 <style scoped>
-/* Modals */
-.modal {
-  color: lime;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  height: 80%;
-  width: 80%;
-  background: black;
-  outline: 1px solid white;
-  text-align: center;
-  position: fixed;
-  overflow: auto;
-}
-
-.modal-bg {
-  position: fixed;
-  z-index: 2;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  backdrop-filter: blur(3px);
-}
-
 /* Animate open */
 .fadeHeight-enter-active,
 .fadeHeight-leave-active {
@@ -289,20 +253,17 @@ const closeModal = () => {
   max-height: 0px;
 }
 
-
-
-
-
-.timer {
+.countdown {
   font-family: "Share Tech Mono", sans-serif;
   /* margin: .5em;  */
   background-color: black;
   border: 1px solid lime;
   color: lime;
-  border-radius: 10px;
+  border-radius: 5px;
   text-align: center;
   position: relative;
   width: 100%;
+  height: 100%;
 }
 
 .timer-name {

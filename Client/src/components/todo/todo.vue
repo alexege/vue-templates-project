@@ -78,9 +78,11 @@ const permissionToManage = (todo) => {
 <template>
   <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
 
-    <!-- Checkbox -->
-    <input type="checkbox" v-if="permissionToManage(todo)" class="checkbox" @click="toggleCompleted(todo)"
-      :checked="todo.completed" />
+    <div class="todo-left">
+      <!-- Checkbox -->
+      <input type="checkbox" v-if="permissionToManage(todo)" class="checkbox" @click="toggleCompleted(todo)"
+        :checked="todo.completed" />
+    </div>
 
     <!-- Todo Category -->
     <span class="category" v-if="todo.category">
@@ -89,8 +91,8 @@ const permissionToManage = (todo) => {
 
     <!-- Body -->
     <div class="todo-body">
-      <div class="todo-top">
 
+      <div class="todo-top">
 
         <!-- Editing Mode -->
         <template v-if="isEditing && permissionToManage(todo)">
@@ -112,8 +114,6 @@ const permissionToManage = (todo) => {
         <template v-if="todo.author && todo.author.username">
           {{ todo.author.username }}
         </template>
-
-        ·
 
         <!-- Created At Time Since Display -->
         <div class="created-at">
@@ -168,6 +168,12 @@ const permissionToManage = (todo) => {
 
 .checkbox {
   margin: 5px;
+  width: 20px;
+  height: 20px;
+}
+
+.checkbox:hover {
+  cursor: pointer;
 }
 
 .category {
@@ -178,6 +184,10 @@ const permissionToManage = (todo) => {
 
 .todo-body {
   flex: 1;
+}
+
+.todo-body input {
+  text-align: center;
 }
 
 .todo-actions {
@@ -216,6 +226,13 @@ const permissionToManage = (todo) => {
   justify-content: space-around;
   align-items: center;
   height: 75%;
+}
+
+.todo-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .todo-bottom {

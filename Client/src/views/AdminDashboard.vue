@@ -94,6 +94,10 @@ td {
   padding: 0.5em;
 }
 
+td {
+  color: white;
+}
+
 th {
   background-color: rgba(0, 0, 0, 0.274);
 }
