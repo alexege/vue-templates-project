@@ -3,6 +3,8 @@ import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useTimerStore } from "@/stores/timer.store.js";
 
+const main_bg_color = "black";
+
 const days = ref(0);
 const hours = ref(0);
 const minutes = ref(0);
@@ -28,15 +30,25 @@ const timeIsEmpty = computed(() => {
   return timeToZero.value === 0;
 });
 
+// const progressColor = computed(() => {
+//   if (percentLeft.value > 60) {
+//     return "green";
+//   } else if (percentLeft.value > 30) {
+//     return "yellow";
+//   } else {
+//     return "red";
+//   }
+// });
+
 const progressColor = computed(() => {
   if (percentLeft.value > 60) {
-    return "green";
+    return { bg: "green", fg: "white" }
   } else if (percentLeft.value > 30) {
-    return "yellow";
+    return { bg: "yellow", fg: "black" }
   } else {
-    return "red";
+    return { bg: "red", fg: "white" }
   }
-});
+})
 
 watch(
   [days, hours, minutes, seconds],
@@ -98,8 +110,10 @@ function startTimer() {
       startTimer();
     } else {
       percentLeft.value = 0;
-      alert(`${props.timer.name} timer is up!`);
       isPaused.value = true;
+      setTimeout(() => {
+        alert(`${props.timer.name} timer is up!`);
+      }, 500)
     }
   }, actualDelay);
 }
@@ -158,6 +172,12 @@ function addTime(mins) {
   // startDuration.value += mins * 60;
 
   minutes.value += mins;
+}
+
+function subtractTime(mins) {
+  if (minutes.value > 0) {
+    minutes.value -= mins;
+  }
 }
 
 function toggleSettings(timerId) {
@@ -239,19 +259,16 @@ const inputStartTime = computed(() => {
           </div>
         </template>
         <template v-else>
-          <h2>{{ msToTime(timeToZero) }}</h2>
+          <span class="time-left">{{ msToTime(timeToZero) }}</span>
         </template>
 
       </div>
 
-      <!-- <div class="optional-time-controls">
-        <button @click="addTime(1)" class="add-time-button">+1</button>
-        <button @click="addTime(5)" class="add-time-button">+5</button>
-        <button @click="addTime(15)" class="add-time-button">+15</button>
-        <span>mins</span>
-      </div> -->
-
       <div class="timer-controls">
+
+        <!-- <span @click="subtractTime(1)" class="add-time" :class="{ disabled: minutes <= 0 }">
+          -1
+        </span> -->
 
         <span @click="restartTimer" class="material-symbols-outlined">
           replay
@@ -264,7 +281,7 @@ const inputStartTime = computed(() => {
         </template>
 
         <template v-else>
-          <span @click="startTimer" class="material-symbols-outlined">
+          <span @click="startTimer" class="material-symbols-outlined" :class="{ disabled: timeToZero <= 0 }">
             play_arrow
           </span>
         </template>
@@ -273,6 +290,10 @@ const inputStartTime = computed(() => {
           close
         </span>
 
+        <!-- <span @click="addTime(1)" class="add-time">
+          +1
+        </span> -->
+
       </div>
 
     </div>
@@ -280,12 +301,12 @@ const inputStartTime = computed(() => {
     <!-- Bottom -->
     <div class="timer-bottom">
       <div class="progressbar">
-        <div class="text">{{ percentLeft }} %</div>
+        <div class="text" :style="[{ 'color': progressColor.fg }]">{{ percentLeft }} %</div>
         <div class="background">{{ percentLeft }} %</div>
         <div class="bar" :style="[
           { width: percentLeft + '%' },
           { animation: 'colorChange 2s both' },
-          { 'background-color': progressColor }
+          { 'background-color': progressColor.bg }
         ]"></div>
       </div>
     </div>
@@ -300,6 +321,11 @@ const inputStartTime = computed(() => {
   </div>
 </template>
 <style scoped>
+.disabled {
+  color: gray;
+  opacity: .25;
+}
+
 .countdown-timer {
   display: flex;
   flex-direction: column;
@@ -318,6 +344,9 @@ const inputStartTime = computed(() => {
   width: 100%;
   align-items: center;
   justify-content: center;
+
+  background-color: black;
+  color: white;
 }
 
 /* Generic */
@@ -358,10 +387,24 @@ const inputStartTime = computed(() => {
   outline: 1px solid lime;
 }
 
+.timer-middle .time-remaining {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
 .timer-middle .time-remaining .time-input {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.timer-middle .time-remaining .time-input span {
+  padding: .25em;
+}
+
+.timer-middle .time-remaining .time-left {
+  font-size: 2.5em;
 }
 
 .timer-middle .time-input .input-control {
@@ -377,6 +420,7 @@ const inputStartTime = computed(() => {
 
 .timer-middle .timer-controls .material-symbols-outlined {
   padding: .10em .25em;
+  font-size: 20px;
 }
 
 /* Bottom */
@@ -395,16 +439,21 @@ const inputStartTime = computed(() => {
 .timer-bottom .text {
   position: absolute;
   top: 0;
+  width: 100%;
+  z-index: 1;
 }
 
 .timer-bottom .background {
-  background-color: black;
+  background-color: v-bind('main_bg_color');
   color: white;
 }
 
-/* .timer-bottom .bar {
+.timer-bottom .bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
   transition: width 1s;
   background-color: limegreen;
   animation: colorChange;
-} */
+}
 </style>
