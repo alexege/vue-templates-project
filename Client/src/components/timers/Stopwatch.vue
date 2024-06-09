@@ -65,13 +65,9 @@ function deleteTimer(timerId) {
 }
 
 const { updateTimer } = useTimerStore()
-const isEditingTimerName = ref(false);
+const editTimerName = ref(false);
 const editTimer = {
-    name: 'Name'
-}
-
-function editName() {
-    isEditingTimerName.value = true;
+    name: props.timer.name
 }
 
 async function updateTimerName() {
@@ -81,108 +77,93 @@ async function updateTimerName() {
     }
     await updateTimer(data)
     props.timer.name = data.name
-    isEditingTimerName.value = false;
+    editTimerName.value = false;
 }
 
 </script>
 
 <template>
-    <div id="clock">
-        <a @click="deleteTimer(timer._id)" class="deleteButton">&#9932;</a>
-        <template v-if="isEditingTimerName">
-            <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName">
-        </template>
-        <template v-else>
-            <h2 @dblclick="editName">{{ timer.name }}</h2>
-        </template>
-        <span class="time">{{ time }}</span>
-
-        <div class="btn-container">
-            <a id="start" @click="start">Start</a>
-            <a id="stop" @click="stop">Stop</a>
-            <a id="reset" @click="reset">Reset</a>
+    <div class="stopwatch-timer">
+        <div class="timer-top">
+            <template v-if="editTimerName">
+                <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName">
+            </template>
+            <template v-else>
+                <span @dblclick="editTimerName = true">{{ timer.name }}</span>
+            </template>
+            <span @click="deleteTimer(timer._id)" class="material-symbols-outlined close">close</span>
+        </div>
+        <div class="timer-middle">
+            <span class="time-elapsed">{{ time }}</span>
+        </div>
+        <div class="timer-bottom">
+            <div class="btn-container">
+                <span id="start" @click="start">Start</span>
+                <span id="stop" @click="stop">Stop</span>
+                <span id="reset" @click="reset">Reset</span>
+            </div>
         </div>
     </div>
 </template>
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-#clock {
-    position: relative;
-    font-family: 'Share Tech Mono', sans-serif;
-    order: 0;
+.stopwatch-timer {
     display: flex;
     flex-direction: column;
-    flex: 0 1 auto;
-    align-items: center;
-    /* text-align: center; */
     justify-content: center;
-    /* color: #c8c8c8; */
-    color: lime;
-    outline: 1px solid lime;
-    background-color: #041e27de;
     width: 100%;
     height: 100%;
-}
-
-#clock h2 {
-    font-size: 1.5em;
-}
-
-#clock .time {
-    font-size: 36px;
-    color: white;
-}
-
-#clock .text {
-    margin-top: 30px;
-    font-size: 15px;
-    color: rgba(200, 200, 200, .4);
-    text-align: center;
-}
-
-#clock .text a {
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.1s ease-out;
-}
-
-#clock .text a:hover {
-    color: #c8c8c8;
-}
-
-#clock .btn-container {
-    display: flex;
-}
-
-#clock .btn-container a {
-    text-align: center;
+    position: relative;
+    border: 1px solid white;
+    border-radius: 5px;
     font-family: 'Share Tech Mono', sans-serif;
-    background: transparent;
-    border: none;
-    /* color: #c8c8c8; */
-    color: lime;
-    padding: 10px 15px;
-    margin: 0 10px;
-    text-transform: uppercase;
-    /* font-size: 2em; */
-    cursor: pointer;
-    flex-grow: 1;
-    transition: color 0.1s ease-out;
+    background-color: black;
 }
 
-#clock .btn-container a:hover {
+/* Generic */
+.timer-top,
+.timer-middle,
+.timer-bottom {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
     color: white;
 }
 
-#clock .deleteButton {
+/* Top  */
+.timer-top {
+    padding: 10px 0;
+}
+
+.timer-top .close {
     position: absolute;
-    top: 10px;
-    right: 15px;
+    top: 0;
+    right: 0;
+    margin: 2.5px 2.5px;
     cursor: pointer;
 }
 
-#clock .deleteButton:hover {
-    color: white;
+/* Middle */
+.timer-middle {
+    flex-direction: column;
+}
+
+.timer-middle .time-elapsed {
+    font-size: 2.5em;
+    min-height: 60px;
+}
+
+/* Bottom */
+.timer-bottom {
+    padding: 10px 0;
+}
+
+.timer-bottom .btn-container span {
+    padding: .10em .25em;
+    font-size: 20px;
+    cursor: pointer;
 }
 </style>

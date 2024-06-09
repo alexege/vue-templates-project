@@ -118,7 +118,6 @@ async function add(type) {
 .timer-view {
     max-width: 75vw;
     margin: 0 auto;
-    outline: 1px solid red;
 }
 
 .timer-grid {

@@ -20,25 +20,21 @@ const timesUp = ref(false);
 const props = defineProps(["timer"]);
 const emit = defineEmits(["close"]);
 
-const isPaused = ref(true);
 const isEditing = ref(false);
 const editTime = ref(true);
 const timerActive = ref(false);
+
+const { updateTimer } = useTimerStore()
+const editingTimerName = ref(false);
+const editTimer = ref({
+  name: props.timer.name
+})
+const editTimerName = ref(false);
 
 //Modal
 const timeIsEmpty = computed(() => {
   return timeToZero.value === 0;
 });
-
-// const progressColor = computed(() => {
-//   if (percentLeft.value > 60) {
-//     return "green";
-//   } else if (percentLeft.value > 30) {
-//     return "yellow";
-//   } else {
-//     return "red";
-//   }
-// });
 
 const progressColor = computed(() => {
   if (percentLeft.value > 60) {
@@ -89,7 +85,6 @@ function startTimer() {
     return;
   }
 
-  isPaused.value = false;
   isEditing.value = false;
   editTime.value = false;
   timerActive.value = true;
@@ -110,7 +105,7 @@ function startTimer() {
       startTimer();
     } else {
       percentLeft.value = 0;
-      isPaused.value = true;
+      timerActive.value = false;
       setTimeout(() => {
         alert(`${props.timer.name} timer is up!`);
       }, 500)
@@ -123,7 +118,6 @@ function updateStart() {
 }
 
 function pauseTimer() {
-  isPaused.value = true;
   timerActive.value = false;
   // editTime.value = false;
 
@@ -131,7 +125,6 @@ function pauseTimer() {
 }
 
 function reset() {
-  isPaused.value = true;
   clearTimeout(time_out.value);
   timerActive.value = false;
   timeToZero.value = inputStartTime.value;
@@ -143,20 +136,26 @@ function restartTimer() {
   console.log("start duration: ", msToTime(startDuration.value).split(':'))
   let startingTime = msToTime(startDuration.value).split(':');
   timerActive.value = false;
-
-  isPaused.value = true;
   clearTimeout(time_out.value);
-  days.value = startingTime[0];
-  hours.value = startingTime[1];
-  minutes.value = startingTime[2];
-  seconds.value = startingTime[3];
+
+  if (timeToZero.value == 0) {
+    days.value = 0;
+    hours.value = 0;
+    minutes.value = 0;
+    seconds.value = 0;
+  } else {
+    days.value = startingTime[0];
+    hours.value = startingTime[1];
+    minutes.value = startingTime[2];
+    seconds.value = startingTime[3];
+  }
+
   timeToZero.value = startDuration.value;
 }
 
 function clearTimer() {
   editTime.value = true;
   timerActive.value = false;
-  isPaused.value = true;
   days.value = 0;
   hours.value = 0;
   minutes.value = 0;
@@ -181,8 +180,6 @@ function subtractTime(mins) {
 }
 
 function toggleSettings(timerId) {
-  // timerActive.value = false;
-  // isPaused.value = true;
   editTime.value = !editTime.value;
   if (editTime.value) {
     pauseTimer()
@@ -213,6 +210,17 @@ const inputStartTime = computed(() => {
     seconds.value * 1000
   );
 });
+
+const updateTimerName = () => {
+  var updateData = {
+    _id: props.timer._id,
+    name: editTimer.value.name
+  }
+
+  updateTimer(updateData)
+  props.timer.name = updateData.name
+  editTimerName.value = false;
+}
 </script>
 <template>
   <div class="countdown-timer">
@@ -221,7 +229,15 @@ const inputStartTime = computed(() => {
     <div class="timer-top">
 
       <div class="timer-title">
-        {{ timer.name }}
+        <template v-if="editTimerName">
+          <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName" />
+          <span class="material-symbols-outlined" @click="updateTimerName">
+            save
+          </span>
+        </template>
+        <template v-else>
+          <span @dblclick="editTimerName = true">{{ timer.name }}</span>
+        </template>
       </div>
 
       <div class="controls">
@@ -332,9 +348,12 @@ const inputStartTime = computed(() => {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
-  outline: 1px solid red;
+  /* height: 100%; */
   position: relative;
+  border: 1px solid white;
+  border-radius: 5px;
+  font-family: 'Share Tech Mono', sans-serif;
+  background-color: black;
 }
 
 .timer-top,
@@ -345,7 +364,6 @@ const inputStartTime = computed(() => {
   align-items: center;
   justify-content: center;
 
-  background-color: black;
   color: white;
 }
 
@@ -360,9 +378,13 @@ const inputStartTime = computed(() => {
 
 /* Top */
 .timer-top {
-  flex: 1;
-  outline: 1px solid red;
-  width: 100%;
+  padding: 10px 0;
+}
+
+.timer-top .timer-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .timer-top .close {
@@ -382,9 +404,7 @@ const inputStartTime = computed(() => {
 
 /* Middle */
 .timer-middle {
-  flex: 2;
   flex-direction: column;
-  outline: 1px solid lime;
 }
 
 .timer-middle .time-remaining {
@@ -401,6 +421,7 @@ const inputStartTime = computed(() => {
 
 .timer-middle .time-remaining .time-input span {
   padding: .25em;
+  align-self: flex-end;
 }
 
 .timer-middle .time-remaining .time-left {
@@ -425,18 +446,18 @@ const inputStartTime = computed(() => {
 
 /* Bottom */
 .timer-bottom {
-  flex: 1;
-  outline: 1px solid blue;
+  padding-top: 10px;
 }
 
 .timer-bottom .progressbar {
   position: relative;
-  outline: 1px solid yellow;
+  /* outline: 1px solid white; */
   width: 100%;
   text-align: center;
 }
 
 .timer-bottom .text {
+  border: 1px solid white;
   position: absolute;
   top: 0;
   width: 100%;
