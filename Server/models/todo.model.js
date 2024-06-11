@@ -5,7 +5,7 @@ const Todo = mongoose.model(
   new mongoose.Schema(
     {
       title: String,
-      category: String,
+      category: [],
       priority: String,
       completed: Boolean,
       author: {

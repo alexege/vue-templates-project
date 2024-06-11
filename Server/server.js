@@ -5,7 +5,7 @@ const brcypt = require("bcryptjs");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:8081",
 };
 
 app.use(cors(corsOptions));
@@ -24,16 +24,17 @@ const Role = require("./models/role.model");
 //Model Connection
 // const User = require("./models/user.model")
 
-db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`)
-.then(() => {
-  console.log("Successfully connected to Mongodb!");
-  //Triggering the database seeding if no items exist
-  initial();
-})
-.catch((err) => {
-  console.log("Connection error", err);
-  process.exit();
-});
+db.mongoose
+  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`)
+  .then(() => {
+    console.log("Successfully connected to Mongodb!");
+    //Triggering the database seeding if no items exist
+    initial();
+  })
+  .catch((err) => {
+    console.log("Connection error", err);
+    process.exit();
+  });
 
 // simple route
 app.get("/", (req, res) => {
@@ -41,10 +42,11 @@ app.get("/", (req, res) => {
 });
 
 // routes
-require('./routes/auth.routes')(app);
-require('./routes/user.routes')(app);
-require('./routes/todo.routes')(app);
-require('./routes/timer.routes')(app);
+require("./routes/auth.routes")(app);
+require("./routes/user.routes")(app);
+require("./routes/todo.routes")(app);
+require("./routes/timer.routes")(app);
+require("./routes/category.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
@@ -54,53 +56,52 @@ app.listen(PORT, () => {
 
 //Seed the database
 function initial() {
-  
   //Setup default roles
-  Role.estimatedDocumentCount()
-  .then((count) => {
-    if (count === 0){
-
+  Role.estimatedDocumentCount().then((count) => {
+    if (count === 0) {
       //User
       const user = new Role({
-        name: "user"
-      })
+        name: "user",
+      });
 
-      user.save(user)
-      .then(() => {
-        console.log("Adding User role to database!");
-      })
-      .catch(err => {
-        console.log("err:", err);
-      })
+      user
+        .save(user)
+        .then(() => {
+          console.log("Adding User role to database!");
+        })
+        .catch((err) => {
+          console.log("err:", err);
+        });
 
       //Moderator
       const moderator = new Role({
-        name: "moderator"
-      })
+        name: "moderator",
+      });
 
-      moderator.save(moderator)
-      .then(() => {
-        console.log("Adding Moderator role to database!");
-      })
-      .catch(err => {
-        console.log("err:", err);
-      })
+      moderator
+        .save(moderator)
+        .then(() => {
+          console.log("Adding Moderator role to database!");
+        })
+        .catch((err) => {
+          console.log("err:", err);
+        });
 
       //Admin
       const admin = new Role({
-        name: "admin"
-      })
+        name: "admin",
+      });
 
-      admin.save(admin)
-      .then(() => {
-        console.log("Adding Admin role to database!");
-      })
-      .catch(err => {
-        console.log("err:", err);
-      })
+      admin
+        .save(admin)
+        .then(() => {
+          console.log("Adding Admin role to database!");
+        })
+        .catch((err) => {
+          console.log("err:", err);
+        });
     }
-  })
-  
+  });
 }
 
 // https://www.bezkoder.com/node-express-mongodb-crud-rest-api/

@@ -82,6 +82,9 @@ const permissionToManage = (todo) => {
       <!-- Checkbox -->
       <input type="checkbox" v-if="permissionToManage(todo)" class="checkbox" @click="toggleCompleted(todo)"
         :checked="todo.completed" />
+
+      <!-- Category -->
+      <span class="category">Category</span>
     </div>
 
     <!-- Todo Category -->
@@ -177,9 +180,12 @@ const permissionToManage = (todo) => {
 }
 
 .category {
-  padding: 1em;
+  background-color: #EEF;
   border-radius: 3px;
-  outline: 1px solid black;
+  border: 1px #CCF solid;
+  padding: 2px 5px;
+  display: inline;
+  font-size: .75em;
 }
 
 .todo-body {
@@ -230,7 +236,7 @@ const permissionToManage = (todo) => {
 
 .todo-left {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }

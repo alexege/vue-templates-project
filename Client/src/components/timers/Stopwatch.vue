@@ -86,7 +86,8 @@ async function updateTimerName() {
     <div class="stopwatch-timer">
         <div class="timer-top">
             <template v-if="editTimerName">
-                <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName">
+                <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName"
+                    autofocus @focus="$event.target.select()">
             </template>
             <template v-else>
                 <span @dblclick="editTimerName = true">{{ timer.name }}</span>
@@ -154,6 +155,9 @@ async function updateTimerName() {
 .timer-middle .time-elapsed {
     font-size: 2.5em;
     min-height: 60px;
+
+    display: flex;
+    align-items: center;
 }
 
 /* Bottom */

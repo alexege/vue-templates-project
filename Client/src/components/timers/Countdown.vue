@@ -230,7 +230,8 @@ const updateTimerName = () => {
 
       <div class="timer-title">
         <template v-if="editTimerName">
-          <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName" />
+          <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName" autofocus
+            @focus="$event.target.select()" />
           <span class="material-symbols-outlined" @click="updateTimerName">
             save
           </span>
