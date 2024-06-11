@@ -11,14 +11,23 @@ userStore.getAll()
 const newTodo = ref({
   title: "",
   completed: false,
-  author: ""
+  author: "",
+  category: []
 });
 
 const addItemAndClear = () => {
 
+  let categories = [];
+  // if (customValue.value && customValue.value.name) {
+  //   categories.push(customValue.value.name)
+  // }
+  if (selectedOption.value) {
+    categories.push(selectedOption.value)
+  }
+
   let todo = {
     title: newTodo.value.title,
-    category: newTodo.value.category,
+    category: categories,
     priority: newTodo.value.priority,
     completed: newTodo.value.completed,
     author: JSON.parse(localStorage.getItem('user')).id || newTodo.value.author,
@@ -31,6 +40,9 @@ const addItemAndClear = () => {
     //Reset properties to their starting values
     newTodo.value.title = "";
     newTodo.value.completed = false;
+
+    //TODO: Add id of the selected Category to the Todo Object
+    // newTodo.value.category = customValue.value._id
   }
 };
 
@@ -43,10 +55,11 @@ const customValue = ref({
 import { useCategoryStore } from "@/stores/category.store";
 const categoryStore = useCategoryStore();
 
-const addACategory = () => {
+const addACategory = async () => {
   if (customValue.value) {
     //Add Category via Category store
-    categoryStore.addCategory(customValue.value)
+    let newCategory = await categoryStore.addCategory(customValue.value)
+    console.log("newCat:", newCategory);
     selectedOption.value = customValue.value.name
   }
 }

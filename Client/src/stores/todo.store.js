@@ -4,6 +4,7 @@ const API_URL = 'http://localhost:8080/api'
 
 import { useUsersStore } from '@/stores/user.store'
 import { useAuthStore } from '@/stores/auth.store'
+import { useCategoryStore } from './category.store'
 
 export const useTodoListStore = defineStore('todoList', {
   state: () => ({
@@ -49,6 +50,14 @@ export const useTodoListStore = defineStore('todoList', {
       if (author) {
         // todoItem.data.author = { username: author.username }
         todoItem.data.author = author
+      }
+
+      const category = useCategoryStore().categories.find(
+        (category) => category.name == todo.category
+      )
+
+      if (category) {
+        todoItem.data.categories.push(category)
       }
 
       console.log('response:', todoItem.data)

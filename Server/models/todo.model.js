@@ -5,7 +5,12 @@ const Todo = mongoose.model(
   new mongoose.Schema(
     {
       title: String,
-      category: [],
+      categories: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Category",
+        },
+      ],
       priority: String,
       completed: Boolean,
       author: {

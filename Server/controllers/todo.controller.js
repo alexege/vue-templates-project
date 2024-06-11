@@ -1,9 +1,11 @@
 const db = require("../models");
 const Todo = require("../models/todo.model");
 const User = require("../models/user.model");
+const Category = require("../models/category.model");
 
 exports.findAllTodos = (req, res) => {
   Todo.find()
+    .populate("categories")
     .populate("author")
     .then((todos) => {
       res.status(200).send(todos);
@@ -39,7 +41,19 @@ exports.addTodo = (req, res) => {
     createdAt: new Date(), //This fixes the Invalid Date problem
   });
 
-  Todo.create(newTodo);
+  if (req.body.category) {
+    Category.findOne({ name: req.body.category })
+      .then((category) => {
+        // res.send({ category });
+        newTodo.categories.push(category);
+        Todo.create(newTodo);
+      })
+      .catch((error) => {
+        res.status(500).send({ message: error });
+      });
+  }
+
+  // Todo.create(newTodo);
   // res.status(200).send(newTodo)
 
   //Find Author by _id

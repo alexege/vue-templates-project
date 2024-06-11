@@ -84,13 +84,13 @@ const permissionToManage = (todo) => {
         :checked="todo.completed" />
 
       <!-- Category -->
-      <span class="category">Category</span>
-    </div>
+      <div v-if="todo.categories">
+        <span v-for="category in todo.categories" :key="category">
+          <span class="category">{{ category.name }}</span>
+        </span>
+      </div>
 
-    <!-- Todo Category -->
-    <span class="category" v-if="todo.category">
-      {{ todo.category }}
-    </span>
+    </div>
 
     <!-- Body -->
     <div class="todo-body">
