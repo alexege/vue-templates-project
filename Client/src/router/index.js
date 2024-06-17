@@ -10,6 +10,7 @@ import SettingsView from '@/views/SettingsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import LoginRegView from '@/views/LoginRegView.vue'
 
 import { useAuthStore } from '@/stores/auth.store'
 import TimerView from '@/views/TimerView.vue'
@@ -25,7 +26,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginRegView
     },
     {
       path: '/register',

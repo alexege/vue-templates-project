@@ -77,13 +77,14 @@ const { allCategories } = storeToRefs(useCategoryStore());
     <!-- Custom Input / DropDown -->
     <select v-model="selectedOption">
       <option value="" disabled>Category</option>
+      <option vale="">None</option>
       <option :value="category.name" v-for="category in allCategories" :key="category">{{ category.name }}</option>
       <option value="custom">Custom</option>
     </select>
 
     <div v-show="selectedOption === 'custom'" class="add-category">
       <input type="text" v-model="customValue.name">
-      <button @click="addACategory">Add</button>
+      <button @click.stop="addACategory">Add</button>
     </div>
 
     <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />

@@ -31,6 +31,8 @@ const showAdminPage = computed(() => {
 //Search Bar
 const sideNavSearch = ref()
 
+const showTimers = ref(false)
+
 </script>
 <template>
   <html lang="en" dir="ltr">
@@ -82,8 +84,32 @@ const sideNavSearch = ref()
               <i class="bx bx-timer"></i>
               <span class="links_name">Timers</span>
             </RouterLink>
+            <button @click="showTimers = !showTimers">\/</button>
           </a>
           <span class="tooltip">Timers</span>
+          <div v-if="showTimers">
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+            <button>Timers</button>
+          </div>
         </li>
         <li>
           <a href="#">

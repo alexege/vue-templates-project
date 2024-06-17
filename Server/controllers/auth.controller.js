@@ -59,6 +59,7 @@ exports.signup = (req, result) => {
 };
 
 exports.signin = (req, res) => {
+  console.log("user: ", req.body);
   User.findOne({
     username: req.body.username,
   })

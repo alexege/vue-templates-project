@@ -29,8 +29,8 @@ export const useAuthStore = defineStore({
     //     }
     // },
 
-    async login(username, password) {
-      const user = await axios.post(`${baseUrl}/signin`, { username, password })
+    async login(details) {
+      const user = await axios.post(`${baseUrl}/signin`, details)
 
       // update pinia state
       this.user = user.data
