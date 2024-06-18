@@ -32,6 +32,15 @@ const showAdminPage = computed(() => {
 const sideNavSearch = ref()
 
 const showTimers = ref(false)
+const toggleTimersView = () => {
+  showTimers.value = !showTimers.value;
+  if (showTimers.value == true && openSideNav.value == false) {
+    openSideNav.value = !openSideNav.value
+  }
+}
+
+import TransitionExpand from '@/components/modal/TransitionExpand.vue'
+import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue'
 
 </script>
 <template>
@@ -79,37 +88,21 @@ const showTimers = ref(false)
           <span class="tooltip">Dashboard</span>
         </li>
         <li>
-          <a href="#">
-            <RouterLink to="/timers">
-              <i class="bx bx-timer"></i>
-              <span class="links_name">Timers</span>
-            </RouterLink>
-            <button @click="showTimers = !showTimers">\/</button>
-          </a>
-          <span class="tooltip">Timers</span>
-          <div v-if="showTimers">
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
-            <button>Timers</button>
+          <div style="display:flex;">
+            <a href="#">
+              <RouterLink to="/timers">
+                <i class="bx bx-timer"></i>
+                <span class="links_name">Timers</span>
+              </RouterLink>
+            </a>
+            <span @click="toggleTimersView" class="timer-extend">></span>
           </div>
+          <span class="tooltip">Timers</span>
+          <TransitionExpand class="accordion">
+            <div v-if="showTimers">
+              <SideNavTimerContainer style="overflow: auto; height: 300px;" />
+            </div>
+          </TransitionExpand>
         </li>
         <li>
           <a href="#">
@@ -486,6 +479,17 @@ const showTimers = ref(false)
   font-size: 25px;
   font-weight: 500;
   margin: 18px;
+}
+
+.timer-extend {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: lime;
+  height: 50px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  cursor: pointer;
 }
 
 @media (max-width: 420px) {
