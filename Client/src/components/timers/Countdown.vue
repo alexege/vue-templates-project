@@ -13,6 +13,7 @@ const time_out = ref(0)
 const initialStartValue = ref()
 const timerActive = ref(false)
 const percentLeft = ref(100)
+const timerComplete = ref(false)
 
 const onStart = () => {
     if (timeRemaining.value == 0) return
@@ -36,6 +37,7 @@ const onStart = () => {
             onStart()
         } else {
             percentLeft.value = 0
+            timerComplete.value = true
             //Timer completed Message
             setTimeout(() => {
                 alert(`${props.timer.name} is up!`)
@@ -53,6 +55,9 @@ const onReset = () => {
     timerActive.value = false
     //Set time back to start time
     timeRemaining.value = initialStartValue.value
+
+    if (initialStartValue.value === undefined) initialStartValue.value = days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000
+
     //Reset values back to starting values
     const startingTime = msToTimeFormat(initialStartValue.value).split(':')
     if (timeRemaining.value == 0) {
@@ -144,21 +149,27 @@ const updateTimeRemaining = () => {
 }
 
 //Progress Bar
-const progress = ref(100)
 const progressColor = computed(() => {
-    let color = 'lime'
-    if (progress.value < 60) {
-        color = 'yellow'
+    let color = 'rgba(50,205,50,0.75)'
+    let color2 = 'rgba(50,205,50,0.05)'
+
+    if (percentLeft.value <= 60) {
+        color = 'rgba(240, 255, 0, 0.75)'
+        color2 = 'rgba(240, 255, 0, 0.05)'
     }
-    if (progress.value < 30) {
-        color = 'red'
+    if (percentLeft.value <= 30) {
+        color = 'rgba(255, 0, 0, 0.75)'
+        color2 = 'rgba(255, 0, 0, 0.05)'
     }
-    return color
+    return { foreground: color, background: color2 }
 })
 
 </script>
 <template>
-    <div class="countdown-timer">
+    <div class="countdown-timer" :class="{ timerComplete }" :style="[{ border: `3px solid ${progressColor.foreground}` },
+        // { background: `${progressColor.background}` }
+    ]">
+
         <!-- Top -->
         <div class="timer-top">
             <div class="timer-title">
@@ -172,48 +183,50 @@ const progressColor = computed(() => {
                 </template>
             </div>
             <div class="controls">
-                <span @click="editTime" class="material-symbols-outlined">settings</span>
                 <span @click="deleteTimer" class="material-symbols-outlined">close</span>
             </div>
         </div>
+
         <!-- Middle -->
         <div class="timer-middle">
-            <div class="time-remaining">
+            <div class="time-remaining"
+                :style="[{ borderBottom: `2px solid ${progressColor.foreground}` }, { borderTop: `2px solid ${progressColor.foreground}` }]">
                 <template v-if="editTimerTime">
                     <div class="time-input">
                         <div class="input-control">
                             <label>days</label>
                             <input type="number" min="0" max="100" v-model="days" placeholder="Days"
-                                @change="updateTimeRemaining" />
+                                @change="updateTimeRemaining" @keydown.enter="onStart()" />
                         </div>
                         <span>:</span>
                         <div class="input-control">
                             <label>hours</label>
                             <input type="number" min="0" max="100" v-model="hours" placeholder="Hours"
-                                @change="updateTimeRemaining" />
+                                @change="updateTimeRemaining" @keydown.enter="onStart()" />
                         </div>
                         <span>:</span>
                         <div class="input-control">
                             <label>mins</label>
                             <input type="number" min="0" max="100" v-model="minutes" placeholder="Minutes"
-                                @change="updateTimeRemaining" />
+                                @change="updateTimeRemaining" @keydown.enter="onStart()" />
                         </div>
                         <span>:</span>
                         <div class="input-control">
                             <label>secs</label>
                             <input type="number" min="0" max="100" v-model="seconds" placeholder="Seconds"
-                                @change="updateTimeRemaining" />
+                                @change="updateTimeRemaining" @keydown.enter="onStart()" />
                         </div>
                     </div>
                 </template>
                 <template v-else>
-                    <span class="time-left">{{ msToTimeFormat(timeRemaining) }}</span>
+                    <span class="time-left">{{
+                        msToTimeFormat(timeRemaining) }}</span>
                 </template>
             </div>
         </div>
+
         <!-- Bottom -->
         <div class="timer-bottom">
-
             <div class="timer-controls">
                 <span @click="onReset()" class="material-symbols-outlined"> replay </span>
                 <template v-if="timerActive">
@@ -225,36 +238,36 @@ const progressColor = computed(() => {
                         play_arrow
                     </span>
                 </template>
-                <span @click="onClear()" class="material-symbols-outlined"> close </span>
+
+                <span @click="editTime" class="material-symbols-outlined">edit</span>
+
+                <span @click="onClear()" class="material-symbols-outlined"> delete_forever </span>
+
             </div>
+        </div>
+
+        <div class="time-up-overlay" v-if="timerComplete">
+            <h2>{{ timer.name }}</h2>
+            <h2>Timer is Up!</h2>
+            <span @click="onReset(); timerComplete = false" class="material-symbols-outlined"> replay </span>
 
         </div>
 
-        <div class="progressbar">
-            <div class="bar"
-                :style="[{ width: `${percentLeft}%` }, { animation: 'colorChange 2s both' }, { background: `${progressColor}` }]">
-            </div>
-            Progressbar
-        </div>
-        <!-- <div class="text" :style="[{ color: progressColor.fg }]">{{ percentLeft }} %</div>
-                <div class="background">{{ percentLeft }} %</div>
-                <div
-                    class="bar"
-                    :style="[
-                        { width: percentLeft + '%' },
-                        { animation: 'colorChange 2s both' },
-                        { 'background-color': progressColor.bg }
-                    ]"
-                ></div> -->
     </div>
 </template>
 <style scoped>
+.timerComplete {
+    background: rgba(255, 0, 0, 0.15);
+}
+
 .disabled {
     color: gray;
     opacity: 0.25;
 }
 
 .countdown-timer {
+    box-sizing: border-box;
+    /* padding: 5px; */
     height: 9em;
     display: flex;
     flex-direction: column;
@@ -263,10 +276,10 @@ const progressColor = computed(() => {
     width: 100%;
     /* height: 100%; */
     position: relative;
-    border: 1px solid white;
+    /* border: 1px solid white; */
     border-radius: 5px;
     font-family: 'Share Tech Mono', sans-serif;
-    /* background-color: black; */
+    background-color: black;
 }
 
 .timer-top,
@@ -298,6 +311,7 @@ const progressColor = computed(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .timer-top .close {
@@ -309,7 +323,7 @@ const progressColor = computed(() => {
 
 .timer-top .controls {
     display: flex;
-    outline: 1px solid white;
+    /* outline: 1px solid white; */
     position: absolute;
     top: 0;
     right: 0;
@@ -339,7 +353,8 @@ const progressColor = computed(() => {
 }
 
 .timer-middle .time-remaining .time-left {
-    font-size: 2.5em;
+    font-size: 2em;
+    padding: 0 .5em;
 }
 
 .timer-middle .time-input .input-control {
@@ -364,6 +379,10 @@ const progressColor = computed(() => {
     padding: 10px 0;
 }
 
+.timer-bottom .timer-controls .material-symbols-outlined {
+    margin: 0 10px;
+}
+
 .progressbar {
     position: absolute;
     display: flex;
@@ -375,7 +394,7 @@ const progressColor = computed(() => {
     top: 0;
     left: 0;
     z-index: -1;
-    background: red;
+    background: black;
 }
 
 .progressbar .text {
@@ -404,6 +423,25 @@ const progressColor = computed(() => {
     width: 100%;
     height: 100%;
     left: 0;
-    background-color: red;
+    /* left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0; */
+    /* background-color: red; */
+}
+
+.time-up-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    outline: 1px solid black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 </style>

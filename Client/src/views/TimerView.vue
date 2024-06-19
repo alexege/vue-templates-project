@@ -187,7 +187,7 @@ h2 {
 .add-timer-button {
     /* width: 100%; */
     display: block;
-    background: transparent;
+    background: black;
     border: 1px solid lime;
     color: white;
     padding: 1em;
@@ -259,6 +259,7 @@ h2 {
     border: 1px solid lime;
     color: white;
     cursor: pointer;
+    padding: .25em;
 }
 
 .style-button:hover {

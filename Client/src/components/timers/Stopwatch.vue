@@ -153,7 +153,8 @@ async function updateTimerName() {
 }
 
 .timer-middle .time-elapsed {
-    font-size: 2.5em;
+    font-size: 2em;
+    padding: 0 .5em;
     min-height: 60px;
 
     display: flex;
