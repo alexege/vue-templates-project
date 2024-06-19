@@ -100,7 +100,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
           <span class="tooltip">Timers</span>
           <TransitionExpand class="accordion">
             <div v-if="showTimers">
-              <SideNavTimerContainer style="overflow: auto; height: 300px;" />
+              <SideNavTimerContainer style="overflow: auto; overflow-x: hidden; height: 300px;" />
             </div>
           </TransitionExpand>
         </li>
