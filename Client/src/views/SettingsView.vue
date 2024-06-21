@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted, watch } from 'vue'
+
 //Store References
 import { useThemeStore } from '@/stores/theme.store'
 //Light / Dark Mode
@@ -7,16 +9,45 @@ const themeStore = useThemeStore()
 const toggleTheme = () => {
   themeStore.toggleTheme()
 }
+
+//Themes
+const theme = ref("Default")
+
+const selectedTheme = () => {
+  localStorage.setItem('Theme', theme.value)
+}
+
+watch(theme, async (oldTheme, newTheme) => {
+  console.log("new theme: ", newTheme)
+})
+
+onMounted(() => {
+  const selectedTheme = localStorage.getItem('Theme');
+  if (selectedTheme) {
+    //Set theme to color
+    console.log(selectedTheme)
+  }
+})
 </script>
 <template>
-  <div>Settings Page</div>
+  <div>
+    <div>Settings Page</div>
 
-  <h3>Light/Dark</h3>
-  <div class="theme-switch-wrapper">
-    <label class="theme-switch" for="checkbox">
-      <input type="checkbox" id="checkbox" @click="toggleTheme" />
-      <div class="slider round"></div>
-    </label>
+    <h3>Light/Dark</h3>
+    <div class="theme-switch-wrapper">
+      <label class="theme-switch" for="checkbox">
+        <input type="checkbox" id="checkbox" @click="toggleTheme" />
+        <div class="slider round"></div>
+      </label>
+    </div>
+
+    <h3>Theme</h3>
+    <div>
+      <select v-model="theme">
+        <option value="Default">Default</option>
+        <option value="Future">Future</option>
+      </select>
+    </div>
   </div>
 </template>
 <style scoped>
@@ -64,11 +95,11 @@ const toggleTheme = () => {
   width: 26px;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: black;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(26px);
 }
 

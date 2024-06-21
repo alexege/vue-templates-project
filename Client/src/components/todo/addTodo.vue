@@ -95,7 +95,7 @@ const { allCategories } = storeToRefs(useCategoryStore());
       </option>
     </select>
     <!-- <input type="checkbox" v-model="newTodo.completed"> -->
-    <button>Add</button>
+    <button :disabled="newTodo.title == ''">Add</button>
   </form>
 </template>
 

@@ -68,10 +68,11 @@ const isHovering = ref(false)
     justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: 30px;
+    min-height: 60px;
     height: 100%;
     border: 2px solid white;
     color: white;
+    box-sizing: border-box;
 }
 
 .material-symbols-outlined,
@@ -107,7 +108,7 @@ const isHovering = ref(false)
     width: 100%;
     height: 100%;
     min-height: 30px;
-    background-color: lime;
+    /* background-color: lime; */
 }
 
 /* .progressbar {

@@ -63,6 +63,11 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
         <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn"
           @click="openSideNav = !openSideNav"></i>
       </div>
+      <!-- <ul style="height: 80%; overflow: auto;">
+        <li v-for="n in 20" :key="n">Item one</li>
+        <li>Item two</li>
+        <li>Last</li>
+      </ul> -->
       <ul class="nav-list">
         <li>
           <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>
@@ -100,12 +105,13 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
           <span class="tooltip">Timers</span>
           <TransitionExpand class="accordion">
             <div v-if="showTimers">
-              <SideNavTimerContainer style="overflow: auto; overflow-x: hidden; height: 300px;" />
+              <!-- <SideNavTimerContainer style="overflow: auto; overflow-x: hidden; height: 300px;" /> -->
+              <SideNavTimerContainer style="height: 60vh; overflow-y: scroll; overflow-x: hidden;" />
             </div>
           </TransitionExpand>
         </li>
         <li>
-          <a href="#">
+          <a href=" #">
             <RouterLink to="/user">
               <i class="bx bx-user"></i>
               <span class="links_name">User</span>
@@ -179,7 +185,6 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
         </li>
         <li class="profile">
           <div class="profile-details">
-            <!-- <img src="profile.jpg" alt="profileImg" /> -->
             <div class="name_job">
               <div class="name" v-if="user && user.data">{{ user?.data.username }}</div>
               <div class="job">Software Developer</div>
@@ -214,6 +219,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   height: 100%;
   width: 78px;
   background: #11101d;
+  /* background: #209fe954; */
   padding: 6px 14px;
   z-index: 99;
   transition: all 0.5s ease;
@@ -276,12 +282,16 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
 
 .sidebar .nav-list {
   margin-top: 20px;
-  height: 100%;
+  height: calc(100% - 140px);
+  /* overflow-y: scroll; */
+  overflow-x: hidden;
+  /* overflow: auto; */
+  /* margin: -6px -14px; */
 }
 
 .sidebar li {
   position: relative;
-  margin: 8px 0;
+  /* margin: 8px 6px; */
   list-style: none;
 }
 
@@ -405,7 +415,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   padding: 10px 14px;
   background: #1d1b31;
   transition: all 0.5s ease;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .sidebar.open li.profile {
@@ -507,5 +517,29 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
 .light {
   background-color: white;
   color: black;
+}
+
+/* Scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  /* background: #f1f1f1; */
+  background: black;
+  height: 40px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  /* background: #888; */
+  background: #1d1b31;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: white;
 }
 </style>
