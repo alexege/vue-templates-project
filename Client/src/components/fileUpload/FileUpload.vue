@@ -22,9 +22,6 @@ const uploadFile = () => {
         console.error('No file selected');
     }
 };
-
-
-
 </script>
 <template>
     <div>

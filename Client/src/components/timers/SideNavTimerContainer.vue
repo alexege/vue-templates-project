@@ -24,21 +24,22 @@ const activeButton = ref("All")
         </div>
         <div style="padding-top: 20px;">
             <template v-if="activeButton == 'All'">
-
+                <div v-for="timer in allTimers" :key="timer">
+                    <SideNavCountdown v-if="timer.type == 'countdown'" :timer="timer" />
+                    <SideNavStopwatch v-if="timer.type == 'stopwatch'" :timer="timer" />
+                </div>
             </template>
             <template v-else-if="activeButton == 'Stopwatch'">
-
+                <div v-for="timer in stopwatchTimers" :key="timer">
+                    <SideNavStopwatch :timer="timer" />
+                </div>
             </template>
             <template v-else-if="activeButton == 'CountDown'">
-
+                <div v-for="timer in countDownTimers" :key="timer">
+                    <SideNavCountdown :timer="timer" />
+                </div>
             </template>
 
-            <div v-for="timer in countDownTimers" :key="timer">
-                <SideNavCountdown :timer="timer" />
-            </div>
-            <div v-for="timer in stopwatchTimers" :key="timer">
-                <SideNavStopwatch :timer="timer" />
-            </div>
         </div>
 
     </div>
@@ -47,7 +48,7 @@ const activeButton = ref("All")
 .container {
     /* display: flex; */
     /* justify-content: center; */
-    outline: 1px solid lime;
+    /* outline: 1px solid lime; */
     /* margin-top: 30px; */
     overflow: hidden;
 }
@@ -64,6 +65,10 @@ const activeButton = ref("All")
 .actions button {
     flex: 1;
     font-size: .75em;
+    cursor: pointer;
+    color: white;
+    background: none;
+
 }
 
 .container::-webkit-scrollbar {

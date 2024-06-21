@@ -407,6 +407,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
 }
 
 .sidebar li.profile {
+  display: flex;
   position: fixed;
   height: 60px;
   width: 78px;
@@ -415,7 +416,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   padding: 10px 14px;
   background: #1d1b31;
   transition: all 0.5s ease;
-  /* overflow: hidden; */
+  overflow-x: hidden;
 }
 
 .sidebar.open li.profile {

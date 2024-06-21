@@ -105,7 +105,7 @@ const onDrop = (event, zoneId) => {
   margin: 0 auto;
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 75%;
 }
 
 .todo-container form input {

@@ -1,12 +1,14 @@
 <script setup>
 
+defineProps(['timer'])
+
 import { ref } from 'vue'
 
 const isHovering = ref(false)
 
 </script>
 <template>
-    <div class="container" @mouseenter="isHovering = true" @mouseleave="isHovering = false">
+    <div class="container" @mouseover="isHovering = true" @mouseleave="isHovering = false">
 
         <div class="timer-controls" v-if="isHovering">
 
@@ -21,7 +23,7 @@ const isHovering = ref(false)
             </template>
 
             <template v-else>
-                <span @click="startTimer" class="material-symbols-outlined" :class="{ disabled: timeToZero <= 0 }">
+                <span @click="startTimer" class="material-symbols-outlined" :class="{ disabled: timeRemaining <= 0 }">
                     play_arrow
                 </span>
             </template>
@@ -35,7 +37,7 @@ const isHovering = ref(false)
         </div>
         <div v-else class="timer-body">
             <div class="title">
-                Timer Title
+                {{ timer.name }}
             </div>
             <div class="time">
                 00:00:00:00
@@ -44,7 +46,7 @@ const isHovering = ref(false)
         </div>
 
         <div class="progressbar">
-            <div class="text">ProgressBar</div>
+            <!-- <div class="text">ProgressBar</div> -->
             <div class="bar"></div>
         </div>
 
@@ -94,6 +96,7 @@ const isHovering = ref(false)
 
 .progressbar {
     position: absolute;
+    z-index: -1;
     width: 100%;
     text-align: center;
     color: red;
