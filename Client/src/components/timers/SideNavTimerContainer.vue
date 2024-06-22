@@ -4,14 +4,12 @@ import SideNavCountdown from "@/components/timers/SideNavCountdown.vue";
 
 import { useTimerStore } from "../../stores/timer.store";
 import { storeToRefs } from "pinia";
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 const { fetchTimers } = useTimerStore();
-
+fetchTimers()
 const { allTimers, countDownTimers, stopwatchTimers } = storeToRefs(useTimerStore())
 
 const activeButton = ref("All")
-
-
 
 </script>
 <template>

@@ -1,58 +1,181 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 const props = defineProps(['timer'])
 const emit = defineEmits(['close'])
 import { useTimerStore } from '@/stores/timer.store.js'
+import { isAxiosError } from 'axios';
 const timerStore = useTimerStore()
 const days = ref(0)
 const hours = ref(0)
 const minutes = ref(0)
 const seconds = ref(0)
 const timeRemaining = ref(0)
-const time_out = ref(0)
 const initialStartValue = ref()
 const timerActive = ref(false)
 const percentLeft = ref(100)
 const timerComplete = ref(false)
 
+const remainingTime = computed(() => {
+    const pausedTime = msToTimeFormat(timeRemaining.value).split(':')
+    if (timeRemaining.value != 0) {
+        days.value = pausedTime[0],
+            hours.value = pausedTime[1],
+            minutes.value = pausedTime[2],
+            seconds.value = pausedTime[3]
+    }
+    return msToTimeFormat(timeRemaining.value);
+})
+
+onMounted(() => {
+
+    console.log(props.timer.endDateTime)
+
+    console.log(`Timer: ${JSON.stringify(props.timer)}`)
+
+    if (props.timer.endDateTime) {
+        console.log("EndDate Provided")
+        const calcFutureDate = msToTimeFormat(props.timer.endDateTime.getTime()).split(':')
+        if (calcFutureDate != 0) {
+            days.value = calcFutureDate[0],
+                hours.value = calcFutureDate[1],
+                minutes.value = calcFutureDate[2],
+                seconds.value = calcFutureDate[3]
+        }
+    } else {
+        console.log("No end date found! endDateTime:", props.timer.endDateTime)
+
+        const timerDuration = msToTimeFormat(props.timer.duration).split(':')
+        if (timerDuration != 0) {
+            days.value = timerDuration[0],
+                hours.value = timerDuration[1],
+                minutes.value = timerDuration[2],
+                seconds.value = timerDuration[3]
+        }
+    }
+
+    // timeRemaining.value = props.timer.endDateTime - Date.now()
+
+    initialStartValue.value = days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000
+
+    if (props.timer.isActive) {
+        startCountDown()
+    }
+})
+
 const onStart = () => {
+    console.log("Starting timer with duration: ", props.timer.duration)
+
     if (timeRemaining.value == 0) return
 
-    if (editTimerTime.value == true) editTimerTime.value = false
+    if (editTimerTime.value) editTimerTime.value = false
+
+    initialStartValue.value = days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000
+
+    //Update future end date on timer
+    // let updateData = props.timer;
+    // updateData.endDateTime = Date.now() + timeRemaining.value;
+    // timerStore.updateTimer(updateData)
+
+    if (props.timer.isActive) {
+        startCountDown()
+    } else {
+        // Update Timer On Start if isActive value is different
+        timerStore.updateTimer({
+            _id: props.timer._id,
+            endDateTime: new Date(Date.now() + timeRemaining.value),
+            isActive: true,
+            duration: timeRemaining.value
+        })
+    }
+}
+
+const countDownId = ref();
+const startCountDown = () => {
+    console.log("startCountDown")
 
     timerActive.value = true
-    //Keep track of starting time value
-    // initialStartValue.value = timeRemaining.value
-    initialStartValue.value =
-        days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000
+
     let now = Date.now()
     let desiredDelay = 1000
     let actualDelay = 1000
+
     percentLeft.value = Math.floor((timeRemaining.value / initialStartValue.value) * 100)
-    time_out.value = setTimeout(() => {
+
+    countDownId.value = setInterval(() => {
+
         var actual = Date.now() - now
         actualDelay = desiredDelay - (actual - desiredDelay)
+
         timeRemaining.value -= 1000
-        if (timeRemaining.value > 0) {
-            onStart()
-        } else {
+
+        if (timeRemaining.value == 0) {
             percentLeft.value = 0
             timerComplete.value = true
-            //Timer completed Message
-            setTimeout(() => {
-                alert(`${props.timer.name} is up!`)
-            }, 500)
+        }
+
+        let end = now + timeRemaining.value
+        let remainder = end - now
+
+        // remainingTime.value = remainder ? msToTimeFormat(remainder) : msToTimeFormat(0)
+        // console.log("##########", remainingTime.value)
+
+        if (remainder <= 0) {
+            console.log(`${props.timer.name} timer has expired!`)
+            clearTimeout(countDownId.value)
         }
     }, actualDelay)
 }
-const onPause = () => {
-    clearTimeout(time_out.value)
+
+const stopCountDown = () => {
+    console.log("stopCountDown")
+
+    const updateTimer = {
+        _id: props.timer._id,
+        isActive: false,
+    }
+    // props.timer
+    // updateTimer.isActive = false
+    timerStore.updateTimer(updateTimer)
+
     timerActive.value = false
+    clearTimeout(countDownId.value)
+}
+
+watch(() => props.timer.isActive, (newVal, oldVal) => {
+    console.log(`Timer changed isActive from ${oldVal} to: ${newVal}`)
+
+    //Update the duration
+    const updateTimer = {
+        _id: props.timer._id,
+        duration: timeRemaining.value
+    }
+    // props.timer
+    // updateTimer.duration = timeRemaining.value
+    timerStore.updateTimer(updateTimer)
+
+    if (newVal == true) {
+        startCountDown()
+    } else {
+        stopCountDown()
+    }
+})
+
+const onPause = () => {
+    stopCountDown()
+
+    const pausedTime = msToTimeFormat(timeRemaining.value).split(':')
+    if (timeRemaining.value != 0) {
+        days.value = pausedTime[0],
+            hours.value = pausedTime[1],
+            minutes.value = pausedTime[2],
+            seconds.value = pausedTime[3]
+    }
 }
 const onReset = () => {
+    stopCountDown()
+
     //Stop Timer
-    clearTimeout(time_out.value)
-    timerActive.value = false
+    // timerActive.value = false
     //Set time back to start time
     timeRemaining.value = initialStartValue.value
 
@@ -71,6 +194,8 @@ const onReset = () => {
 }
 
 const onClear = () => {
+    stopCountDown()
+
     editTimerTime.value = true;
     timerActive.value = false;
     days.value = 0;
@@ -92,12 +217,13 @@ const msToTimeFormat = (ms) => {
     seconds = seconds < 10 ? '0' + seconds : seconds
     return `${days}:${hours}:${minutes}:${seconds}`
 }
+
 //Watch for value changes and update accordingly
 watch(
     [days, hours, minutes, seconds],
     ([newDays, newHours, newMinutes, newSeconds], [oldDays, oldHours, oldMinutes, oldSeconds]) => {
-        console.log(`Watcher updated`)
-        console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
+        // console.log(`Watcher updated`)
+        // console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
 
         if (newHours >= 24) {
             hours.value = (newHours - 24) > 0 ? newHours - 24 : 0
@@ -119,7 +245,7 @@ watch(
 
         if (timeRemaining.value > 0) percentLeft.value = 100
         if (timeRemaining.value == 0) percentLeft.value = 0
-        console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
+        // console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
     }
 )
 // Edit Timer
@@ -179,6 +305,8 @@ const progressColor = computed(() => {
                     <span class="material-symbols-outlined" @click="updateTimerName">save</span>
                 </template>
                 <template v-else>
+                    <!-- {{ new Date(timer.endDateTime) }} -->
+
                     <span @dblclick="isEditTimerName = true">{{ timer.name }}</span>
                 </template>
             </div>
@@ -219,8 +347,10 @@ const progressColor = computed(() => {
                     </div>
                 </template>
                 <template v-else>
-                    <span class="time-left">{{
-                        msToTimeFormat(timeRemaining) }}</span>
+                    <!-- <span class="time-left">{{ msToTimeFormat(timeRemaining) }}</span> -->
+                    <span class="time-left">
+                        {{ remainingTime }}
+                    </span>
                 </template>
             </div>
         </div>

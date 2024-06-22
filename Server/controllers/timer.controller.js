@@ -29,8 +29,9 @@ exports.addTimer = (req, res) => {
   const newTimer = new Timer({
     name: req.body.name,
     type: req.body.type,
-    startTime: req.body.startTime,
-    endTime: req.body.endTime,
+    duration: req.body.duration,
+    isActive: req.body.isActive,
+    endDateTime: req.body.endDateTime,
     creator: null,
     img: null,
   });
@@ -61,6 +62,8 @@ exports.addTimer = (req, res) => {
 exports.updateTimer = (req, res) => {
   const updateData = {
     name: req.body.name,
+    duration: req.body.duration,
+    isActive: req.body.isActive,
     img: req.body.img,
   };
   Timer.findByIdAndUpdate({ _id: req.params.id }, updateData)
