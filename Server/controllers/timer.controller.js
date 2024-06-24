@@ -60,10 +60,12 @@ exports.addTimer = (req, res) => {
 };
 
 exports.updateTimer = (req, res) => {
+  console.log("updateTimer:", req.body);
   const updateData = {
     name: req.body.name,
     duration: req.body.duration,
     isActive: req.body.isActive,
+    endDateTime: req.body.endDateTime,
     img: req.body.img,
   };
   Timer.findByIdAndUpdate({ _id: req.params.id }, updateData)

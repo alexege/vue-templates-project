@@ -27,14 +27,18 @@ const remainingTime = computed(() => {
 })
 
 onMounted(() => {
-
-    console.log(props.timer.endDateTime)
+    console.log(`raw: ${props.timer.endDateTime}`)
+    console.log(`raw.getTime(): ${new Date(props.timer.endDateTime).getTime()}`)
+    console.log(`as new Date: ${new Date(props.timer.endDateTime)}`)
+    console.log(`as new Date .get Time(): ${new Date(props.timer.endDateTime).getTime()}`)
+    console.log(Date.now())
+    console.log(msToTimeFormat(new Date(props.timer.endDateTime).getTime()))
 
     console.log(`Timer: ${JSON.stringify(props.timer)}`)
 
     if (props.timer.endDateTime) {
         console.log("EndDate Provided")
-        const calcFutureDate = msToTimeFormat(props.timer.endDateTime.getTime()).split(':')
+        const calcFutureDate = msToTimeFormat(new Date(props.timer.endDateTime).getTime()).split(':')
         if (calcFutureDate != 0) {
             days.value = calcFutureDate[0],
                 hours.value = calcFutureDate[1],
@@ -80,6 +84,10 @@ const onStart = () => {
         startCountDown()
     } else {
         // Update Timer On Start if isActive value is different
+
+        console.log("time remaining:", timeRemaining.value);
+        console.log(`Sending ${new Date(Date.now() + timeRemaining.value)} to database`)
+
         timerStore.updateTimer({
             _id: props.timer._id,
             endDateTime: new Date(Date.now() + timeRemaining.value),
@@ -99,14 +107,13 @@ const startCountDown = () => {
     let desiredDelay = 1000
     let actualDelay = 1000
 
-    percentLeft.value = Math.floor((timeRemaining.value / initialStartValue.value) * 100)
-
     countDownId.value = setInterval(() => {
 
         var actual = Date.now() - now
         actualDelay = desiredDelay - (actual - desiredDelay)
 
         timeRemaining.value -= 1000
+        percentLeft.value = Math.floor((timeRemaining.value / initialStartValue.value) * 100)
 
         if (timeRemaining.value == 0) {
             percentLeft.value = 0
@@ -115,9 +122,6 @@ const startCountDown = () => {
 
         let end = now + timeRemaining.value
         let remainder = end - now
-
-        // remainingTime.value = remainder ? msToTimeFormat(remainder) : msToTimeFormat(0)
-        // console.log("##########", remainingTime.value)
 
         if (remainder <= 0) {
             console.log(`${props.timer.name} timer has expired!`)
@@ -243,7 +247,7 @@ watch(
             minutes.value * 60000 +
             seconds.value * 1000
 
-        if (timeRemaining.value > 0) percentLeft.value = 100
+        if (timeRemaining.value == initialStartValue.value) percentLeft.value = 100
         if (timeRemaining.value == 0) percentLeft.value = 0
         // console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
     }
@@ -295,7 +299,6 @@ const progressColor = computed(() => {
     <div class="countdown-timer" :class="{ timerComplete }" :style="[{ border: `3px solid ${progressColor.foreground}` },
         // { background: `${progressColor.background}` }
     ]">
-
         <!-- Top -->
         <div class="timer-top">
             <div class="timer-title">

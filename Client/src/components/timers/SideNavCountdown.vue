@@ -34,7 +34,8 @@ onMounted(() => {
     console.log(props.timer.endDateTime)
 
     if (props.timer.endDateTime) {
-        const calcFutureDate = msToTimeFormat(props.timer.endDateTime.getTime()).split(':')
+        console.log(`timer endDateTime is: ${new Date(props.timer.endDateTime)}`)
+        const calcFutureDate = msToTimeFormat(new Date(props.timer.endDateTime).getTime()).split(':')
         if (calcFutureDate != 0) {
             days.value = calcFutureDate[0],
                 hours.value = calcFutureDate[1],
