@@ -18,11 +18,8 @@ const timerComplete = ref(false)
 
 onMounted(() => {
 
-    console.log(`isActive: ${props.timer.isActive}`)
-
     if (props.timer.isActive) {
         if (props.timer.endDateTime) {
-            console.log("EndDate Provided")
             const calcFutureDate = msToTimeFormat(new Date(props.timer.endDateTime).getTime() - Date.now()).split(':')
             if (calcFutureDate != 0) {
                 days.value = calcFutureDate[0],
@@ -73,8 +70,6 @@ const onStart = () => {
 
 const countDownId = ref();
 const startCountDown = () => {
-    console.log("startCountDown")
-
     timerActive.value = true
 
     let now = Date.now()
@@ -105,8 +100,6 @@ const startCountDown = () => {
 }
 
 const stopCountDown = () => {
-    console.log("stopCountDown")
-
     const updateTimer = {
         _id: props.timer._id,
         isActive: false,
@@ -119,8 +112,6 @@ const stopCountDown = () => {
 }
 
 watch(() => props.timer.isActive, (newVal, oldVal) => {
-    console.log(`Timer changed isActive from ${oldVal} to: ${newVal}`)
-
     //Update the duration
     const updateTimer = {
         _id: props.timer._id,
@@ -172,13 +163,14 @@ const onReset = () => {
 const onClear = () => {
     stopCountDown()
 
-    editTimerTime.value = true;
     timerActive.value = false;
     days.value = 0;
     hours.value = 0;
     minutes.value = 0;
     seconds.value = 0;
     timeRemaining.value = 0;
+
+    editTimerTime.value = !editTimerTime.value;
 }
 
 //Convert ms to '00:00:00:00' string
@@ -198,9 +190,6 @@ const msToTimeFormat = (ms) => {
 watch(
     [days, hours, minutes, seconds],
     ([newDays, newHours, newMinutes, newSeconds], [oldDays, oldHours, oldMinutes, oldSeconds]) => {
-        console.log(`Watcher updated`)
-        console.log(`Updated watcher:${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
-
         if (newHours >= 24) {
             hours.value = (newHours - 24) > 0 ? newHours - 24 : 0
             days.value++
@@ -247,7 +236,6 @@ const deleteTimer = () => {
     emit('close', props.timer._id)
 }
 const updateTimeRemaining = () => {
-    console.log("updating time remaining")
     initialStartValue.value = timeRemaining.value
 }
 
@@ -269,9 +257,8 @@ const progressColor = computed(() => {
 
 </script>
 <template>
-    <div class="countdown-timer" :class="{ timerComplete }" :style="[{ border: `3px solid ${progressColor.foreground}` },
-        // { background: `${progressColor.background}` }
-    ]">
+    <div class="countdown-timer" :class="{ timerComplete }"
+        :style="[{ border: `3px solid ${progressColor.foreground}` }]">
         <!-- Top -->
         <div class="timer-top">
             <div class="timer-title">
@@ -281,8 +268,6 @@ const progressColor = computed(() => {
                     <span class="material-symbols-outlined" @click="updateTimerName">save</span>
                 </template>
                 <template v-else>
-                    <!-- {{ new Date(timer.endDateTime) }} -->
-
                     <span @dblclick="isEditTimerName = true">{{ timer.name }}</span>
                 </template>
             </div>
@@ -324,9 +309,6 @@ const progressColor = computed(() => {
                 </template>
                 <template v-else>
                     <span class="time-left">{{ msToTimeFormat(timeRemaining) }}</span>
-                    <!-- <span class="time-left">
-                        {{ remainingTime }}
-                    </span> -->
                 </template>
             </div>
         </div>
@@ -375,7 +357,8 @@ const progressColor = computed(() => {
     box-shadow: 5px 5px 10px black;
     box-sizing: border-box;
     /* padding: 5px; */
-    height: 9em;
+    /* height: 9em; */
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;

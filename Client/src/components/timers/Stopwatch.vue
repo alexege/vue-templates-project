@@ -76,7 +76,6 @@ async function updateTimerName() {
         name: editTimer.name
     }
     await updateTimer(data)
-    props.timer.name = data.name
     editTimerName.value = false;
 }
 
@@ -88,6 +87,7 @@ async function updateTimerName() {
             <template v-if="editTimerName">
                 <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName"
                     autofocus @focus="$event.target.select()">
+                <span class="material-symbols-outlined" @click="updateTimerName">save</span>
             </template>
             <template v-else>
                 <span @dblclick="editTimerName = true">{{ timer.name }}</span>
@@ -95,13 +95,16 @@ async function updateTimerName() {
             <span @click="deleteTimer(timer._id)" class="material-symbols-outlined close">close</span>
         </div>
         <div class="timer-middle">
-            <span class="time-elapsed">{{ time }}</span>
+            <span class="time-elapsed"
+                :style="[{ borderBottom: `2px solid white` }, { borderTop: `2px solid white` }]">{{
+                    time }}</span>
         </div>
         <div class="timer-bottom">
             <div class="btn-container">
-                <span id="start" @click="start">Start</span>
-                <span id="stop" @click="stop">Stop</span>
-                <span id="reset" @click="reset">Reset</span>
+                <span @click="start" class="material-symbols-outlined" v-if="!running">play_arrow</span>
+                <span @click="stop" class="material-symbols-outlined" v-else> pause </span>
+                <span @click="reset" class="material-symbols-outlined"> replay </span>
+
             </div>
         </div>
     </div>
@@ -110,13 +113,15 @@ async function updateTimerName() {
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 .stopwatch-timer {
+    box-shadow: 5px 5px 10px black;
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 100%;
     height: 100%;
     position: relative;
-    border: 1px solid white;
+    border: 3px solid white;
+    box-sizing: border-box;
     border-radius: 5px;
     font-family: 'Share Tech Mono', sans-serif;
     background-color: black;

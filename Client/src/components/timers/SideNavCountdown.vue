@@ -1,13 +1,12 @@
 <script setup>
-
-const props = defineProps(['timer'])
-
-const isHovering = ref(false)
-
 import { ref, computed, watch, onMounted } from 'vue'
 import { useTimerStore } from '@/stores/timer.store';
 
-/////////////////////////////////////////
+const props = defineProps(['timer'])
+const emit = defineEmits(['close'])
+
+const isHovering = ref(false)
+
 const timerStore = useTimerStore()
 const days = ref(0)
 const hours = ref(0)
@@ -19,47 +18,37 @@ const timerActive = ref(false)
 const percentLeft = ref(100)
 const timerComplete = ref(false)
 
-const remainingTime = computed(() => {
-    const pausedTime = msToTimeFormat(timeRemaining.value).split(':')
-    if (timeRemaining.value != 0) {
-        days.value = pausedTime[0],
-            hours.value = pausedTime[1],
-            minutes.value = pausedTime[2],
-            seconds.value = pausedTime[3]
-    }
-    return msToTimeFormat(timeRemaining.value);
-})
-
 onMounted(() => {
-    console.log(props.timer.endDateTime)
-
-    if (props.timer.endDateTime) {
-        console.log(`timer endDateTime is: ${new Date(props.timer.endDateTime)}`)
-        const calcFutureDate = msToTimeFormat(new Date(props.timer.endDateTime).getTime()).split(':')
-        if (calcFutureDate != 0) {
-            days.value = calcFutureDate[0],
-                hours.value = calcFutureDate[1],
-                minutes.value = calcFutureDate[2],
-                seconds.value = calcFutureDate[3]
-        }
-    } else {
-        const timerDuration = msToTimeFormat(props.timer.duration).split(':')
-        if (timerDuration != 0) {
-            days.value = timerDuration[0],
-                hours.value = timerDuration[1],
-                minutes.value = timerDuration[2],
-                seconds.value = timerDuration[3]
-        }
-    }
-    initialStartValue.value = days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000
 
     if (props.timer.isActive) {
+        if (props.timer.endDateTime) {
+            const calcFutureDate = msToTimeFormat(new Date(props.timer.endDateTime).getTime() - Date.now()).split(':')
+            if (calcFutureDate != 0) {
+                days.value = calcFutureDate[0],
+                    hours.value = calcFutureDate[1],
+                    minutes.value = calcFutureDate[2],
+                    seconds.value = calcFutureDate[3]
+            }
+        }
+
         startCountDown()
+
+    } else {
+        if (props.timer.duration) {
+            const timeRem = msToTimeFormat(props.timer.duration).split(':')
+            if (timeRem != 0) {
+                days.value = timeRem[0],
+                    hours.value = timeRem[1],
+                    minutes.value = timeRem[2],
+                    seconds.value = timeRem[3]
+            }
+        }
     }
+
+    initialStartValue.value = days.value * 86400000 + hours.value * 3600000 + minutes.value * 60000 + seconds.value * 1000
 })
 
 const onStart = () => {
-    console.log("Starting timer with duration: ", props.timer.duration)
 
     if (timeRemaining.value == 0) return
 
@@ -71,9 +60,10 @@ const onStart = () => {
         startCountDown()
     } else {
         // Update Timer On Start if isActive value is different
+
         timerStore.updateTimer({
             _id: props.timer._id,
-            endDateTime: new Date(Date.now() + timeRemaining.value),
+            endDateTime: Date.now() + timeRemaining.value,
             isActive: true,
             duration: timeRemaining.value
         })
@@ -82,15 +72,11 @@ const onStart = () => {
 
 const countDownId = ref();
 const startCountDown = () => {
-    console.log("startCountDown")
-
     timerActive.value = true
 
     let now = Date.now()
     let desiredDelay = 1000
     let actualDelay = 1000
-
-    percentLeft.value = Math.floor((timeRemaining.value / initialStartValue.value) * 100)
 
     countDownId.value = setInterval(() => {
 
@@ -98,6 +84,7 @@ const startCountDown = () => {
         actualDelay = desiredDelay - (actual - desiredDelay)
 
         timeRemaining.value -= 1000
+        percentLeft.value = Math.floor((timeRemaining.value / initialStartValue.value) * 100)
 
         if (timeRemaining.value == 0) {
             percentLeft.value = 0
@@ -115,14 +102,11 @@ const startCountDown = () => {
 }
 
 const stopCountDown = () => {
-    console.log("stopCountDown")
-
     const updateTimer = {
         _id: props.timer._id,
         isActive: false,
+        duration: timeRemaining.value
     }
-    // props.timer
-    // updateTimer.isActive = false
     timerStore.updateTimer(updateTimer)
 
     timerActive.value = false
@@ -130,15 +114,12 @@ const stopCountDown = () => {
 }
 
 watch(() => props.timer.isActive, (newVal, oldVal) => {
-    console.log(`SIDENAV ------------- Timer changed isActive from ${oldVal} to: ${newVal}`)
-
     //Update the duration
     const updateTimer = {
         _id: props.timer._id,
         duration: timeRemaining.value
     }
-    // props.timer
-    // updateTimer.duration = timeRemaining.value
+
     timerStore.updateTimer(updateTimer)
 
     if (newVal == true) {
@@ -149,6 +130,7 @@ watch(() => props.timer.isActive, (newVal, oldVal) => {
 })
 
 const onPause = () => {
+
     stopCountDown()
 
     const pausedTime = msToTimeFormat(timeRemaining.value).split(':')
@@ -160,10 +142,9 @@ const onPause = () => {
     }
 }
 const onReset = () => {
+    //Stop Timer
     stopCountDown()
 
-    //Stop Timer
-    // timerActive.value = false
     //Set time back to start time
     timeRemaining.value = initialStartValue.value
 
@@ -205,13 +186,11 @@ const msToTimeFormat = (ms) => {
     seconds = seconds < 10 ? '0' + seconds : seconds
     return `${days}:${hours}:${minutes}:${seconds}`
 }
+
 //Watch for value changes and update accordingly
 watch(
     [days, hours, minutes, seconds],
     ([newDays, newHours, newMinutes, newSeconds], [oldDays, oldHours, oldMinutes, oldSeconds]) => {
-        // console.log(`Watcher updated`)
-        // console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
-
         if (newHours >= 24) {
             hours.value = (newHours - 24) > 0 ? newHours - 24 : 0
             days.value++
@@ -230,7 +209,7 @@ watch(
             minutes.value * 60000 +
             seconds.value * 1000
 
-        if (timeRemaining.value > 0) percentLeft.value = 100
+        if (timeRemaining.value == initialStartValue.value) percentLeft.value = 100
         if (timeRemaining.value == 0) percentLeft.value = 0
         // console.log(`${newDays}:${newHours}:${newMinutes}:${newSeconds}`)
     }
@@ -276,13 +255,12 @@ const progressColor = computed(() => {
     }
     return { foreground: color, background: color2 }
 })
-/////////////////////////////////////////
-
 </script>
 <template>
-    <div class="container" @mouseover="isHovering = true" @mouseleave="isHovering = false">
+    <div class="container" @mouseover="isHovering = true" @mouseleave="isHovering = false"
+        :style="[{ border: `3px solid ${progressColor.foreground}` }]">
 
-        <div class="timer-controls" v-if="isHovering">
+        <div class=" timer-controls" v-if="isHovering">
 
             <span @click="onReset()" class="material-symbols-outlined">
                 replay
@@ -315,8 +293,7 @@ const progressColor = computed(() => {
                 <!-- <pre>{{ props.timer }}</pre> -->
                 <!-- {{ props.timer.isActive }} -->
 
-                <!-- {{ msToTimeFormat(timeRemaining) }} -->
-                {{ remainingTime }}
+                {{ msToTimeFormat(timeRemaining) }}
                 <!-- {{ props.timer.duration }} -->
                 <!-- 00:00:00:00 -->
             </div>

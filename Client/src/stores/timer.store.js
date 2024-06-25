@@ -58,7 +58,6 @@ export const useTimerStore = defineStore('timer', {
     },
 
     async updateTimer(updatedTimer) {
-      console.log('[timer.store] - updatedTimer', updatedTimer)
       try {
         await axios.patch(`${API_URL}/timer/update/${updatedTimer._id}`, updatedTimer)
 
@@ -70,8 +69,6 @@ export const useTimerStore = defineStore('timer', {
           ...this.timers[timerToUpdateIdx],
           ...updatedTimer
         }
-
-        console.log('updated timer:', merged)
 
         this.timers[timerToUpdateIdx] = merged
       } catch (error) {
