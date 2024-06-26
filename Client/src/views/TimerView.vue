@@ -48,14 +48,14 @@ async function add(type) {
         <h2>Timers</h2>
 
         <div class="timer-filter-buttons">
-            <button @click="activeButton = 'stopwatches'" :class="{ 'active-button': activeButton == 'stopwatches' }">
-                Stopwatches
-            </button>
             <button @click="activeButton = 'countdowns'" :class="{ 'active-button': activeButton == 'countdowns' }">
                 Countdowns
             </button>
             <button @click="activeButton = 'both'" :class="{ 'active-button': activeButton == 'both' }">
                 Both
+            </button>
+            <button @click="activeButton = 'stopwatches'" :class="{ 'active-button': activeButton == 'stopwatches' }">
+                Stopwatches
             </button>
         </div>
 
@@ -92,11 +92,11 @@ async function add(type) {
             </template>
         </div>
 
-        <div class="add-button-container">
-            <button class="add-timer-button" @click="add('stopwatch')" v-if="activeButton != 'countdowns'">
+        <div class="add-timer">
+            <button @click="add('stopwatch')" v-if="activeButton != 'countdowns'">
                 Add Stopwatch
             </button>
-            <button class="add-timer-button" @click="add('countdown')" v-if="activeButton != 'stopwatches'">
+            <button @click="add('countdown')" v-if="activeButton != 'stopwatches'">
                 Add Countdown
             </button>
         </div>
@@ -119,8 +119,14 @@ async function add(type) {
 </template>
 <style scoped>
 .timer-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
     max-width: 75vw;
     margin: 0 auto;
+    padding: 2em;
+    border-radius: 5px;
+    background: rgba(19, 21, 27, 0.315);
 }
 
 .timer-grid {
@@ -130,38 +136,64 @@ async function add(type) {
     gap: 1em;
 }
 
-/* @media screen and (min-width:480px) {
-    .timer-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 1em;
-    }
-} */
-
 .timer-filter-buttons {
     display: flex;
     justify-content: center;
+    gap: 1em;
 }
 
-.timer-filter-buttons button {
-    margin: 1em;
-    width: 8em;
+button {
     color: white;
-    background-color: black;
-    outline: 1px solid lime;
+    background: none;
+    border: none;
+}
+
+button:hover {
     cursor: pointer;
 }
 
-.timer-filter-buttons button:hover {
-    background: rgba(0, 255, 0, 0.25);
+.active-button {
+    border-bottom: 2px solid white;
+    text-shadow: 2px 2px 2px black;
 }
 
-.timer-filter-buttons .active-button {
-    /* background: rgba(0, 255, 0, 0.25); */
-    background: rgba(4, 30, 39, 0.9);
-    border-style: none;
-    border: 2px solid lime;
+.add-timer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1em;
+}
+
+.add-timer button {
+    color: white;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: 1px solid lime;
+    background: black;
+    padding: .5em 1em;
+
+}
+
+.add-timer button:hover {
+    cursor: pointer;
+    transform: scale(.95);
+    transition: .25s all;
+    border: 1px solid white;
+}
+
+.timer-display-buttons {
+    display: flex;
+    justify-content: center;
+    gap: .5em;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 1em;
+}
+
+.timer-display-buttons button {
+    padding: .5em 1em;
+    border-radius: 5px;
 }
 
 h2 {
@@ -187,35 +219,9 @@ h2 {
     gap: 1em;
 }
 
-.add-timer-button {
-    /* width: 100%; */
-    display: block;
-    background: black;
-    border: 1px solid lime;
-    color: white;
-    padding: 1em;
-    margin: 15px;
-    cursor: pointer;
-}
-
-.add-timer-button:hover {
-    background: rgba(0, 255, 0, 0.25);
-}
-
 .add-button-container {
     display: flex;
     justify-content: center;
-}
-
-.timer-display-buttons {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    margin: 1em;
-}
-
-.timer-display-buttons button {
-    margin: 0.25em;
 }
 
 .show-column {
@@ -233,14 +239,19 @@ h2 {
     gap: 1em;
 }
 
+.show-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* grid-template-rows: repeat(auto, 0.5fr); */
+    grid-template-rows: repeat(auto-fill, minmax(50px, 150px));
+    gap: 1em;
+}
+
 .show-two-column {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(auto-fill, minmax(50px, 150px));
     gap: 1em;
-    /* width: 100%; */
-    /* margin: 0 auto; */
-    /* gap: 1em; */
-    /* margin: 0 1em; */
 }
 
 .column {
@@ -248,13 +259,6 @@ h2 {
     flex-direction: column;
     flex-basis: 100%;
     flex: 1;
-}
-
-.show-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(auto, 0.5fr);
-    gap: 1em;
 }
 
 .style-button {
