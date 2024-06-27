@@ -106,7 +106,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
           <TransitionExpand class="accordion">
             <div v-if="showTimers">
               <!-- <SideNavTimerContainer style="overflow: auto; overflow-x: hidden; height: 300px;" /> -->
-              <SideNavTimerContainer style="height: 60vh; overflow-y: scroll; overflow-x: hidden;" />
+              <SideNavTimerContainer style="overflow-y: scroll; overflow-x: hidden;" />
             </div>
           </TransitionExpand>
         </li>

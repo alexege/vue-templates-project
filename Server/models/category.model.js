@@ -14,6 +14,10 @@ const Category = mongoose.model(
         trim: true,
         maxLength: [40, "Description must not exceed 40 characters"],
       },
+      author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
     },
     { timestamps: true }
   )

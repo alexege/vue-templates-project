@@ -28,6 +28,7 @@ exports.addCategory = (req, res) => {
   const newCategory = new Category({
     name: req.body.name,
     description: req.body.description,
+    author: req.body.author,
   });
 
   Category.create(newCategory);

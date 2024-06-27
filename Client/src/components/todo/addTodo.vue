@@ -49,10 +49,12 @@ const addItemAndClear = () => {
 //Custom Dropdown
 const selectedOption = ref('')
 const customValue = ref({
-  name: null
+  name: null,
+  author: JSON.parse(localStorage.getItem('user')).id || newTodo.value.author
 })
 
 import { useCategoryStore } from "@/stores/category.store";
+import { useAuthStore } from "@/stores/auth.store";
 const categoryStore = useCategoryStore();
 
 const addACategory = async () => {
@@ -68,7 +70,6 @@ categoryStore.fetchCategories()
 
 //Retrieve all custom categories
 const { allCategories } = storeToRefs(useCategoryStore());
-
 
 </script>
 <template>

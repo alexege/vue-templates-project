@@ -36,6 +36,38 @@ const onDrop = (event, zoneId) => {
   start.todo = temp;
 };
 
+// Categories
+import { useCategoryStore } from "@/stores/category.store";
+const categoryStore = useCategoryStore();
+categoryStore.fetchCategories()
+
+//Retrieve all custom categories
+const { allCategories } = storeToRefs(useCategoryStore());
+
+
+// Permission to interact / edit content
+import { useAuthStore } from "@/stores/auth.store";
+const { activeUser } = storeToRefs(useAuthStore())
+const permissionToManage = (category) => {
+
+  // Admin, Moderator, Author/Owner
+
+  if (activeUser.value) {
+
+    // Content Owner
+    if (category.author && activeUser.value.id === category.author._id) {
+      //Has full access, as is owner
+    } else if (activeUser.value.roles.includes("ROLE_ADMIN")) {
+      //Has full access, as is admin
+    } else if (activeUser.value.roles.includes("ROLE_MODERATOR")) {
+      //Has full access, as is moderator
+    } else {
+      return false
+    }
+    return true
+  }
+}
+
 </script>
 <template>
   <div class="todo-container">
@@ -43,6 +75,18 @@ const onDrop = (event, zoneId) => {
 
     <!-- Add Todo List Item Form -->
     <AddTodo />
+
+    <!-- All Categories -->
+    <div class="category-list">
+      <div v-for="category in allCategories" :key="category" class="category">
+        <a :href="`/todo/${category.name}`">
+          <span>{{ category.name }}</span>
+
+          <!-- TODO: Add author association to category creation and use it to conditionally render delete -->
+          <button v-if="permissionToManage(category)">X</button>
+        </a>
+      </div>
+    </div>
 
 
     <!-- <div v-for="todo in todoList" :key="todo._id">
@@ -112,9 +156,28 @@ const onDrop = (event, zoneId) => {
   flex: 1;
 }
 
-/* Drag and drop */
-.drop-zone {
-  min-height: 40px;
-  /* outline: 1px dashed red; */
+/* Categories */
+.category-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: .5em;
+  padding: 1em;
+}
+
+.category {
+  background-color: #EEF;
+  border-radius: 3px;
+  border: 1px #CCF solid;
+  padding: 2px 5px;
+  display: inline;
+  font-size: .75em;
+  cursor: pointer;
+}
+
+.category a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
 }
 </style>

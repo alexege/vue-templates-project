@@ -85,8 +85,8 @@ const permissionToManage = (todo) => {
 
       <!-- Category -->
       <div v-if="todo.categories">
-        <span v-for="category in todo.categories" :key="category">
-          <span class="category">{{ category.name }}</span>
+        <span v-for="category in todo.categories" :key="category" class="category">
+          <a :href="`/todo/${category.name}`">{{ category.name }}</a>
         </span>
       </div>
 
@@ -186,6 +186,13 @@ const permissionToManage = (todo) => {
   padding: 2px 5px;
   display: inline;
   font-size: .75em;
+  cursor: pointer;
+}
+
+.category a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
 }
 
 .todo-body {
@@ -205,6 +212,11 @@ const permissionToManage = (todo) => {
 .todo-actions i {
   font-size: 1em;
   padding: 0 5px;
+  cursor: pointer;
+}
+
+.todo-actions i:hover {
+  color: white;
 }
 
 .completed {
