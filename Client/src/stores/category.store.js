@@ -56,7 +56,7 @@ export const useCategoryStore = defineStore('category', {
     async deleteCategory(id) {
       try {
         await axios.delete(`${API_URL}/category/${id}`).then(() => {
-          let index = this.categorys.findIndex((category) => category._id == id)
+          let index = this.categories.findIndex((category) => category._id == id)
           this.categories.splice(index, 1)
         })
       } catch (error) {

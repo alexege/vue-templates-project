@@ -64,6 +64,8 @@ const addACategory = async () => {
     console.log("newCat:", newCategory);
     selectedOption.value = customValue.value.name
   }
+
+  customValue.value.name = ''
 }
 
 categoryStore.fetchCategories()
@@ -89,12 +91,12 @@ const { allCategories } = storeToRefs(useCategoryStore());
     </div>
 
     <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
-    <select v-model="newTodo.author" placeholder="Author">
+    <!-- <select v-model="newTodo.author" placeholder="Author">
       <option value="">None</option>
       <option value="" v-for="author in userStore.users" :key="author._id">
         {{ author.username }}
       </option>
-    </select>
+    </select> -->
     <!-- <input type="checkbox" v-model="newTodo.completed"> -->
     <button :disabled="newTodo.title == ''">Add</button>
   </form>

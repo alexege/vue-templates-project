@@ -86,7 +86,7 @@ const permissionToManage = (todo) => {
       <!-- Category -->
       <div v-if="todo.categories">
         <span v-for="category in todo.categories" :key="category" class="category">
-          <a :href="`/todo/${category.name}`">{{ category.name }}</a>
+          <a :href="`/todo/category/${category.name}`">{{ category.name }}</a>
         </span>
       </div>
 

@@ -26,6 +26,23 @@ export const useTodoListStore = defineStore('todoList', {
       console.log(useAuthStore.user)
       // return state.todoList.filter((todo) => todo.author._id == )
       return
+    },
+    getTodosByCategory: (state) => (category) => {
+      // return state.todoList.filter((todo) => todo.categories.some((cat) => cat.name == category))
+      return state.todoList
+        .filter((todo) => !todo.completed)
+        .filter((todo) => todo.categories.some((cat) => cat.name == category))
+      // todo.categories.some((cat) => cat.name == category))
+    },
+    getCompleteTodosByCategory: (state) => (category) => {
+      return state.todoList
+        .filter((todo) => todo.completed)
+        .filter((todo) => todo.categories.some((cat) => cat.name == category))
+    },
+    getInCompleteTodosByCategory: (state) => (category) => {
+      return state.todoList
+        .filter((todo) => !todo.completed)
+        .filter((todo) => todo.categories.some((cat) => cat.name == category))
     }
   },
   actions: {
@@ -38,6 +55,16 @@ export const useTodoListStore = defineStore('todoList', {
         console.log('Error: ', error)
       }
     },
+
+    // async fetchCategoryTodos(category) {
+    //   try {
+    //     await axios.get(`${API_URL}/todo/category/${category}`).then((res) => {
+    //       this.todoList = res.data
+    //     })
+    //   } catch (error) {
+    //     console.log('Error: ', error)
+    //   }
+    // },
 
     async addTodo(todo) {
       const author = useUsersStore().users.find((user) => user._id == todo.author)

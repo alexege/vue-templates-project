@@ -2,7 +2,7 @@
 import Todo from "@/components/todo/todo.vue";
 import AddTodo from "@/components/todo/addTodo.vue";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { useTodoListStore } from "../stores/todo.store";
 
 const todo = ref("");
@@ -45,6 +45,11 @@ categoryStore.fetchCategories()
 const { allCategories } = storeToRefs(useCategoryStore());
 
 
+//Delete Category
+const deleteCategory = (id) => {
+  categoryStore.deleteCategory(id)
+}
+
 // Permission to interact / edit content
 import { useAuthStore } from "@/stores/auth.store";
 const { activeUser } = storeToRefs(useAuthStore())
@@ -68,6 +73,44 @@ const permissionToManage = (category) => {
   }
 }
 
+//Get params value
+import { useRoute } from "vue-router";
+const route = useRoute();
+const category = ref(route.params.category);
+const filteredTodos = computed(() => todoStore.getTodosByCategory(category.value))
+
+watch(() => route.params.category, (newCategory) => {
+  category.value = newCategory
+})
+
+// if (Object.keys(route.params).length === 0) {
+//   todoFilter = 
+// }
+
+// if (route.params === undefined) {
+//   console.log("Undefined");
+// } else {
+//   console.log("category is: ", route.params.category)
+// }
+
+// const { getCompleteTodosByCategory } = storeToRefs(useTodoListStore());
+
+const filteredTodosComplete = computed(() => {
+  if (category.value) {
+    return todoStore.getCompleteTodosByCategory(category.value)
+  } else {
+    return todoStore.completedTodos
+  }
+})
+
+const filteredTodosIncomplete = computed(() => {
+  if (category.value) {
+    return todoStore.getInCompleteTodosByCategory(category.value)
+  } else {
+    return todoStore.incompleteTodos
+  }
+})
+
 </script>
 <template>
   <div class="todo-container">
@@ -79,12 +122,17 @@ const permissionToManage = (category) => {
     <!-- All Categories -->
     <div class="category-list">
       <div v-for="category in allCategories" :key="category" class="category">
-        <a :href="`/todo/${category.name}`">
-          <span>{{ category.name }}</span>
-
-          <!-- TODO: Add author association to category creation and use it to conditionally render delete -->
-          <button v-if="permissionToManage(category)">X</button>
-        </a>
+        <template v-if="category.name == 'All'">
+          <a href="/todo/">All</a>
+        </template>
+        <template v-else>
+          <a :href="`/todo/category/${category.name}`">
+            <span>{{ category.name }}</span>
+            <span v-if="permissionToManage(category)" @click.prevent="deleteCategory(category._id)">
+              <span class="material-symbols-outlined">cancel</span>
+            </span>
+          </a>
+        </template>
       </div>
     </div>
 
@@ -93,23 +141,23 @@ const permissionToManage = (category) => {
       <Todo :todo="todo" />
     </div> -->
 
-    <h3 v-if="incompleteTodos.length > 0">Pending ({{ incompleteTodos.length }})</h3>
+    <h3 v-if="filteredTodosIncomplete.length > 0">Pending ({{ filteredTodosIncomplete.length }})</h3>
 
     <!-- Incomplete Todos -->
 
-    <div class="incomplete-items" v-if="incompleteTodos.length">
-      <div v-for="todo in incompleteTodos" :key="todo._id">
+    <div class="incomplete-items" v-if="filteredTodosIncomplete.length">
+      <div v-for="todo in filteredTodosIncomplete" :key="todo._id">
         <Todo :todo="todo" />
       </div>
     </div>
 
     <br>
 
-    <h3 v-if="completedTodos.length > 0">Completed ({{ completedTodos.length }})</h3>
+    <h3 v-if="filteredTodosComplete.length > 0">Completed ({{ filteredTodosComplete.length }})</h3>
 
     <!-- Completed Todos -->
-    <div class="completed-items" v-if="completedTodos.length">
-      <div v-for="todo in completedTodos" :key="todo._id">
+    <div class="completed-items" v-if="filteredTodosComplete.length">
+      <div v-for="todo in filteredTodosComplete" :key="todo._id">
         <Todo :todo="todo" />
       </div>
     </div>
@@ -117,6 +165,19 @@ const permissionToManage = (category) => {
   </div>
 </template>
 <style scoped>
+.material-symbols-outlined {
+  padding: .10em .25em;
+  font-size: 20px;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+}
+
+.material-symbols-outlined:hover {
+  color: red;
+}
+
 .incomplete-items {
   /* max-height: 40vh; */
   overflow-y: scroll;
@@ -129,6 +190,7 @@ const permissionToManage = (category) => {
 
 .todo-container {
   text-align: center;
+  color: white;
   /* padding: 1em; */
 }
 
@@ -167,17 +229,28 @@ const permissionToManage = (category) => {
 
 .category {
   background-color: #EEF;
-  border-radius: 3px;
+  border-radius: 15px;
   border: 1px #CCF solid;
   padding: 2px 5px;
-  display: inline;
+  /* display: inline; */
+  display: flex;
+  justify-content: center;
   font-size: .75em;
   cursor: pointer;
+  min-width: 30px;
+}
+
+.category:hover {
+  outline: 1px solid lime;
 }
 
 .category a {
   text-decoration: none;
   color: black;
   font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 </style>

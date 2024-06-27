@@ -59,6 +59,12 @@ const router = createRouter({
       component: ToDoView
     },
     {
+      path: '/todo/category/:category',
+      name: 'todoCategory',
+      component: ToDoView,
+      props: true
+    },
+    {
       path: '/user',
       name: 'profile',
       component: Profile

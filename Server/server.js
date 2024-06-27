@@ -20,6 +20,7 @@ const db = require("./models");
 const dbConfig = require("./config/db.config");
 
 const Role = require("./models/role.model");
+const Category = require("./models/category.model");
 
 //Model Connection
 // const User = require("./models/user.model")
@@ -96,6 +97,23 @@ function initial() {
         .save(admin)
         .then(() => {
           console.log("Adding Admin role to database!");
+        })
+        .catch((err) => {
+          console.log("err:", err);
+        });
+    }
+  });
+
+  Category.estimatedDocumentCount().then((count) => {
+    if (count == 0) {
+      const category = new Category({
+        name: "All",
+      });
+
+      category
+        .save(category)
+        .then(() => {
+          console.log("Added 'all' category");
         })
         .catch((err) => {
           console.log("err:", err);
