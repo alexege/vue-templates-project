@@ -165,19 +165,6 @@ const filteredTodosIncomplete = computed(() => {
   </div>
 </template>
 <style scoped>
-.material-symbols-outlined {
-  padding: .10em .25em;
-  font-size: 20px;
-  cursor: pointer;
-
-  display: flex;
-  justify-content: center;
-}
-
-.material-symbols-outlined:hover {
-  color: red;
-}
-
 .incomplete-items {
   /* max-height: 40vh; */
   overflow-y: scroll;
@@ -252,5 +239,18 @@ const filteredTodosIncomplete = computed(() => {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+}
+
+.material-symbols-outlined {
+  padding: .10em .25em;
+  font-size: 20px;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+}
+
+.material-symbols-outlined:hover {
+  color: red;
 }
 </style>

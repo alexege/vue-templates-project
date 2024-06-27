@@ -105,6 +105,7 @@ function initial() {
   });
 
   Category.estimatedDocumentCount().then((count) => {
+    console.log("No categories detected!");
     if (count == 0) {
       const category = new Category({
         name: "All",

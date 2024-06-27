@@ -21,13 +21,15 @@ const addItemAndClear = () => {
   // if (customValue.value && customValue.value.name) {
   //   categories.push(customValue.value.name)
   // }
-  if (selectedOption.value) {
-    categories.push(selectedOption.value)
-  }
+  // if (selectedOption.value) {
+  //   categories.push(selectedOption.value)
+  // }
+
+  todoCategories.value.forEach((item) => categories.push(item))
 
   let todo = {
     title: newTodo.value.title,
-    category: categories,
+    categories: categories,
     priority: newTodo.value.priority,
     completed: newTodo.value.completed,
     author: JSON.parse(localStorage.getItem('user')).id || newTodo.value.author,
@@ -59,6 +61,9 @@ const categoryStore = useCategoryStore();
 
 const addACategory = async () => {
   if (customValue.value) {
+
+    addTodoCategory()
+
     //Add Category via Category store
     let newCategory = await categoryStore.addCategory(customValue.value)
     console.log("newCat:", newCategory);
@@ -73,36 +78,116 @@ categoryStore.fetchCategories()
 //Retrieve all custom categories
 const { allCategories } = storeToRefs(useCategoryStore());
 
+const todoCategories = ref([])
+
+const addTodoCategory = () => {
+  console.log(`addTodoCategory`);
+  console.log("selectedOption:", selectedOption.value)
+  if (selectedOption.value !== "custom" && selectedOption.value !== "All" && selectedOption.value !== "None") {
+    todoCategories.value.push(selectedOption.value)
+  }
+
+  if (customValue.value.name) {
+    todoCategories.value.push(customValue.value.name)
+  }
+
+  // if (customValue.value.name !== null) {
+  //   todoCategories.value.push(customValue.value)
+  // }
+}
+
+const removeCategory = (category) => {
+  let idxOfCat = todoCategories.value.indexOf(category)
+  todoCategories.value.splice(idxOfCat, 1);
+}
+
+
+// Permission to interact / edit content
+const { activeUser } = storeToRefs(useAuthStore())
+const permissionToManage = (category) => {
+
+  // Admin, Moderator, Author/Owner
+
+  if (activeUser.value) {
+
+    // Content Owner
+    if (category.author && activeUser.value.id === category.author._id) {
+      //Has full access, as is owner
+    } else if (activeUser.value.roles.includes("ROLE_ADMIN")) {
+      //Has full access, as is admin
+    } else if (activeUser.value.roles.includes("ROLE_MODERATOR")) {
+      //Has full access, as is moderator
+    } else {
+      return false
+    }
+    return true
+  }
+}
+
 </script>
 <template>
   <form @submit.prevent="addItemAndClear(newTodo)" class="add-todo-form">
 
     <!-- Custom Input / DropDown -->
-    <select v-model="selectedOption">
-      <option value="" disabled>Category</option>
-      <option vale="">None</option>
-      <option :value="category.name" v-for="category in allCategories" :key="category">{{ category.name }}</option>
-      <option value="custom">Custom</option>
-    </select>
+    <div class="top">
+      <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
 
-    <div v-show="selectedOption === 'custom'" class="add-category">
-      <input type="text" v-model="customValue.name">
-      <button @click.stop="addACategory">Add</button>
+      <select v-model="newTodo.author" placeholder="Author">
+        <option value="">None</option>
+        <option value="" v-for="author in userStore.users" :key="author._id">
+          {{ author.username }}
+        </option>
+      </select>
+      <!-- <input type="checkbox" v-model="newTodo.completed"> -->
+      <button :disabled="newTodo.title == ''">Add</button>
     </div>
 
-    <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
-    <!-- <select v-model="newTodo.author" placeholder="Author">
-      <option value="">None</option>
-      <option value="" v-for="author in userStore.users" :key="author._id">
-        {{ author.username }}
-      </option>
-    </select> -->
-    <!-- <input type="checkbox" v-model="newTodo.completed"> -->
-    <button :disabled="newTodo.title == ''">Add</button>
+    <div class="bottom">
+      <select v-model="selectedOption" @change="addTodoCategory">
+        <option value="" disabled>Category</option>
+        <option vale="">None</option>
+        <option :value="category.name" v-for="category in allCategories" :key="category">{{ category.name }}</option>
+        <option value="custom">Custom</option>
+      </select>
+
+      <div v-show="selectedOption === 'custom'" class="add-category">
+        <input type="text" v-model="customValue.name">
+        <button @click.stop="addACategory">Add</button>
+      </div>
+
+      <div class="category-list">
+        <div class="category" v-for="category in todoCategories" :key="category._id">
+          <a :href="`/todo/category/${category.name}`">
+            <span>{{ category }}</span>
+            <span v-if="permissionToManage(category)" @click.prevent="removeCategory(category)">
+              <span class="material-symbols-outlined">cancel</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+
   </form>
 </template>
 
 <style scoped>
+.add-todo-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+}
+
 form {
   display: flex;
   flex: 1;
@@ -118,5 +203,54 @@ form {
 .add-category {
   display: flex;
   flex-direction: row;
+}
+
+
+/* Categories */
+.category-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: .25em;
+}
+
+.category {
+  background-color: #EEF;
+  border-radius: 15px;
+  border: 1px #CCF solid;
+  padding: 2px 5px;
+  /* display: inline; */
+  display: flex;
+  justify-content: center;
+  font-size: .75em;
+  cursor: pointer;
+  min-width: 30px;
+}
+
+.category:hover {
+  outline: 1px solid lime;
+}
+
+.category a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.material-symbols-outlined {
+  padding: .10em .25em;
+  font-size: 20px;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+}
+
+.material-symbols-outlined:hover {
+  color: red;
 }
 </style>

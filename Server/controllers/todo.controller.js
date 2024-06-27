@@ -28,49 +28,33 @@ exports.findById = (req, res) => {
     });
 };
 
-exports.addTodo = (req, res) => {
+exports.addTodo = async (req, res) => {
   console.log("todo req.body:", req.body);
 
   //Create the new Todo Object using info from the req.body
   const newTodo = new Todo({
     title: req.body.title,
-    category: req.body.category,
+    categories: [],
     priority: req.body.priority,
     completed: req.body.completed,
     author: req.body.author,
     createdAt: new Date(), //This fixes the Invalid Date problem
   });
 
-  if (req.body.category) {
-    Category.findOne({ name: req.body.category })
-      .then((category) => {
-        // res.send({ category });
-        newTodo.categories.push(category);
-        Todo.create(newTodo);
-      })
-      .catch((error) => {
-        res.status(500).send({ message: error });
-      });
+  if (req.body.categories) {
+    console.log("req.body.categories: ", req.body.categories);
+
+    for (const cat of req.body.categories) {
+      console.log("cat:", cat);
+
+      let value = await Category.findOne({ name: cat }).then((cat) =>
+        newTodo.categories.push(cat)
+      );
+    }
+    await newTodo.save(newTodo);
   }
-
-  // Todo.create(newTodo);
-  // res.status(200).send(newTodo)
-
-  //Find Author by _id
-  // User.findOne({ _id: req.body.author })
-  // .then((user) => {
-  //     newTodo.author = user
-  //     newTodo.save()
-  //     .then((todo) => {
-  //         res.status(200).send(todo)
-  //     })
-  // })
-
   console.log("new todo: ", newTodo);
-
-  // newTodo.save()
-
-  res.status(200).send(newTodo);
+  await res.status(200).send(newTodo);
 };
 
 exports.updateTodo = (req, res) => {
