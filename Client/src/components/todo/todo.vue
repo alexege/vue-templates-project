@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeMount, onBeforeUnmount } from "vue";
 import { storeToRefs } from 'pinia'
+
+defineEmits(['category'])
 defineProps(["todo"]);
 
 // Auth Store
@@ -73,6 +75,7 @@ const permissionToManage = (todo) => {
     return true
   }
 }
+
 </script>
 
 <template>
@@ -84,9 +87,10 @@ const permissionToManage = (todo) => {
         :checked="todo.completed" />
 
       <!-- Category -->
-      <div v-if="todo.categories">
+      <div v-if="todo.categories" class="todo-category">
         <span v-for="category in todo.categories" :key="category" class="category">
-          <a :href="`/todo/category/${category.name}`">{{ category.name }}</a>
+          <a @click.prevent="$emit('category', category.name)">{{ category.name }}</a>
+          <!-- <a :href="`/todo/category/${category.name}`">{{ category.name }}</a> -->
         </span>
       </div>
 
@@ -179,6 +183,10 @@ const permissionToManage = (todo) => {
   cursor: pointer;
 }
 
+.todo-category .category {
+  margin: 0 .25em;
+}
+
 .category {
   background-color: #EEF;
   border-radius: 3px;
@@ -195,18 +203,15 @@ const permissionToManage = (todo) => {
   font-weight: bold;
 }
 
-.todo-body {
-  flex: 1;
-}
-
 .todo-body input {
   text-align: center;
 }
 
 .todo-actions {
   display: flex;
+  flex: 1;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .todo-actions i {
@@ -230,12 +235,14 @@ const permissionToManage = (todo) => {
 
 .is-completed {
   outline: 2px solid lime;
-  background-color: rgba(50, 205, 50, 0.25);
+  /* background-color: rgba(50, 205, 50, 0.25); */
+  background-color: black;
 }
 
 .is-incomplete {
   outline: 2px solid red;
-  background-color: rgba(255, 0, 0, 0.25);
+  /* background-color: rgba(255, 0, 0, 0.25); */
+  background-color: black;
 }
 
 .todo-top {
@@ -249,8 +256,10 @@ const permissionToManage = (todo) => {
 .todo-left {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  /* min-width: 115px; */
+  flex: 1;
 }
 
 .todo-bottom {
@@ -260,5 +269,9 @@ const permissionToManage = (todo) => {
   align-items: center;
   font-size: 10px;
   height: 25%;
+}
+
+.todo-body {
+  flex: 2;
 }
 </style>

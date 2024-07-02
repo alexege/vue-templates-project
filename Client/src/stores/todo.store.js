@@ -35,11 +35,13 @@ export const useTodoListStore = defineStore('todoList', {
       // todo.categories.some((cat) => cat.name == category))
     },
     getCompleteTodosByCategory: (state) => (category) => {
+      if (category == 'All') return state.todoList.filter((todo) => todo.completed)
       return state.todoList
         .filter((todo) => todo.completed)
         .filter((todo) => todo.categories.some((cat) => cat.name == category))
     },
     getInCompleteTodosByCategory: (state) => (category) => {
+      if (category == 'All') return state.todoList.filter((todo) => !todo.completed)
       return state.todoList
         .filter((todo) => !todo.completed)
         .filter((todo) => todo.categories.some((cat) => cat.name == category))

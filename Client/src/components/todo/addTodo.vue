@@ -152,7 +152,7 @@ const permissionToManage = (category) => {
 
       <div v-show="selectedOption === 'custom'" class="add-category">
         <input type="text" v-model="customValue.name">
-        <button @click.stop="addACategory">Add</button>
+        <button @click.prevent="addACategory">Add</button>
       </div>
 
       <div class="category-list">

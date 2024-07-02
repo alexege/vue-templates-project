@@ -111,6 +111,15 @@ const filteredTodosIncomplete = computed(() => {
   }
 })
 
+// Category Filtering
+const activeCategoryFilter = ref('All')
+
+const activeCategory = (cat) => {
+  activeCategoryFilter.value = cat
+  category.value = cat
+  console.log("active category: ", cat)
+}
+
 </script>
 <template>
   <div class="todo-container">
@@ -123,10 +132,12 @@ const filteredTodosIncomplete = computed(() => {
     <div class="category-list">
       <div v-for="category in allCategories" :key="category" class="category">
         <template v-if="category.name == 'All'">
-          <a href="/todo/">All</a>
+          <a @click.prevent="activeCategory('All')">All</a>
+          <!-- <a href="/todo/">All</a> -->
         </template>
         <template v-else>
-          <a :href="`/todo/category/${category.name}`">
+          <!-- <a :href="`/todo/category/${category.name}`"> -->
+          <a @click.prevent="activeCategory(category.name)">
             <span>{{ category.name }}</span>
             <span v-if="permissionToManage(category)" @click.prevent="deleteCategory(category._id)">
               <span class="material-symbols-outlined">cancel</span>
@@ -147,7 +158,7 @@ const filteredTodosIncomplete = computed(() => {
 
     <div class="incomplete-items" v-if="filteredTodosIncomplete.length">
       <div v-for="todo in filteredTodosIncomplete" :key="todo._id">
-        <Todo :todo="todo" />
+        <Todo :todo="todo" @category="activeCategory" />
       </div>
     </div>
 
@@ -158,7 +169,7 @@ const filteredTodosIncomplete = computed(() => {
     <!-- Completed Todos -->
     <div class="completed-items" v-if="filteredTodosComplete.length">
       <div v-for="todo in filteredTodosComplete" :key="todo._id">
-        <Todo :todo="todo" />
+        <Todo :todo="todo" @category="activeCategory" />
       </div>
     </div>
 
