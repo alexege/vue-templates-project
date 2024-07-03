@@ -56,7 +56,8 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   </head>
 
   <body>
-    <div class="sidebar" :class="{ open: openSideNav }">
+    <div class="sidebar" :class="{ open: openSideNav }" @mouseover="openSideNav = true"
+      @mouseleave="openSideNav = false">
       <div class="logo-details">
         <i class="bx bxl-c-plus-plus icon"></i>
         <div class="logo_name">Templates</div>
@@ -68,7 +69,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
         <li>Item two</li>
         <li>Last</li>
       </ul> -->
-      <ul class="nav-list">
+      <ul class="nav-list" :class="{ sideNavScrollBar: !openSideNav }">
         <li>
           <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>
           <input type="text" placeholder="Search..." v-model="sideNavSearch" />
@@ -202,6 +203,10 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   </html>
 </template>
 <style scoped>
+.sideNavScrollBar {
+  overflow: hidden;
+}
+
 /* Google Font Link */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 
@@ -287,6 +292,17 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   overflow-x: hidden;
   /* overflow: auto; */
   /* margin: -6px -14px; */
+}
+
+.router-link-active,
+.router-link-exact-active {
+  background-color: white !important;
+  color: black !important;
+}
+
+.router-link-exact-active span,
+.router-link-exact-active i {
+  color: black !important;
 }
 
 .sidebar li {

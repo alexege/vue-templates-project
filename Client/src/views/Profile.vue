@@ -7,19 +7,13 @@ const authStore = useAuthStore();
 import FileUpload from '@/components/fileUpload/FileUpload.vue';
 
 const roleConverter = (role) => {
-
-  let roles = []
-
-  console.log("role", role)
   const roleNames = {
     "ROLE_USER": "User",
     "ROLE_MODERATOR": "Moderator",
     "ROLE_ADMIN": "Admin"
   }
 
-  role.map((role) => roles.push(roleNames[role]))
-
-  return roles.join(', ')
+  return roleNames[role]
 }
 
 // https://github.com/joezimjs/vue-dd-uploader/tree/main
@@ -43,64 +37,149 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
 
 </script>
 <template>
-  <div class="profile">
-    <h2>{{ authStore.user.username }}</h2>
-    <p>Roles:</p>
-    <span>{{ roleConverter(authStore.user.roles) }}</span>
-    <span style="font-size: 3em" class="profile-image">
-      <img :src="authStore.user.img" alt="" width="200px;" height="200px;">
-    </span>
-
-    <!-- Info Boxes -->
-    <div class="profile-numbers">
-      <div class="profile-statistic">
-        <label>Posts:</label>
-        <p v-if="authStore.user.posts">{{ authStore.user.posts.length ? authStore.user.posts.length : 0 }}</p>
-      </div>
-      <div class="profile-statistic">
-        <label>Todos:</label>
-        <p v-if="authStore.user.todos">{{ authStore.user.todos.length }}</p>
-      </div>
-      <div class="profile-statistic">
-        <label>Timers:</label>
-        <p v-if="authStore.user.timers">{{ authStore.user.timers.length }}</p>
+  <div class="container">
+    <div class="card profile">
+      <span class="profile-image">
+        <img :src="authStore.user.img" alt="">
+      </span>
+      <h2>{{ authStore.user.username }}</h2>
+      <div class="roles">
+        <label>Roles:</label>
+        <ul>
+          <li v-for="role in authStore.user.roles" :key="role">
+            <span class="role">
+              {{ roleConverter(role) }}
+            </span>
+          </li>
+        </ul>
       </div>
     </div>
+    <div class="card stats">
+      Stats
+    </div>
+    <div class="card timers">
+      Timers
+    </div>
+    <div class="card todos">
+      {{ authStore.user.todos }}
+      Todos
+    </div>
+    <div class="card posts">
+      {{ authStore.user.posts }}
+      Posts
+    </div>
 
-    <FileUpload />
-
-    <DropZone class="drop-area" @files-dropped="addFiles" #default="{ dropZoneActive }">
-      <label for="file-input">
-        <span v-if="dropZoneActive">
-          <span>Drop Them Here</span>
-          <span class="smaller">to add them</span>
-        </span>
-        <span v-else>
-          <span>Drag Your Files Here</span>
-          <span class="smaller">
-            or <strong><em>click here</em></strong> to select files
+    <div class="file-upload">
+      <FileUpload />
+      <DropZone class="drop-area" @files-dropped="addFiles" #default="{ dropZoneActive }">
+        <label for="file-input">
+          <span v-if="dropZoneActive">
+            <span>Drop Them Here</span>
+            <span class="smaller">to add them</span>
           </span>
-        </span>
-
-        <input type="file" id="file-input" multiple @change="onInputChange" />
-      </label>
-      <ul class="image-list" v-show="files.length">
-        <FilePreview v-for="file of files" :key="file.id" :file="file" tag="li" @remove="removeFile" />
-      </ul>
-    </DropZone>
-    <button @click.prevent="uploadFiles(files)" class="upload-button">Upload</button>
+          <span v-else>
+            <span>Drag Your Files Here</span>
+            <span class="smaller">
+              or <strong><em>click here</em></strong> to select files
+            </span>
+          </span>
+          <input type="file" id="file-input" multiple @change="onInputChange" />
+        </label>
+        <ul class="image-list" v-show="files.length">
+          <FilePreview v-for="file of files" :key="file.id" :file="file" tag="li" @remove="removeFile" />
+        </ul>
+      </DropZone>
+      <button @click.prevent="uploadFiles(files)" class="upload-button">Upload</button>
+    </div>
 
   </div>
 </template>
 <style scoped>
+* {
+  /* font-family: 'Share Tech Mono', sans-serif; */
+  font-family: 'Poppins', sans-serif;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(100px, auto);
+  justify-items: center;
+  gap: .5em;
+  padding: 2em;
+}
+
+.card {
+  box-shadow: 3px 3px 5px black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 15px;
+  /* margin: 1em; */
+  min-height: 100px;
+}
+
 .profile {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
 }
 
 .profile-image {}
 
+.profile-image img {
+  min-width: 50px;
+  width: 200px;
+}
+
 .profile-numbers {}
+
+.roles {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 50px;
+}
+
+.roles ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 50px;
+}
+
+.roles li {
+  list-style-type: none;
+}
+
+.role {
+  padding: .5em;
+  margin: .5em;
+  background: white;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.stats {}
+
+.timers {}
+
+.todos {}
+
+.posts {}
+
+.file-upload {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 </style>

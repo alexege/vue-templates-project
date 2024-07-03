@@ -43,6 +43,9 @@ const addItemAndClear = () => {
     newTodo.value.title = "";
     newTodo.value.completed = false;
 
+    selectedOption.value = null
+    todoCategories.value = []
+
     //TODO: Add id of the selected Category to the Todo Object
     // newTodo.value.category = customValue.value._id
   }
@@ -81,8 +84,6 @@ const { allCategories } = storeToRefs(useCategoryStore());
 const todoCategories = ref([])
 
 const addTodoCategory = () => {
-  console.log(`addTodoCategory`);
-  console.log("selectedOption:", selectedOption.value)
   if (selectedOption.value !== "custom" && selectedOption.value !== "All" && selectedOption.value !== "None") {
     todoCategories.value.push(selectedOption.value)
   }
