@@ -175,12 +175,18 @@ const permissionToManage = (todo) => {
 
 .checkbox {
   margin: 5px;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 .checkbox:hover {
   cursor: pointer;
+}
+
+.todo-category {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .todo-category .category {

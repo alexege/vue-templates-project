@@ -56,6 +56,30 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
     </div>
     <div class="card stats">
       Stats
+      <div>
+        <label>Todos:</label>
+        <ul>
+          <li v-for="todo in authStore.user.todos" :key="todo">
+            {{ todo }}
+          </li>
+        </ul>
+      </div>
+      <div>
+        <label>Timers:</label>
+        <ul>
+          <li v-for="todo in authStore.user.todos" :key="todo">
+            {{ todo }}
+          </li>
+        </ul>
+      </div>
+      <div>
+        <label>Posts:</label>
+        <ul>
+          <li v-for="todo in authStore.user.todos" :key="todo">
+            {{ todo }}
+          </li>
+        </ul>
+      </div>
     </div>
     <div class="card timers">
       Timers
@@ -103,14 +127,16 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: minmax(100px, auto);
+  grid-auto-rows: minmax(150px, auto);
   justify-items: center;
-  gap: .5em;
+  gap: 1em;
   padding: 2em;
+  height: 100vh;
 }
 
 .card {
-  box-shadow: 3px 3px 5px black;
+  /* box-shadow: 3px 3px 5px black; */
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -121,6 +147,14 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
   border-radius: 15px;
   /* margin: 1em; */
   min-height: 100px;
+  transition: box-shadow 0.5s, transform 0.5s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-10px);
+  cursor: pointer;
 }
 
 .profile {
@@ -129,7 +163,7 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
   justify-content: center;
   align-items: center;
 
-  grid-column: 1 / 2;
+  /* grid-column: 1 / 2; */
   grid-row: 1 / 3;
 }
 
@@ -168,11 +202,18 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
   border-radius: 5px;
 }
 
-.stats {}
+.stats {
+  grid-column: 1 / 2;
+}
 
-.timers {}
+.timers {
+  grid-row: 2;
+}
 
-.todos {}
+.todos {
+  grid-column: 2 / 2;
+  grid-row: 1;
+}
 
 .posts {}
 

@@ -50,6 +50,9 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
     <meta charset="UTF-8" />
     <title>Responsive Sidebar Menu | CodingLab</title>
     <link rel="stylesheet" href="style.css" />
+
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!-- Boxicons CDN Link -->
     <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -101,7 +104,11 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
                 <span class="links_name">Timers</span>
               </RouterLink>
             </a>
-            <span @click="toggleTimersView" class="timer-extend">></span>
+            <span @click="toggleTimersView" class="timer-extend">
+              <span class="material-symbols-outlined">
+                arrow_drop_down
+              </span>
+            </span>
           </div>
           <span class="tooltip">Timers</span>
           <TransitionExpand class="accordion">
