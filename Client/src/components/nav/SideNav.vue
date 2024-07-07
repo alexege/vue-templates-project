@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useThemeStore } from '../../stores/theme.store'
@@ -42,6 +42,29 @@ const toggleTimersView = () => {
 import TransitionExpand from '@/components/modal/TransitionExpand.vue'
 import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue'
 
+// Navbar lock/unlock
+const isNavLocked = ref(false)
+
+const toggleNavLock = () => {
+  console.log("Toggle navlock")
+  isNavLocked.value = !isNavLocked.value
+  openSideNav.value = !openSideNav.value
+
+  localStorage.setItem('isNavLocked', isNavLocked.value)
+}
+
+const showNav = () => {
+  if (!isNavLocked.value) openSideNav.value = true;
+}
+
+const hideNav = () => {
+  if (!isNavLocked.value) openSideNav.value = false;
+}
+
+onMounted(() => {
+  isNavLocked.value = JSON.parse(localStorage.getItem('isNavLocked'))
+})
+
 </script>
 <template>
   <html lang="en" dir="ltr">
@@ -59,13 +82,21 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   </head>
 
   <body>
-    <div class="sidebar" :class="{ open: openSideNav }" @mouseover="openSideNav = true"
-      @mouseleave="openSideNav = false">
+    <div class="sidebar" :class="{ open: openSideNav }" @mouseover="showNav" @mouseleave="hideNav">
       <div class="logo-details">
         <i class="bx bxl-c-plus-plus icon"></i>
         <div class="logo_name">Templates</div>
-        <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn"
-          @click="openSideNav = !openSideNav"></i>
+        <span class="material-symbols-outlined btn" @click="openSideNav = !openSideNav">
+          {{ openSideNav ? 'chevron_right' : 'chevron_left' }}
+        </span>
+        <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock">
+          {{ isNavLocked ? 'lock_open' : 'lock' }}
+        </span>
+        <!-- <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn" @click="toggleNavLock">
+          <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock()">
+            {{ isNavLocked ? 'lock_open' : 'lock' }}
+          </span>
+        </i> -->
       </div>
       <!-- <ul style="height: 80%; overflow: auto;">
         <li v-for="n in 20" :key="n">Item one</li>
@@ -97,16 +128,19 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
           <span class="tooltip">Dashboard</span>
         </li>
         <li>
-          <div style="display:flex;">
-            <a href="#">
-              <RouterLink to="/timers">
+          <div style="display: flex;">
+            <a href="#" id="">
+              <RouterLink to="/timers" id="sideNavTimers" :class="{ sideNavTimersExpanded: openSideNav }">
                 <i class="bx bx-timer"></i>
                 <span class="links_name">Timers</span>
               </RouterLink>
             </a>
-            <span @click="toggleTimersView" class="timer-extend">
-              <span class="material-symbols-outlined">
+            <span @click="toggleTimersView" class="timer-extend" v-if="openSideNav">
+              <span class="material-symbols-outlined" v-if="!showTimers">
                 arrow_drop_down
+              </span>
+              <span class="material-symbols-outlined" v-else>
+                arrow_drop_up
               </span>
             </span>
           </div>
@@ -401,6 +435,26 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   background: #fff;
 }
 
+/* .sidebar li a>#sideNavTimers {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+} */
+
+/* #sideNavTimers {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+} */
+
+.sideNavTimersCompressed {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.sideNavTimersExpanded {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
 .sidebar li a .links_name {
   color: #fff;
   font-size: 15px;
@@ -519,7 +573,7 @@ import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: lime;
+  background: white;
   height: 50px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
