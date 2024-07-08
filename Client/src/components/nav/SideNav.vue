@@ -48,7 +48,7 @@ const isNavLocked = ref(false)
 const toggleNavLock = () => {
   console.log("Toggle navlock")
   isNavLocked.value = !isNavLocked.value
-  openSideNav.value = !openSideNav.value
+  // openSideNav.value = !openSideNav.value
 
   localStorage.setItem('isNavLocked', isNavLocked.value)
 }
@@ -86,12 +86,14 @@ onMounted(() => {
       <div class="logo-details">
         <i class="bx bxl-c-plus-plus icon"></i>
         <div class="logo_name">Templates</div>
-        <span class="material-symbols-outlined btn" @click="openSideNav = !openSideNav">
-          {{ openSideNav ? 'chevron_right' : 'chevron_left' }}
-        </span>
-        <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock">
-          {{ isNavLocked ? 'lock_open' : 'lock' }}
-        </span>
+        <div class="nav-icons">
+          <span class="material-symbols-outlined" @click="openSideNav = !openSideNav">
+            {{ openSideNav ? 'chevron_left' : 'chevron_right' }}
+          </span>
+          <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock">
+            {{ isNavLocked ? 'lock' : 'lock_open' }}
+          </span>
+        </div>
         <!-- <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn" @click="toggleNavLock">
           <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock()">
             {{ isNavLocked ? 'lock_open' : 'lock' }}
@@ -280,11 +282,21 @@ onMounted(() => {
   display: flex;
   align-items: center;
   position: relative;
+  color: white;
 }
 
 .sidebar .logo-details .icon {
   opacity: 0;
   transition: all 0.5s ease;
+}
+
+.sidebar .logo-details .nav-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  cursor: pointer;
 }
 
 .sidebar .logo-details .logo_name {
@@ -327,12 +339,16 @@ onMounted(() => {
 }
 
 .sidebar .nav-list {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   height: calc(100% - 140px);
   /* overflow-y: scroll; */
   overflow-x: hidden;
   /* overflow: auto; */
   /* margin: -6px -14px; */
+}
+
+.sidebar .nav-list li {
+  margin: 5px 0;
 }
 
 .router-link-active,
@@ -573,11 +589,18 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: white;
+  background: none;
+  color: white;
+  background: rgba(28, 27, 48, 1);
   height: 50px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   cursor: pointer;
+}
+
+.timer-extend:hover {
+  color: black;
+  background: white;
 }
 
 @media (max-width: 420px) {
