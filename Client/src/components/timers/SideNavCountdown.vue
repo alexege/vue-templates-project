@@ -176,6 +176,7 @@ const onClear = () => {
 
 //Convert ms to '00:00:00:00' string
 const msToTimeFormat = (ms) => {
+    if (ms < 0) return '00:00:00:00'
     var seconds = Math.floor((ms / 1000) % 60)
     var minutes = Math.floor((ms / (1000 * 60)) % 60)
     var hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
@@ -318,6 +319,11 @@ const progressColor = computed(() => {
     </div>
 </template>
 <style scoped>
+.disabled {
+    color: gray;
+    opacity: 0.25;
+}
+
 .container {
     position: relative;
     display: flex;

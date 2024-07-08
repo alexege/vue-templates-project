@@ -16,24 +16,26 @@ const activeButton = ref("All")
     <div class="container">
 
         <div class="actions">
-            <button @click="activeButton = 'All'">All</button>
-            <button @click="activeButton = 'Stopwatch'">Stopwatch</button>
-            <button @click="activeButton = 'CountDown'">CountDown</button>
+            <button @click="activeButton = 'All'" :class="{ active: activeButton == 'All' }">All</button>
+            <button @click="activeButton = 'Stopwatch'"
+                :class="{ active: activeButton == 'Stopwatch' }">Stopwatch</button>
+            <button @click="activeButton = 'CountDown'"
+                :class="{ active: activeButton == 'CountDown' }">CountDown</button>
         </div>
         <div style="padding-top: 20px;">
             <template v-if="activeButton == 'All'">
-                <div v-for="timer in allTimers" :key="timer">
+                <div v-for="timer in allTimers" :key="timer" class="timers">
                     <SideNavCountdown v-if="timer.type == 'countdown'" :timer="timer" />
                     <SideNavStopwatch v-if="timer.type == 'stopwatch'" :timer="timer" />
                 </div>
             </template>
             <template v-else-if="activeButton == 'Stopwatch'">
-                <div v-for="timer in stopwatchTimers" :key="timer">
+                <div v-for="timer in stopwatchTimers" :key="timer" class="timers">
                     <SideNavStopwatch :timer="timer" />
                 </div>
             </template>
             <template v-else-if="activeButton == 'CountDown'">
-                <div v-for="timer in countDownTimers" :key="timer">
+                <div v-for="timer in countDownTimers" :key="timer" class="timers">
                     <SideNavCountdown :timer="timer" />
                 </div>
             </template>
@@ -66,7 +68,14 @@ const activeButton = ref("All")
     cursor: pointer;
     color: white;
     background: none;
+    border: 1px solid rgb(28, 27, 48);
+    padding: .25em;
+}
 
+.actions .active {
+    border-bottom: none;
+    background-color: rgb(28, 27, 48);
+    color: white;
 }
 
 .container::-webkit-scrollbar {
@@ -76,5 +85,9 @@ const activeButton = ref("All")
 .container {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+.timers {
+    padding: 5px;
 }
 </style>

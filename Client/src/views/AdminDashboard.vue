@@ -20,9 +20,37 @@ fetchTodos();
 const deleteATodo = (todoId) => {
   todoStore.deleteTodo(todoId);
 };
+
+//Timers
+import { useTimerStore } from "@/stores/timer.store";
+import ConfirmationDialog from "@/components/modals/ConfirmationDialog.vue";
+const timerStore = useTimerStore();
+const { fetchTimers } = useTimerStore();
+const { allTimers } = storeToRefs(timerStore);
+fetchTimers()
+
+const showDialog = ref(true)
+const deleteATimer = (timerId) => {
+  showDialog.value = true;
+
+  timerStore.deleteTimer(timerId);
+}
+
+const dialogConfirm = (confirm) => {
+  console.log("Dialog sent back: ", confirm);
+  // if (!confirm) showDialog.value = false;
+  // else {
+  //   timerStore.deleteTimer(timerId)
+  // }
+}
+
 </script>
 <template>
   <div class="main">
+
+    <ConfirmationDialog :show="showDialog" @result="dialogConfirm">
+    </ConfirmationDialog>
+
     Admin Dashboard
 
     <h3>All Users:</h3>
@@ -68,6 +96,41 @@ const deleteATodo = (todoId) => {
         <td>{{ todo.createdAt }}</td>
         <td>
           <a @click="deleteATodo(todo._id)">Delete</a>
+        </td>
+      </tr>
+    </table>
+
+    <h3>All Timers:</h3>
+    <table>
+      <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>type</th>
+        <th>duration</th>
+        <th>isActive</th>
+        <th>endDateTime</th>
+        <th>creator</th>
+        <th>img</th>
+        <th>author</th>
+        <th>createdAt</th>
+        <th>actions</th>
+      </tr>
+      <tr v-for="timer in allTimers" :key="timer._id">
+        <td v-if="timer._id">{{ timer._id.slice(-5) }}</td>
+        <td>{{ timer.name }}</td>
+        <td>{{ timer.type }}</td>
+        <td>{{ timer.duration }}</td>
+        <td>{{ timer.isActive }}</td>
+        <td>{{ timer.endDateTime }}</td>
+        <td>{{ timer.creator }}</td>
+        <td>{{ timer.img }}</td>
+        <td>
+          <span v-if="timer.author">{{ timer.author.username }}</span>
+          <span v-else>-</span>
+        </td>
+        <td>{{ timer.createdAt }}</td>
+        <td>
+          <a @click="deleteATimer(timer._id)">Delete</a>
         </td>
       </tr>
     </table>

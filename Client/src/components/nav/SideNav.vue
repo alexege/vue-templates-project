@@ -39,7 +39,7 @@ const toggleTimersView = () => {
   }
 }
 
-import TransitionExpand from '@/components/modal/TransitionExpand.vue'
+import TransitionExpand from '@/components/modals/TransitionExpand.vue'
 import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue'
 
 // Navbar lock/unlock
@@ -238,6 +238,7 @@ onMounted(() => {
         </li>
       </ul>
     </div>
+    <div id="modals"></div>
     <section class="home-section" :class="theme">
       <RouterView />
     </section>

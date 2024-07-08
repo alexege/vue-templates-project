@@ -125,6 +125,13 @@ async function updateTimerName() {
     border-radius: 5px;
     font-family: 'Share Tech Mono', sans-serif;
     background-color: black;
+
+    transition: box-shadow 0.5s, transform 0.5s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stopwatch-timer:hover {
+    transform: translateY(-5px);
 }
 
 /* Generic */

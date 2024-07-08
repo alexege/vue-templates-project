@@ -17,10 +17,11 @@ const percentLeft = ref(100)
 const timerComplete = ref(false)
 
 onMounted(() => {
-
+    console.log(`props.timer.endDateTime: ${props.timer.endDateTime}`)
     if (props.timer.isActive) {
         if (props.timer.endDateTime) {
             const calcFutureDate = msToTimeFormat(new Date(props.timer.endDateTime).getTime() - Date.now()).split(':')
+            console.log(`calcFutureDate: ${calcFutureDate}`)
             if (calcFutureDate != 0) {
                 days.value = calcFutureDate[0],
                     hours.value = calcFutureDate[1],
@@ -175,6 +176,7 @@ const onClear = () => {
 
 //Convert ms to '00:00:00:00' string
 const msToTimeFormat = (ms) => {
+    if (ms < 0) return '00:00:00:00'
     var seconds = Math.floor((ms / 1000) % 60)
     var minutes = Math.floor((ms / (1000 * 60)) % 60)
     var hours = Math.floor((ms / (1000 * 60 * 60)) % 24)
@@ -259,6 +261,7 @@ const progressColor = computed(() => {
 <template>
     <div class="countdown-timer" :class="{ timerComplete }"
         :style="[{ border: `3px solid ${progressColor.foreground}` }]">
+
         <!-- Top -->
         <div class="timer-top">
             <div class="timer-title">
@@ -370,6 +373,13 @@ const progressColor = computed(() => {
     border-radius: 5px;
     font-family: 'Share Tech Mono', sans-serif;
     background-color: black;
+
+    transition: box-shadow 0.5s, transform 0.5s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.countdown-timer:hover {
+    transform: translateY(-5px);
 }
 
 .timer-top,
