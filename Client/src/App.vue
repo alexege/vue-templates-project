@@ -1,6 +1,5 @@
 <script setup>
 import SideNav from './components/nav/SideNav.vue'
-
 import { useUsersStore } from '@/stores/user.store';
 const userStore = useUsersStore()
 const { getAll } = useUsersStore()
