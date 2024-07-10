@@ -613,7 +613,7 @@ onMounted(() => {
 /* Light / Dark  */
 .dark {
   background-color: black;
-  color: white;
+  color: black;
 }
 
 .light {
