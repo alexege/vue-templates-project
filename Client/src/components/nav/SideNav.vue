@@ -39,7 +39,7 @@ const toggleTimersView = () => {
   }
 }
 
-import TransitionExpand from '@/components/modals/TransitionExpand.vue'
+import TransitionExpand from '@/components/transitions/TransitionExpand.vue'
 import SideNavTimerContainer from '@/components/timers/SideNavTimerContainer.vue'
 
 // Navbar lock/unlock

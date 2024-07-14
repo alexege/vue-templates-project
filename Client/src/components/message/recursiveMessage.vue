@@ -1,46 +1,99 @@
 <script setup>
-const props = defineProps(['replies', 'message', 'depth'])
-import { ref } from 'vue'
+const props = defineProps(['replies', 'message', 'depth', 'id', 'msgId'])
+import { ref, reactive } from 'vue'
+import { useMessageStore } from '@/stores/message.store';
+const messageStore = useMessageStore()
 
-const replyData = ref({
+const replyData = {
   message: '',
-  replies: [],
-  depth: props.depth
-})
-import { useReplyStore } from '@/stores/message.store'
+}
 
-const replyStore = useReplyStore()
-
-const addReply_ToReply = (item) => {
+const addReply_ToReply = (item, idx) => {
+  toggleStates[idx] = true
   const reply = {
-    message: replyData.value.message,
-    replies: replyData.value.replies,
-    depth: props.depth
+    message: replyData.message,
+    replies: [],
+    depth: props.depth,
+    id: Date.now().toString().slice(-5)
   }
-  replyStore.addReplyToReply(item, reply)
-  replyData.value.message = ''
+  messageStore.addReplyToReply(item, reply)
+  replyData.message = ''
+}
+// Toggle Dynamic Replies Independantly
+import TransitionExpand from '../transitions/TransitionExpand.vue'
+//Set initial state
+const toggleStates = reactive({})
+if (!toggleStates[props.id]) {
+  toggleStates[props.id] = ref(false)
+}
+const toggle = (id) => {
+  toggleStates[id] = !toggleStates[id]
+}
+const nextId = () => {
+  return `${props.id}-child` // Example of generating unique IDs
+}
+const deleteReply = (messageId, reply, replyId, depth) => {
+  messageStore.deleteReply(messageId, reply, replyId, depth)
+  // if (confirm(`msgId: ${messageId}, replyId: ${replyId}`) == true) {
+  // }
 }
 </script>
 <template>
-  <li class="message">
-    {{ props.message.message }}
+  <li class="reply-container">
     <ul class="replies" v-if="props.replies && props.replies.length">
-      <div v-for="(message, index) in props.message.replies" :key="index">
-        <recursive-message v-bind="{
-          message: message,
-          replies: message.replies
-        }" :depth="props.depth + 1" />
-
-        <!-- Add Reply -->
-        <div class="add-reply">
-          <input type="text" placeholder="Add Reply to Reply" v-model="replyData.message"
-            @keydown.enter="addReply_ToReply(message)" />
-          <button @click="addReply_ToReply(message)">Add</button>
+      <div v-for="(message, index) in props.message.replies" :key="index" class="reply">
+        <div class="message">
+          Reply_id: {{
+            message.id
+          }} <br />
+          Depth: {{ depth }}
+          <div class="close-btn" @click="deleteReply(props.message.id, props.message, message.id, depth)">
+            <span class="material-symbols-outlined"> close </span>
+          </div>
+          <div class="user-prof">
+            <span class="author">Author Name</span>
+            <span class="material-symbols-outlined icon"> account_circle </span>
+            <div class="message-footer">
+              {{ new Date().toLocaleTimeString() }}
+            </div>
+          </div>
+          <div class="message-box">
+            <div class="message-header"></div>
+            <div class="message-body">
+              {{ message.message }}
+            </div>
+            <div class="message-footer">
+              <!-- {{ new Date().toLocaleTimeString() }} -->
+            </div>
+          </div>
         </div>
-
+        <a @click="toggle(index)" class="toggle" v-if="message.replies && message.replies.length">
+          {{ toggleStates[index] ? 'Hide Replies' : 'Show Replies' }}
+        </a>
+        <TransitionExpand :key="`Reply-${index}`">
+          <div v-if="toggleStates[index]">
+            <recursiveMessage v-bind="{
+              message: message,
+              replies: message.replies
+            }" :depth="props.depth + 1" :id="nextId(index)" :msgId="props.msgId" />
+          </div>
+        </TransitionExpand>
+        <!-- Add Reply -->
+        <div class="reply-box">
+          <div class="user-icon">
+            <span class="material-symbols-outlined"> account_circle </span>
+          </div>
+          <div class="add-reply">
+            <input type="text" placeholder="Add Reply to Reply" v-model="replyData.message"
+              @keydown.enter="addReply_ToReply(message, index)" />
+            <div class="actions">
+              <button @click="addReply_ToReply(message, index)">Add</button>
+              <!-- <a @click="toggleStates[index] = false">Cancel</a> -->
+            </div>
+          </div>
+        </div>
       </div>
     </ul>
-
   </li>
 </template>
 <style scoped>
@@ -54,13 +107,163 @@ li {
   /* padding: 1em; */
 }
 
-.message {
-  border-top: 1px solid black;
-  border-left: 1px solid black;
-  border-bottom: 1px solid black;
-  padding-top: 1em;
-  padding-left: 1em;
-  padding-bottom: 1em;
+.reply-container {
+  /* background: rgba(255, 0, 0, 0.15); */
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* outline: 1px solid black; */
+  /* border: 1px solid black; */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* outline: 1px solid black; */
   list-style: none;
+  margin-bottom: 1em;
+}
+
+.reply {
+  display: flex;
+  flex-direction: column;
+  outline: 1px solid black;
+  /* margin: 1em 0; */
+  margin-bottom: 1em;
+  box-shadow: 2px 2px 5px black;
+}
+
+.reply .toggle {
+  align-self: center;
+  width: 100%;
+  text-align: center;
+}
+
+/* .reply:hover .toggle {
+    cursor: pointer;
+} */
+.message {
+  position: relative;
+  display: flex;
+  gap: 0.25em;
+  border-bottom: 1px solid black;
+  margin-top: 5px;
+  background: white;
+  /* background: rgb(155, 155, 155); */
+  /* border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black; */
+  /* padding-top: 0.5em;
+    padding-left: 0.5em;
+    padding-bottom: 0.5em; */
+  padding: 0.5em;
+  list-style: none;
+}
+
+.message .user-prof {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.message .user-prof span {
+  font-size: 0.75em;
+}
+
+.message .user-prof .icon {
+  font-size: 3em;
+}
+
+.message .message-box {
+  flex: 7;
+}
+
+.message-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.message-header {
+  font-size: 0.75em;
+  font-weight: bold;
+  flex: 1;
+}
+
+.message-body {
+  font-size: 0.75em;
+  flex: 2;
+}
+
+.message-footer {
+  font-size: 0.65em;
+  flex: 1;
+}
+
+.replies {
+  /* background: rgba(155, 155, 155, 1); */
+  list-style: none;
+}
+
+.reply-box {
+  display: flex;
+  flex-direction: row;
+  /* outline: 1px solid red; */
+  padding: 0.25em;
+  background: white;
+  /* background: rgb(155, 155, 155); */
+}
+
+.add-reply {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.add-reply input {
+  width: 100%;
+}
+
+.add-reply .actions {
+  /* width: 100%; */
+  /* display: flex; */
+  flex-direction: row;
+  justify-content: start;
+}
+
+.add-reply .actions button {
+  cursor: pointer;
+  width: 50px;
+  padding: 2px;
+  margin: 5px 0;
+  margin-right: 0.25em;
+}
+
+.reply-box .user-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.reply-box .add-reply {
+  /* flex-shrink: 0; */
+  /* min-width: 60px; */
+  flex: 1;
+}
+
+.reply-box .add-reply input {
+  flex: 1;
+}
+
+/* Delete Message Button */
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 16px;
 }
 </style>

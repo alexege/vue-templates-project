@@ -1,7 +1,16 @@
-<script setup></script>
 <template>
   <div>
-    <h4>Notes Template</h4>
+    rootReplyData: {{ rootReplyData }} <br />
+    rootReplies:
+    <pre>{{ rootReplies }}</pre>
+    <note v-model="rootReplyData" :replies="rootReplies" />
   </div>
 </template>
-<style scoped></style>
+
+<script setup>
+import { ref } from 'vue';
+import note from '@/components/notes/note.vue';
+
+const rootReplyData = ref('');
+const rootReplies = ref([]);
+</script>
