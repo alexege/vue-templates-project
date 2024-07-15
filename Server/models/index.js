@@ -13,6 +13,7 @@ db.refreshToken = require("./refreshToken.model");
 db.user = require("./user.model");
 db.role = require("./role.model");
 db.category = require("./category.model");
+db.message = require("./message.model");
 
 db.ROLES = ["user", "admin", "moderator"];
 

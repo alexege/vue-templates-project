@@ -8,33 +8,36 @@ const messageStore = useMessageStore()
 messageStore.fetchMessages()
 const { allMessages } = storeToRefs(useMessageStore())
 const newMessage = {
-  message: '',
+  content: '',
   replies: [],
-  depth: 0
+  depth: 0,
 }
 const addMessage = () => {
   const data = {
-    message: newMessage.message,
+    content: newMessage.content,
     replies: [],
-    depth: newMessage.depth
+    depth: newMessage.depth,
+    authorId: JSON.parse(localStorage.getItem('user')).id || "Author"
   }
   messageStore.addMessage(data)
-  newMessage.message = ''
+  newMessage.content = ''
 }
 const messageReply = {
-  message: '',
+  content: '',
   replies: [],
-  depth: 0
+  depth: 0,
+  author: JSON.parse(localStorage.getItem('user')).id || "Author"
 }
 const addReply_ToMessage = (message, idx) => {
   toggleStates[idx] = true
   const reply = {
-    message: messageReply.message,
+    content: messageReply.content,
     replies: [],
-    depth: messageReply.depth
+    depth: messageReply.depth,
+    authorId: messageReply.author
   }
   messageStore.addReplyToMessage(message, reply)
-  messageReply.message = ''
+  messageReply.content = ''
 }
 // Toggle Dynamic Components Independantly
 import TransitionExpand from '@/components/transitions/TransitionExpand.vue'
@@ -55,13 +58,20 @@ const deleteMessage = (messageId) => {
     messageStore.deleteMessage(messageId)
   }
 }
+
+//User Ownership
+import { useAuthStore } from '@/stores/auth.store';
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
+
 </script>
 <template>
   <div class="message-container">
+    {{ user.username }}
     <!-- <pre>{{ allMessages }}</pre> -->
     <!-- <pre v-for="message in allMessages" :key="message.id">{{ message.replies }}</pre> -->
     <div class="add-message">
-      <input type="text" v-model="newMessage.message" @keydown.enter="addMessage" placeholder="Add Message" />
+      <input type="text" v-model="newMessage.content" @keydown.enter="addMessage" placeholder="Add Message" />
       <button @click="addMessage">Add</button>
     </div>
     <ul v-for="(message, index) in allMessages" :key="index" class="post">
@@ -71,16 +81,17 @@ const deleteMessage = (messageId) => {
       </div>
       <div class="message">
         <div class="user-prof">
-          <span class="author">Author Name</span>
+          <span class="author" v-if="message.author && message.author.username">{{ message.author.username }}</span>
           <span class="material-symbols-outlined icon"> account_circle </span>
           <div class="message-footer">
-            {{ new Date().toLocaleTimeString() }}
+            {{ new Date(message.createdAt).toLocaleTimeString() }}
           </div>
         </div>
         <div class="message-box">
           <div class="message-header"></div>
           <div class="message-body">
-            {{ message.message }}
+            {{ message.content }}
+            <span v-if="message.replies">- len({{ message.replies.length }})</span>
           </div>
           <div class="message-footer">
             <!-- {{ new Date().toLocaleTimeString() }} -->
@@ -89,6 +100,9 @@ const deleteMessage = (messageId) => {
       </div>
       <a @click="toggle(index)" class="toggle" v-if="message.replies && message.replies.length">
         {{ toggleStates[index] ? 'Hide Coments' : 'Show Comments' }}
+        <template v-if="message.replies.length">
+          ({{ message.replies.length }})
+        </template>
       </a>
       <div class="comments-toggle">
         <TransitionExpand :key="`Message-${index}`" v-if="message && message.replies">
@@ -105,7 +119,7 @@ const deleteMessage = (messageId) => {
             <span class="material-symbols-outlined"> account_circle </span>
           </div>
           <div class="add-reply">
-            <input type="text" v-model="messageReply.message" placeholder="Add Reply to Message"
+            <input type="text" v-model="messageReply.content" placeholder="Add Reply to Message"
               @keydown.enter="addReply_ToMessage(message, index)" />
             <div class="actions">
               <button @click="addReply_ToMessage(message, index)">Add</button>
@@ -116,10 +130,10 @@ const deleteMessage = (messageId) => {
       </div>
     </ul>
 
-    <!-- Messages:
+    Messages:
     <pre>{{ messageStore.messages }}</pre>
     Replies:
-    <pre>{{ messageStore.replies }}</pre> -->
+    <pre>{{ messageStore.replies }}</pre>
   </div>
 </template>
 <style scoped>

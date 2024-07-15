@@ -5,19 +5,20 @@ import { useMessageStore } from '@/stores/message.store';
 const messageStore = useMessageStore()
 
 const replyData = {
-  message: '',
+  content: '',
 }
 
 const addReply_ToReply = (item, idx) => {
   toggleStates[idx] = true
   const reply = {
-    message: replyData.message,
+    content: replyData.content,
     replies: [],
     depth: props.depth,
-    id: Date.now().toString().slice(-5)
+    id: Date.now().toString().slice(-5),
+    author: JSON.parse(localStorage.getItem('user')).id || "Author"
   }
   messageStore.addReplyToReply(item, reply)
-  replyData.message = ''
+  replyData.content = ''
 }
 // Toggle Dynamic Replies Independantly
 import TransitionExpand from '../transitions/TransitionExpand.vue'
@@ -43,10 +44,6 @@ const deleteReply = (messageId, reply, replyId, depth) => {
     <ul class="replies" v-if="props.replies && props.replies.length">
       <div v-for="(message, index) in props.message.replies" :key="index" class="reply">
         <div class="message">
-          Reply_id: {{
-            message.id
-          }} <br />
-          Depth: {{ depth }}
           <div class="close-btn" @click="deleteReply(props.message.id, props.message, message.id, depth)">
             <span class="material-symbols-outlined"> close </span>
           </div>
@@ -60,7 +57,7 @@ const deleteReply = (messageId, reply, replyId, depth) => {
           <div class="message-box">
             <div class="message-header"></div>
             <div class="message-body">
-              {{ message.message }}
+              {{ message.content }}
             </div>
             <div class="message-footer">
               <!-- {{ new Date().toLocaleTimeString() }} -->
@@ -69,6 +66,7 @@ const deleteReply = (messageId, reply, replyId, depth) => {
         </div>
         <a @click="toggle(index)" class="toggle" v-if="message.replies && message.replies.length">
           {{ toggleStates[index] ? 'Hide Replies' : 'Show Replies' }}
+          <template v-if="message.replies.length">({{ message.replies.length }})</template>
         </a>
         <TransitionExpand :key="`Reply-${index}`">
           <div v-if="toggleStates[index]">
@@ -84,7 +82,7 @@ const deleteReply = (messageId, reply, replyId, depth) => {
             <span class="material-symbols-outlined"> account_circle </span>
           </div>
           <div class="add-reply">
-            <input type="text" placeholder="Add Reply to Reply" v-model="replyData.message"
+            <input type="text" placeholder="Add Reply to Reply" v-model="replyData.content"
               @keydown.enter="addReply_ToReply(message, index)" />
             <div class="actions">
               <button @click="addReply_ToReply(message, index)">Add</button>
@@ -136,9 +134,10 @@ li {
   text-align: center;
 }
 
-/* .reply:hover .toggle {
-    cursor: pointer;
-} */
+.reply:hover .toggle {
+  cursor: pointer;
+}
+
 .message {
   position: relative;
   display: flex;

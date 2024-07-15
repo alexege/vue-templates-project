@@ -4,27 +4,26 @@ import { useAuthStore } from './auth.store'
 
 const API_URL = 'http://localhost:8080/api'
 
-export const useMessageStore = defineStore('message', {
+export const useReplyStore = defineStore('reply', {
   state: () => ({
-    messages: [],
-    message: null,
+    reply: null,
     replies: [],
     loading: false,
     error: null
   }),
   getters: {
-    allMessages() {
-      return this.messages
+    allReplies() {
+      return this.replies
     }
   },
   actions: {
-    async fetchMessages() {
-      // console.log(`[message.store messageStore] - fetchMessages`)
+    async fetchReplies() {
+      // console.log(`[reply.store replyStore] - fetchReplies`)
       this.loading = true
       this.error = null
       try {
-        const response = await axios.get(`${API_URL}/message/allMessages`)
-        this.messages = response.data
+        const response = await axios.get(`${API_URL}/reply/allReplies`)
+        this.replies = response.data
       } catch (error) {
         this.error = error
         console.error(error)
@@ -33,13 +32,13 @@ export const useMessageStore = defineStore('message', {
       }
     },
 
-    async addMessage(message) {
-      // console.log(`[message.store messageStore] - addMessage`, JSON.stringify(message, null, 2))
+    async addReply(reply) {
+      // console.log(`[reply.store replyStore] - addReply`, JSON.stringify(reply, null, 2))
       this.loading = true
       this.error = null
       try {
-        const response = await axios.post(`${API_URL}/message/addMessage`, message)
-        this.messages.push(response.data)
+        const response = await axios.post(`${API_URL}/reply/addReply`, reply)
+        this.replies.push(response.data)
       } catch (error) {
         this.error = error
       } finally {
@@ -47,12 +46,12 @@ export const useMessageStore = defineStore('message', {
       }
     },
 
-    async deleteMessage(messageId) {
+    async deleteReply(replyId) {
       this.loading = true
       this.error = null
       try {
-        await axios.delete(`${API_URL}/message/deleteMessageById`, messageId)
-        this.messages = this.messages.filter((message) => message._id !== messageId)
+        await axios.delete(`${API_URL}/reply/deleteReplyById`, replyId)
+        this.replies = this.replies.filter((reply) => reply._id !== replyId)
       } catch (error) {
         this.error = error
       } finally {
@@ -60,45 +59,14 @@ export const useMessageStore = defineStore('message', {
       }
     },
 
-    async addReplyToMessage(message, reply) {
+    async addReplyToMessage(source, reply) {
       this.loading = true
       this.error = null
       try {
-        const replyResponse = await axios.post(
-          `${API_URL}/reply/addReplyToMessage/${message._id}`,
-          reply
-        )
+        const response = await axios.post(`${API_URL}/reply/addReplyToMessage/${source._id}`, reply)
+        console.log('$$$$$$$$$$$$$$response:$$$$$$$$$$$$$$$', response)
 
-        console.log(`$$$$$$$$$$$$$$ ${JSON.stringify(replyResponse.data, null, 2)}`)
-
-        const messageResponse = await axios.get(`${API_URL}/message/${message._id}`)
-        const messageIndex = this.messages.findIndex((msg) => msg._id === message._id)
-
-        if (messageIndex !== -1) {
-          this.messages[messageIndex] = messageResponse.data
-        }
-
-        // this.messages = messageResponse.data
-
-        // messageResponse.data.replies.push(replyResponse)
-        // console.log('message Response: ', messageResponse.data)
-
-        // const foundReply = replyResponse.data
-        // const foundMessage = messageResponse.data
-
-        // console.log(`rep:${JSON.stringify(foundReply, null, 2)}`)
-        // console.log(`msg:${JSON.stringify(foundMessage, null, 2)}`)
-
-        // if (replyResponse) {
-        //   this.replies.push(foundReply)
-        // }
-
-        // if (foundMessage) {
-        //   console.log('---------------------msg found --------------------')
-        //   this.replies.push(foundReply)
-        //   foundMessage.replies.push(foundReply)
-        //   console.log('Found Message: ', foundMessage)
-        // }
+        reply.replies.push(reply)
       } catch (error) {
         this.error = error
       } finally {
@@ -110,11 +78,11 @@ export const useMessageStore = defineStore('message', {
       source.replies.push(reply)
     },
 
-    async fetchMessage(id) {
+    async fetchReply(id) {
       this.note = null
       this.loading = true
       try {
-        this.message = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
+        this.reply = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
           (response) => response.json()
         )
       } catch (error) {
@@ -140,11 +108,11 @@ export const useMessageStore = defineStore('message', {
 
     async deleteReply(msgId, reply, replyId, depth) {
       if (depth == 0) {
-        let message = this.messages.find((message) => message.id === msgId)
-        let index = message.replies.findIndex((reply) => reply.id === replyId)
-        let replies = [...message.replies]
+        let reply = this.replies.find((reply) => reply.id === msgId)
+        let index = reply.replies.findIndex((reply) => reply.id === replyId)
+        let replies = [...reply.replies]
         replies.splice(index, 1)
-        message.replies = replies
+        reply.replies = replies
       } else {
         console.log('Deleting a reply to a reply')
 

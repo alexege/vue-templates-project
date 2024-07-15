@@ -230,7 +230,7 @@ onMounted(() => {
         <li class="profile">
           <div class="profile-details">
             <div class="name_job">
-              <div class="name" v-if="user && user.data">{{ user?.data.username }}</div>
+              <div class="name" v-if="user && user.username">{{ user.username }}</div>
               <div class="job">Software Developer</div>
             </div>
           </div>
