@@ -8,24 +8,18 @@ module.exports = (app) => {
     next();
   });
 
-  //Get All Replies
-  app.get("/api/reply/allReplies", controller.getReplies);
+  //Add Reply
+  app.post("/api/replies", controller.createReply);
 
-  //Get a Reply by Id
-  app.get("/api/reply/:id", controller.findReplyById);
+  //Get Reply
+  app.get("/api/replies", controller.getAllReplies);
 
-  //Add a Reply
-  app.post("/api/reply/addReply", controller.addReply);
+  //Get Reply by Id
+  app.get("/api/replies/:id", controller.getReplyById);
 
-  //Add Reply to Message
-  app.post("/api/reply/addReplyToMessage/:id", controller.addReplyToMessage);
+  //Update Reply by Id
+  app.put("/api/replies/:id", controller.updateReplyById);
 
-  //Add Reply to Reply
-  //   app.post("/api/reply/addReplyToReply", controller.addReplyToReply);
-
-  //Update a Reply
-  app.patch("/api/reply/update/:id", controller.updateReplyById);
-
-  //Delete a Reply
-  app.delete("/api/reply/:id", controller.deleteReplyById);
+  //Delete Reply
+  app.delete("/api/replies/:id", controller.deleteReplyById);
 };

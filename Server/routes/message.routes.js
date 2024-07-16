@@ -7,19 +7,24 @@ module.exports = (app) => {
     );
     next();
   });
+  //Add Message
+  app.post("/api/messages", controller.createMessage);
 
-  //Get All Messages
-  app.get("/api/message/allMessages", controller.getMessages);
+  //Get Message
+  app.get("/api/messages", controller.getAllMessages);
 
-  //Get a Message by Id
-  app.get("/api/message/:id", controller.findMessageById);
+  //Get Message by Id
+  app.get("/api/messages/:id", controller.getMessageById);
 
-  //Add a Message
-  app.post("/api/message/addMessage", controller.addMessage);
+  //Update Message by Id
+  app.put("/api/messages/:id", controller.updateMessageById);
 
-  //Update a Message
-  app.patch("/api/message/update/:id", controller.updateMessageById);
+  //Delete Message
+  app.delete("/api/messages/:id", controller.deleteMessageById);
 
-  //Delete a Message
-  app.delete("/api/message/:id", controller.deleteMessageById);
+  //Add Reply to Message
+  app.post("/api/messages/:id/reply", controller.addReplyToMessage);
+
+  //Add Reply to Reply
+  app.post("/api/replies/:id/reply", controller.addReplyToReply);
 };

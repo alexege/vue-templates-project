@@ -14,10 +14,10 @@ const addReply_ToReply = (item, idx) => {
     content: replyData.content,
     replies: [],
     depth: props.depth,
-    id: Date.now().toString().slice(-5),
-    author: JSON.parse(localStorage.getItem('user')).id || "Author"
+    authorId: JSON.parse(localStorage.getItem('user')).id || "Author"
   }
-  messageStore.addReplyToReply(item, reply)
+  messageStore.addReplyToReply(item._id, reply)
+  replyData.replies = []
   replyData.content = ''
 }
 // Toggle Dynamic Replies Independantly
@@ -25,7 +25,7 @@ import TransitionExpand from '../transitions/TransitionExpand.vue'
 //Set initial state
 const toggleStates = reactive({})
 if (!toggleStates[props.id]) {
-  toggleStates[props.id] = ref(false)
+  toggleStates[props.id] = ref(true)
 }
 const toggle = (id) => {
   toggleStates[id] = !toggleStates[id]
@@ -34,7 +34,8 @@ const nextId = () => {
   return `${props.id}-child` // Example of generating unique IDs
 }
 const deleteReply = (messageId, reply, replyId, depth) => {
-  messageStore.deleteReply(messageId, reply, replyId, depth)
+  messageStore.deleteReplyById(messageId, replyId)
+  // messageStore.deleteReplyById(messageId, reply, replyId, depth)
   // if (confirm(`msgId: ${messageId}, replyId: ${replyId}`) == true) {
   // }
 }
@@ -44,14 +45,15 @@ const deleteReply = (messageId, reply, replyId, depth) => {
     <ul class="replies" v-if="props.replies && props.replies.length">
       <div v-for="(message, index) in props.message.replies" :key="index" class="reply">
         <div class="message">
-          <div class="close-btn" @click="deleteReply(props.message.id, props.message, message.id, depth)">
+          <div class="close-btn" @click="deleteReply(props.message._id, props.message, message._id, depth)">
             <span class="material-symbols-outlined"> close </span>
           </div>
           <div class="user-prof">
-            <span class="author">Author Name</span>
+            <span class="author" v-if="message.author">{{ message.author ? message.author.username : 'Author Name'
+              }}</span>
             <span class="material-symbols-outlined icon"> account_circle </span>
             <div class="message-footer">
-              {{ new Date().toLocaleTimeString() }}
+              <span v-if="message.createdAt">{{ new Date(message.createdAt).toLocaleTimeString() }}</span>
             </div>
           </div>
           <div class="message-box">

@@ -75,7 +75,19 @@ export const useReplyStore = defineStore('reply', {
     },
 
     async addReplyToReply(source, reply) {
-      source.replies.push(reply)
+      console.log('<?><><><><> add reply to reply')
+      this.loading = true
+      this.error = null
+      try {
+        const response = await axios.post(`${API_URL}/reply/addReplyToReply/${source._id}`, reply)
+
+        reply.replies.push(reply)
+      } catch (errror) {
+        this.error = error
+      } finally {
+        this.loading = false
+      }
+      // source.replies.push(reply)
     },
 
     async fetchReply(id) {

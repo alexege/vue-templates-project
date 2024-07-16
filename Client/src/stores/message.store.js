@@ -1,9 +1,11 @@
+/*
+ *   Keep the Pinia Store for:
+ *   - Managing application state, performing API requests, handling data.
+ */
 import axios from 'axios'
 import { defineStore, storeToRefs } from 'pinia'
 import { useAuthStore } from './auth.store'
-
 const API_URL = 'http://localhost:8080/api'
-
 export const useMessageStore = defineStore('message', {
   state: () => ({
     messages: [],
@@ -15,15 +17,29 @@ export const useMessageStore = defineStore('message', {
   getters: {
     allMessages() {
       return this.messages
+    },
+    allReplies() {
+      return this.replies
     }
   },
   actions: {
-    async fetchMessages() {
-      // console.log(`[message.store messageStore] - fetchMessages`)
+    async createMessage(message) {
       this.loading = true
       this.error = null
       try {
-        const response = await axios.get(`${API_URL}/message/allMessages`)
+        const response = await axios.post(`${API_URL}/messages`, message)
+        this.messages.push(response.data)
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.loading = false
+      }
+    },
+    async getAllMessages() {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await axios.get(`${API_URL}/messages`)
         this.messages = response.data
       } catch (error) {
         this.error = error
@@ -32,26 +48,36 @@ export const useMessageStore = defineStore('message', {
         this.loading = false
       }
     },
-
-    async addMessage(message) {
-      // console.log(`[message.store messageStore] - addMessage`, JSON.stringify(message, null, 2))
+    async getAllReplies() {
       this.loading = true
       this.error = null
       try {
-        const response = await axios.post(`${API_URL}/message/addMessage`, message)
-        this.messages.push(response.data)
+        const response = await axios.get(`${API_URL}/replies`)
+        this.replies = response.data
+      } catch (error) {
+        this.error = error
+        console.error(error)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getMessageById(messageId) {
+      this.note = null
+      this.loading = true
+      try {
+        const response = await axios.get(`${API_URL}/messages/${messageId}`)
+        this.message = response.data
       } catch (error) {
         this.error = error
       } finally {
         this.loading = false
       }
     },
-
-    async deleteMessage(messageId) {
+    async deleteMessageById(messageId) {
       this.loading = true
       this.error = null
       try {
-        await axios.delete(`${API_URL}/message/deleteMessageById`, messageId)
+        await axios.delete(`${API_URL}/messages/${messageId}`)
         this.messages = this.messages.filter((message) => message._id !== messageId)
       } catch (error) {
         this.error = error
@@ -59,71 +85,82 @@ export const useMessageStore = defineStore('message', {
         this.loading = false
       }
     },
-
-    async addReplyToMessage(message, reply) {
+    async updateMessageById(messageId, updateData) {
       this.loading = true
       this.error = null
       try {
-        const replyResponse = await axios.post(
-          `${API_URL}/reply/addReplyToMessage/${message._id}`,
-          reply
-        )
+        await axios.put(`${API_URL}/messages/${messageId}`, updateData)
+        const index = this.messages.findIndex((msg) => msg._id === messageId)
+        if (index !== -1) {
+          this.messages[index] = updateData
+        }
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.loading = false
+      }
+    },
+    async addReplyToMessage(messageId, reply) {
+      this.loading = true
+      this.error = null
+      try {
+        //Creates and links new Reply to Message
+        const replyResponse = await axios.post(`${API_URL}/messages/${messageId}/reply`, reply)
+        // this.replies.push(replyResponse.data) //Retrieve the newly updated Message
 
-        console.log(`$$$$$$$$$$$$$$ ${JSON.stringify(replyResponse.data, null, 2)}`)
-
-        const messageResponse = await axios.get(`${API_URL}/message/${message._id}`)
-        const messageIndex = this.messages.findIndex((msg) => msg._id === message._id)
+        const message = await axios.get(`${API_URL}/messages/${messageId}`)
+        const messageIndex = this.messages.findIndex((msg) => msg._id === messageId) //Replace the existing one with the new one
 
         if (messageIndex !== -1) {
-          this.messages[messageIndex] = messageResponse.data
+          this.messages[messageIndex] = message.data
+        }
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.loading = false
+      }
+    },
+    async addReplyToReply(replyId, reply) {
+      console.log(`replyId:${replyId}`)
+      console.log(`reply:${JSON.stringify(reply)}`)
+      this.loading = true
+      this.error = null
+      try {
+        //Post new reply to server
+        const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply) //Add new Reply to Reply list
+        const newReply = response.data
+        console.log('newReply:', newReply)
+
+        // Find the parent reply and update its replies list
+        const updateReplies = (replies, replyId, newReply) => {
+          for (let i = 0; i < replies.length; i++) {
+            if (replies[i]._id === replyId) {
+              replies[i].replies.push(newReply)
+              return true
+            } else if (replies[i].replies.length > 0) {
+              const updated = updateReplies(replies[i].replies, replyId, newReply)
+              if (updated) return true
+            }
+          }
+          return false
+        }
+        updateReplies(this.replies, replyId, newReply)
+
+        const updateMessageReplies = (messages, replyId, newReply) => {
+          for (let i = 0; i < messages.length; i++) {
+            const updated = updateReplies(messages[i].replies, replyId, newReply)
+            if (updated) return true
+          }
+          return false
         }
 
-        // this.messages = messageResponse.data
-
-        // messageResponse.data.replies.push(replyResponse)
-        // console.log('message Response: ', messageResponse.data)
-
-        // const foundReply = replyResponse.data
-        // const foundMessage = messageResponse.data
-
-        // console.log(`rep:${JSON.stringify(foundReply, null, 2)}`)
-        // console.log(`msg:${JSON.stringify(foundMessage, null, 2)}`)
-
-        // if (replyResponse) {
-        //   this.replies.push(foundReply)
-        // }
-
-        // if (foundMessage) {
-        //   console.log('---------------------msg found --------------------')
-        //   this.replies.push(foundReply)
-        //   foundMessage.replies.push(foundReply)
-        //   console.log('Found Message: ', foundMessage)
-        // }
+        updateMessageReplies(this.messages, replyId, newReply)
       } catch (error) {
         this.error = error
       } finally {
         this.loading = false
       }
     },
-
-    async addReplyToReply(source, reply) {
-      source.replies.push(reply)
-    },
-
-    async fetchMessage(id) {
-      this.note = null
-      this.loading = true
-      try {
-        this.message = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`).then(
-          (response) => response.json()
-        )
-      } catch (error) {
-        this.error = error
-      } finally {
-        this.loading = false
-      }
-    },
-
     async findReplyToDelete(replyId, replies) {
       for (let i = 0; i < replies.length; i++) {
         if (replies[i].id === replyId) {
@@ -137,44 +174,55 @@ export const useMessageStore = defineStore('message', {
       }
       return null
     },
+    async deleteReplyById(messageId, replyId) {
+      this.loading = true
+      this.error = null
+      try {
+        await axios.delete(`${API_URL}/replies/${replyId}`)
+        const message = this.messages.find((msg) => msg._id === messageId)
+        if (message) {
+          message.replies = message.replies.filter((reply) => reply._id !== replyId)
+        }
 
-    async deleteReply(msgId, reply, replyId, depth) {
-      if (depth == 0) {
-        let message = this.messages.find((message) => message.id === msgId)
-        let index = message.replies.findIndex((reply) => reply.id === replyId)
-        let replies = [...message.replies]
-        replies.splice(index, 1)
-        message.replies = replies
-      } else {
-        console.log('Deleting a reply to a reply')
-
-        reply.replies = reply.replies.filter((reply) => reply.id !== replyId)
+        this.replies = this.replies.filter((reply) => reply._id !== replyId)
+      } catch (error) {
+        this.error = error
+      } finally {
+        this.loading = false
       }
-
-      //Need to go in recursively and remove the reply from the parent
-
-      // if (deleted) {
-      //   //TODO do something after deleting
-      // }
-
-      // this.replies = this.replies.filter((reply) => reply.id !== replyId)
-    }
+    } // async deleteReply(msgId, reply, replyId, depth) {
+    //   if (depth == 0) {
+    //     let message = this.messages.find((message) => message.id === msgId)
+    //     let index = message.replies.findIndex((reply) => reply.id === replyId)
+    //     let replies = [...message.replies]
+    //     replies.splice(index, 1)
+    //     message.replies = replies
+    //   } else {
+    //     console.log('Deleting a reply to a reply')
+    //     reply.replies = reply.replies.filter((reply) => reply.id !== replyId)
+    //   }
+    //   //Need to go in recursively and remove the reply from the parent
+    //   // if (deleted) {
+    //   //   //TODO do something after deleting
+    //   // }
+    //   // this.replies = this.replies.filter((reply) => reply.id !== replyId)
+    // }
     // async _deleteReply(replyId, replies) {
-    //   console.log('replies.length:', replies.length)
-    //   for (let i = 0; i < replies.length; i++) {
-    //     if (replies[i].id === replyId) {
-    //       console.log(`slicing! found ${replies[i].id} == ${replyId}`)
-    //       let del = replies.splice(i, 1)
-    //       console.log(`ending reply: ${del}`)
-    //       return true
-    //     } else {
-    //       console.log('not found')
-    //       if (this._deleteReply(replyId, replies[i].replies)) {
-    //         return true
-    //       }
-    //     }
-    //   }
-    //   return false
+    //   console.log('replies.length:', replies.length)
+    //   for (let i = 0; i < replies.length; i++) {
+    //     if (replies[i].id === replyId) {
+    //       console.log(`slicing! found ${replies[i].id} == ${replyId}`)
+    //       let del = replies.splice(i, 1)
+    //       console.log(`ending reply: ${del}`)
+    //       return true
+    //     } else {
+    //       console.log('not found')
+    //       if (this._deleteReply(replyId, replies[i].replies)) {
+    //         return true
+    //       }
+    //     }
+    //   }
+    //   return false
     // }
   }
 })

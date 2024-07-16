@@ -5,7 +5,8 @@ import { storeToRefs } from 'pinia'
 import recursiveMessage from '@/components/message/recursiveMessage.vue'
 import { useMessageStore } from '@/stores/message.store'
 const messageStore = useMessageStore()
-messageStore.fetchMessages()
+messageStore.getAllMessages()
+messageStore.getAllReplies()
 const { allMessages } = storeToRefs(useMessageStore())
 const newMessage = {
   content: '',
@@ -19,7 +20,7 @@ const addMessage = () => {
     depth: newMessage.depth,
     authorId: JSON.parse(localStorage.getItem('user')).id || "Author"
   }
-  messageStore.addMessage(data)
+  messageStore.createMessage(data)
   newMessage.content = ''
 }
 const messageReply = {
@@ -28,7 +29,7 @@ const messageReply = {
   depth: 0,
   author: JSON.parse(localStorage.getItem('user')).id || "Author"
 }
-const addReply_ToMessage = (message, idx) => {
+const addReply_ToMessage = (messageId, idx) => {
   toggleStates[idx] = true
   const reply = {
     content: messageReply.content,
@@ -36,14 +37,14 @@ const addReply_ToMessage = (message, idx) => {
     depth: messageReply.depth,
     authorId: messageReply.author
   }
-  messageStore.addReplyToMessage(message, reply)
+  messageStore.addReplyToMessage(messageId, reply)
   messageReply.content = ''
 }
-// Toggle Dynamic Components Independantly
+// Toggle Dynamic Components Independently
 import TransitionExpand from '@/components/transitions/TransitionExpand.vue'
 const toggleStates = reactive({})
 if (!toggleStates[0]) {
-  toggleStates[0] = ref(false)
+  toggleStates[0] = ref(true)
 }
 const toggle = (id) => {
   toggleStates[id] = !toggleStates[id]
@@ -120,9 +121,9 @@ const { user } = storeToRefs(authStore)
           </div>
           <div class="add-reply">
             <input type="text" v-model="messageReply.content" placeholder="Add Reply to Message"
-              @keydown.enter="addReply_ToMessage(message, index)" />
+              @keydown.enter="addReply_ToMessage(message._id, index)" />
             <div class="actions">
-              <button @click="addReply_ToMessage(message, index)">Add</button>
+              <button @click="addReply_ToMessage(message._id, index)">Add</button>
               <!-- <button @click="toggleStates[index] = false">Cancel</button> -->
             </div>
           </div>
