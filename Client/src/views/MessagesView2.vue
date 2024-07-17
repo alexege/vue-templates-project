@@ -20,6 +20,7 @@ const newComment = {
 const addComment = () => {
   console.log(`Adding new comment: ${JSON.stringify(newComment, null, 2)}`)
   commentStore.createComment(newComment)
+  newComment.content = ''
 }
 
 //Adding a Comment to a Comment
@@ -38,16 +39,27 @@ const addCommentToComment = (commentId, comment) => {
 <template>
   <div>
 
+    <!-- Add New Comment -->
     <div>
       {{ newComment }} <br />
       <input type="text" v-model="newComment.content" @keydown.enter="addComment" placeholder="Add a new Comment">
       <button @click="addComment">Add</button>
     </div>
 
-    <recursive-comment />
+    <div v-for="(comment, idx) in allComments" :key="idx" class="comment">
+      base comment: {{ comment._id }}
+
+      <recursive-comment v-bind="{ comment: comment }" />
+
+    </div>
+
 
     <pre>{{ allComments }}</pre>
 
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+.comment {
+  outline: 1px solid black;
+}
+</style>
