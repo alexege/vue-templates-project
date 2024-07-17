@@ -174,23 +174,55 @@ export const useMessageStore = defineStore('message', {
       }
       return null
     },
+
     async deleteReplyById(messageId, replyId) {
       this.loading = true
       this.error = null
       try {
         await axios.delete(`${API_URL}/replies/${replyId}`)
-        const message = this.messages.find((msg) => msg._id === messageId)
-        if (message) {
-          message.replies = message.replies.filter((reply) => reply._id !== replyId)
+
+        // Recursive function to delete nested replies
+        const deleteNestedReplies = (replies, replyId) => {
+          return replies.filter((reply) => {
+            if (reply.replies.length > 0) {
+              reply.replies = deleteNestedReplies(reply.replies, replyId)
+            }
+            return reply._id !== replyId
+          })
         }
 
-        this.replies = this.replies.filter((reply) => reply._id !== replyId)
+        const message = this.messages.find((msg) => msg._id === messageId)
+        if (message) {
+          message.replies = deleteNestedReplies(message.replies, replyId)
+        }
+
+        this.replies = deleteNestedReplies(this.replies, replyId)
       } catch (error) {
         this.error = error
       } finally {
         this.loading = false
       }
-    } // async deleteReply(msgId, reply, replyId, depth) {
+    }
+
+    // async deleteReplyById(messageId, replyId) {
+    //   this.loading = true
+    //   this.error = null
+    //   try {
+    //     await axios.delete(`${API_URL}/replies/${replyId}`)
+    //     const message = this.messages.find((msg) => msg._id === messageId)
+    //     if (message) {
+    //       message.replies = message.replies.filter((reply) => reply._id !== replyId)
+    //     }
+
+    //     this.replies = this.replies.filter((reply) => reply._id !== replyId)
+    //   } catch (error) {
+    //     this.error = error
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // }
+
+    // async deleteReply(msgId, reply, replyId, depth) {
     //   if (depth == 0) {
     //     let message = this.messages.find((message) => message.id === msgId)
     //     let index = message.replies.findIndex((reply) => reply.id === replyId)

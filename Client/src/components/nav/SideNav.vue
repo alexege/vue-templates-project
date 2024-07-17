@@ -192,6 +192,15 @@ onMounted(() => {
         </li>
         <li>
           <a href="#">
+            <RouterLink to="/messages2">
+              <i class="bx bx-chat"></i>
+              <span class="links_name">Messages2</span>
+            </RouterLink>
+          </a>
+          <span class="tooltip">Messages</span>
+        </li>
+        <li>
+          <a href="#">
             <i class="bx bx-pie-chart-alt-2"></i>
             <span class="links_name">Analytics</span>
           </a>

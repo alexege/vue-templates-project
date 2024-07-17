@@ -75,6 +75,45 @@ const updateMessageById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const deleteReplyById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleteRepliesRecursively = async (replyId) => {
+      const reply = await Reply.findById(replyId).populate("replies");
+      if (!reply) return;
+
+      for (let nestedReply of reply.replies) {
+        await deleteRepliesRecursively(nestedReply._id);
+      }
+
+      await Reply.findByIdAndDelete(replyId);
+    };
+
+    // Find the parent message or reply
+    const parentMessage = await Message.findOne({ replies: id });
+    const parentReply = await Reply.findOne({ replies: id });
+
+    // Recursively delete replies
+    await deleteRepliesRecursively(id);
+
+    // Remove the reference to the deleted reply from the parent
+    if (parentMessage) {
+      parentMessage.replies.pull(id);
+      await parentMessage.save();
+    }
+    if (parentReply) {
+      parentReply.replies.pull(id);
+      await parentReply.save();
+    }
+
+    res.status(200).json({ message: "Reply deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const deleteMessageById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -191,6 +230,7 @@ module.exports = {
   getMessageById,
   updateMessageById,
   deleteMessageById,
+  deleteReplyById,
   addReplyToMessage,
   addReplyToReply,
   populateReplies,
