@@ -120,47 +120,63 @@ export const useMessageStore = defineStore('message', {
         this.loading = false
       }
     },
-    async addReplyToReply(replyId, reply) {
-      console.log(`replyId:${replyId}`)
-      console.log(`reply:${JSON.stringify(reply)}`)
+    async addReplyToReply(sourceId, replyId, reply) {
       this.loading = true
       this.error = null
       try {
-        //Post new reply to server
-        const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply) //Add new Reply to Reply list
+        //Controller Logic
+        const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply)
         const newReply = response.data
-        console.log('newReply:', newReply)
+        console.log(`new reply is: ${JSON.stringify(newReply, null, 2)}`)
 
-        // Find the parent reply and update its replies list
-        const updateReplies = (replies, replyId, newReply) => {
-          for (let i = 0; i < replies.length; i++) {
-            if (replies[i]._id === replyId) {
-              replies[i].replies.push(newReply)
-              return true
-            } else if (replies[i].replies.length > 0) {
-              const updated = updateReplies(replies[i].replies, replyId, newReply)
-              if (updated) return true
-            }
-          }
-          return false
-        }
-        updateReplies(this.replies, replyId, newReply)
-
-        const updateMessageReplies = (messages, replyId, newReply) => {
-          for (let i = 0; i < messages.length; i++) {
-            const updated = updateReplies(messages[i].replies, replyId, newReply)
-            if (updated) return true
-          }
-          return false
-        }
-
-        updateMessageReplies(this.messages, replyId, newReply)
+        //Pinia Logic
       } catch (error) {
         this.error = error
       } finally {
         this.loading = false
       }
     },
+    // async addReplyToReply(replyId, reply) {
+    //   console.log(`replyId:${replyId}`)
+    //   console.log(`reply:${JSON.stringify(reply)}`)
+    //   this.loading = true
+    //   this.error = null
+    //   try {
+    //     //Post new reply to server
+    //     const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply) //Add new Reply to Reply list
+    //     const newReply = response.data
+    //     console.log('newReply:', newReply)
+
+    //     // Find the parent reply and update its replies list
+    //     const updateReplies = (replies, replyId, newReply) => {
+    //       for (let i = 0; i < replies.length; i++) {
+    //         if (replies[i]._id === replyId) {
+    //           replies[i].replies.push(newReply)
+    //           return true
+    //         } else if (replies[i].replies.length > 0) {
+    //           const updated = updateReplies(replies[i].replies, replyId, newReply)
+    //           if (updated) return true
+    //         }
+    //       }
+    //       return false
+    //     }
+    //     updateReplies(this.replies, replyId, newReply)
+
+    //     const updateMessageReplies = (messages, replyId, newReply) => {
+    //       for (let i = 0; i < messages.length; i++) {
+    //         const updated = updateReplies(messages[i].replies, replyId, newReply)
+    //         if (updated) return true
+    //       }
+    //       return false
+    //     }
+
+    //     updateMessageReplies(this.messages, replyId, newReply)
+    //   } catch (error) {
+    //     this.error = error
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
     async findReplyToDelete(replyId, replies) {
       for (let i = 0; i < replies.length; i++) {
         if (replies[i].id === replyId) {

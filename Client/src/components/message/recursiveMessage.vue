@@ -1,25 +1,28 @@
 <script setup>
-const props = defineProps(['replies', 'message', 'depth', 'id', 'msgId'])
 import { ref, reactive } from 'vue'
+const props = defineProps(['replies', 'message', 'depth', 'id', 'msgId', 'sourceId'])
+
+//Store Imports
 import { useMessageStore } from '@/stores/message.store';
 const messageStore = useMessageStore()
 
+//Add a Reply to Message
 const replyData = {
   content: '',
 }
 
-const addReply_ToReply = (item, idx) => {
+const addReply_ToReply = (replyId, idx) => {
   toggleStates[idx] = true
   const reply = {
     content: replyData.content,
+    depth: props.depth + 1,
     replies: [],
-    depth: props.depth,
-    authorId: JSON.parse(localStorage.getItem('user')).id || "Author"
+    author: JSON.parse(localStorage.getItem('user')).id || null
   }
-  messageStore.addReplyToReply(item._id, reply)
-  replyData.replies = []
+  messageStore.addReplyToReply(props.sourceId, replyId, reply)
   replyData.content = ''
 }
+
 // Toggle Dynamic Replies Independantly
 import TransitionExpand from '../transitions/TransitionExpand.vue'
 //Set initial state
@@ -72,10 +75,14 @@ const deleteReply = (messageId, reply, replyId, depth) => {
         </a>
         <TransitionExpand :key="`Reply-${index}`">
           <div v-if="toggleStates[index]">
+
+
             <recursiveMessage v-bind="{
               message: message,
               replies: message.replies
-            }" :depth="props.depth + 1" :id="nextId(index)" :msgId="props.msgId" />
+            }" :depth="props.depth + 1" :id="nextId(index)" :msgId="props.msgId" :sourceId="props.sourceId" />
+
+
           </div>
         </TransitionExpand>
         <!-- Add Reply -->
@@ -83,14 +90,16 @@ const deleteReply = (messageId, reply, replyId, depth) => {
           <div class="user-icon">
             <span class="material-symbols-outlined"> account_circle </span>
           </div>
+
           <div class="add-reply">
             <input type="text" placeholder="Add Reply to Reply" v-model="replyData.content"
-              @keydown.enter="addReply_ToReply(message, index)" />
+              @keydown.enter="addReply_ToReply(message._id, index)" />
             <div class="actions">
-              <button @click="addReply_ToReply(message, index)">Add</button>
+              <button @click="addReply_ToReply(message._id, index)">Add</button>
               <!-- <a @click="toggleStates[index] = false">Cancel</a> -->
             </div>
           </div>
+
         </div>
       </div>
     </ul>

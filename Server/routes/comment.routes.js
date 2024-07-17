@@ -13,8 +13,8 @@ module.exports = (app) => {
   //Get Comment
   app.get("/api/comments", controller.getAllComments);
 
-  // //Get Comment by Id
-  // app.get("/api/comments/:id", controller.getCommentById);
+  //Get Comment by Id
+  app.get("/api/comments/:id", controller.getCommentById);
 
   // //Update Comment by Id
   // app.put("/api/comments/:id", controller.updateCommentById);
@@ -22,9 +22,6 @@ module.exports = (app) => {
   //Delete Comment
   app.delete("/api/comments/:id", controller.deleteCommentById);
 
-  // //Add Reply to Comment
-  // app.post("/api/comments/:id/reply", controller.addReplyToComment);
-
-  // //Add Reply to Reply
-  // app.post("/api/replies/:id/reply", controller.addReplyToReply);
+  // //Add Comment to Comment
+  app.post("/api/comments/:id/comment", controller.addCommentToComment);
 };

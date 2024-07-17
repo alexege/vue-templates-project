@@ -12,13 +12,14 @@ const { allComments } = storeToRefs(useCommentStore())
 //Adding a new Comment
 const newComment = {
   content: '',
+  depth: 0,
   parentId: null,
   comments: [],
   author: JSON.parse(localStorage.getItem('user')).id || null
 }
 
 const addComment = () => {
-  console.log(`Adding new comment: ${JSON.stringify(newComment, null, 2)}`)
+  // console.log(`Adding new comment: ${JSON.stringify(newComment, null, 2)}`)
   commentStore.createComment(newComment)
   newComment.content = ''
 }
@@ -45,7 +46,7 @@ const deleteComment = (commentId) => {
 
       [b] - {{ comment._id.slice(-5) }} - {{ comment.content }}
 
-      <recursive-comment v-bind="{ comment: comment }" />
+      <recursive-comment v-bind="{ comment: comment }" :parentId="comment._id" :sourceId="comment._id" :depth="0" />
 
     </div>
 

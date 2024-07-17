@@ -7,6 +7,9 @@ const Comment = mongoose.model(
       content: {
         type: String,
       },
+      depth: {
+        type: Number,
+      },
       parentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",

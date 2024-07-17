@@ -4,14 +4,22 @@
  */
 const User = require("../models/user.model");
 const { Message, Reply } = require("../models/message.model");
+
 const createMessage = async (req, res) => {
+  console.log("req.body: ", req.body);
+  const authorId = req.body.author;
   try {
     const message = new Message(req.body); //Add author to message
-    const { authorId } = req.body;
+
+    //Find author by authorId and set new Message's author to that author Object
+    // const { author } = req.body;
     const author = await User.findById(authorId);
     if (!author) return res.status(404).json({ message: "Author not found" });
-    message.author = authorId;
+    message.author = author;
     await message.save();
+
+    console.log("message:", message);
+
     res.status(201).json(message);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -129,10 +137,16 @@ const deleteMessageById = async (req, res) => {
 };
 const addReplyToMessage = async (req, res) => {
   console.log("Getting to reply to message: ", req.body);
-  const { content, replies, depth, authorId } = req.body;
+  const authorId = req.body.author;
   try {
     //Create a new reply
-    const newReply = new Reply({ content, replies, depth, author: authorId }); //Save the reply
+    const newReply = new Reply(req.body); //Save the reply
+
+    //Populate the author
+    const author = await User.findById(authorId);
+    if (!author) return res.status(404).json({ message: "Author not found" });
+    newReply.author = author;
+
     await newReply.save(); //Add the reply to the message's replies array
 
     await Message.findByIdAndUpdate(
@@ -169,61 +183,85 @@ const addReplyToMessage = async (req, res) => {
 };
 const addReplyToReply = async (req, res) => {
   console.log("Getting to reply to reply: ", req.body);
-
-  const { content, replies, depth, authorId } = req.body;
+  const authorId = req.body.author;
   try {
     //Create a new reply
-    const newReply = new Reply({ content, replies, depth, author: authorId }); //Save the reply
+    const newReply = new Reply(req.body); //Save the reply
+
+    //Populate the author
+    const author = await User.findById(authorId);
+    if (!author) return res.status(404).json({ message: "Author not found" });
+    newReply.author = author;
+
     const savedReply = await newReply.save(); //Add the reply to the source reply's replies array
-    console.log("-----newReply-----:", savedReply);
 
-    const parentReply = await Reply.findById(req.params.id);
-    if (!parentReply) {
-      return res.status(404).json({ message: "Parent reply not found" });
-    }
-
-    parentReply.replies.push(savedReply._id);
-    await parentReply.save();
-
-    const topLevelReplyId = req.params.id;
-
-    populateReplies(topLevelReplyId)
-      .then((populatedReply) => {
-        console.log("Populated reply:", populatedReply);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-
-    // await Reply.findByIdAndUpdate(
-    //   req.params.id,
-    //   {
-    //     $push: {
-    //       replies: newReply._id,
-    //     },
-    //   },
-    //   {
-    //     new: true,
-    //     useFindAndModify: false,
-    //   }
-    // ).populate("replies");
-    //   .populate("author")
-    //   .populate("replies");
-    // console.log("rep - sending back: ", savedReply);
-    // console.log("rep - sending back: ", newReply);
-
-    const populatedReply = await Reply.findById(savedReply._id).populate(
-      "author"
-    );
-    console.log("rep - sending back: ", populatedReply);
-
-    res.status(201).json(populatedReply);
-    // res.status(201).json(savedReply);
-    // res.status(201).json(newReply);
+    res.status(200).json(savedReply);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+// const addReplyToReply = async (req, res) => {
+//   console.log("Getting to reply to reply: ", req.body);
+//   const authorId = req.body.author;
+//   try {
+//     //Create a new reply
+//     const newReply = new Reply(req.body); //Save the reply
+
+//     //Populate the author
+//     const author = await User.findById(authorId);
+//     if (!author) return res.status(404).json({ message: "Author not found" });
+//     newReply.author = author;
+
+//     const savedReply = await newReply.save(); //Add the reply to the source reply's replies array
+
+//     const parentReply = await Reply.findById(req.params.id);
+//     if (!parentReply) {
+//       return res.status(404).json({ message: "Parent reply not found" });
+//     }
+
+//     parentReply.replies.push(savedReply._id);
+//     await parentReply.save();
+
+//     const topLevelReplyId = req.params.id;
+
+//     populateReplies(topLevelReplyId)
+//       .then((populatedReply) => {
+//         console.log("Populated reply:", populatedReply);
+//       })
+//       .catch((error) => {
+//         console.error("Error:", error);
+//       });
+
+//     // await Reply.findByIdAndUpdate(
+//     //   req.params.id,
+//     //   {
+//     //     $push: {
+//     //       replies: newReply._id,
+//     //     },
+//     //   },
+//     //   {
+//     //     new: true,
+//     //     useFindAndModify: false,
+//     //   }
+//     // ).populate("replies");
+//     //   .populate("author")
+//     //   .populate("replies");
+//     // console.log("rep - sending back: ", savedReply);
+//     // console.log("rep - sending back: ", newReply);
+
+//     const populatedReply = await Reply.findById(savedReply._id).populate(
+//       "author"
+//     );
+//     console.log("rep - sending back: ", populatedReply);
+
+//     res.status(201).json(populatedReply);
+//     // res.status(201).json(savedReply);
+//     // res.status(201).json(newReply);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 module.exports = {
   createMessage,
   getAllMessages,

@@ -2,40 +2,40 @@
 // https://blog.logrocket.com/rendering-nested-comments-recursive-components-vue/?ref=dailydev
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
+
+//Store Imports
 import recursiveMessage from '@/components/message/recursiveMessage.vue'
 import { useMessageStore } from '@/stores/message.store'
 const messageStore = useMessageStore()
 messageStore.getAllMessages()
 messageStore.getAllReplies()
 const { allMessages } = storeToRefs(useMessageStore())
+
+//Add a new Message
 const newMessage = {
   content: '',
-  replies: [],
-  depth: 0,
 }
 const addMessage = () => {
   const data = {
     content: newMessage.content,
+    depth: 0,
     replies: [],
-    depth: newMessage.depth,
-    authorId: JSON.parse(localStorage.getItem('user')).id || "Author"
+    author: JSON.parse(localStorage.getItem('user')).id || null
   }
   messageStore.createMessage(data)
   newMessage.content = ''
 }
+
 const messageReply = {
   content: '',
-  replies: [],
-  depth: 0,
-  author: JSON.parse(localStorage.getItem('user')).id || "Author"
 }
 const addReply_ToMessage = (messageId, idx) => {
   toggleStates[idx] = true
   const reply = {
     content: messageReply.content,
     replies: [],
-    depth: messageReply.depth,
-    authorId: messageReply.author
+    depth: 1,
+    author: JSON.parse(localStorage.getItem('user')).id || null
   }
   messageStore.addReplyToMessage(messageId, reply)
   messageReply.content = ''
@@ -68,7 +68,6 @@ const { user } = storeToRefs(authStore)
 </script>
 <template>
   <div class="message-container">
-    {{ user.username }}
     <!-- <pre>{{ allMessages }}</pre> -->
     <!-- <pre v-for="message in allMessages" :key="message.id">{{ message.replies }}</pre> -->
     <div class="add-message">
@@ -111,7 +110,7 @@ const { user } = storeToRefs(authStore)
             <recursiveMessage v-bind="{
               message: message,
               replies: message.replies
-            }" :depth="0" :id="nextId(index)" :msgId="message.id" />
+            }" :depth="0" :id="nextId(index)" :msgId="message.id" :sourceId="message._id" />
           </div>
         </TransitionExpand>
         <!-- Add Reply -->
