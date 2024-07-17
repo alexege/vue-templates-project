@@ -38,6 +38,14 @@ const addCommentToComment = (parentId) => {
     <!-- <div v-for="(comment, idx) in props.comment.replies">
       <recursive-comment />
     </div> -->
+
+    <!-- Add New Comment -->
+    <div>
+      <input type="text" v-model="newCommentComment.content" @keydown.enter="addCommentToComment"
+        placeholder="Add a new Comment">
+      <button @click="addCommentToComment">Add</button>
+    </div>
+
   </div>
 </template>
 <style scoped></style>

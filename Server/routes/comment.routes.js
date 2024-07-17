@@ -19,8 +19,8 @@ module.exports = (app) => {
   // //Update Comment by Id
   // app.put("/api/comments/:id", controller.updateCommentById);
 
-  // //Delete Comment
-  // app.delete("/api/comments/:id", controller.deleteCommentById);
+  //Delete Comment
+  app.delete("/api/comments/:id", controller.deleteCommentById);
 
   // //Add Reply to Comment
   // app.post("/api/comments/:id/reply", controller.addReplyToComment);

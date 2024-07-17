@@ -23,16 +23,8 @@ const addComment = () => {
   newComment.content = ''
 }
 
-//Adding a Comment to a Comment
-const newCommentComment = {
-  content: '',
-  parentId: null,
-  comments: [],
-  author: JSON.parse(localStorage.getItem('user')).id || null
-}
-
-const addCommentToComment = (commentId, comment) => {
-
+const deleteComment = (commentId) => {
+  commentStore.deleteCommentById(commentId)
 }
 
 </script>
@@ -41,18 +33,21 @@ const addCommentToComment = (commentId, comment) => {
 
     <!-- Add New Comment -->
     <div>
-      {{ newComment }} <br />
       <input type="text" v-model="newComment.content" @keydown.enter="addComment" placeholder="Add a new Comment">
       <button @click="addComment">Add</button>
     </div>
 
     <div v-for="(comment, idx) in allComments" :key="idx" class="comment">
-      base comment: {{ comment._id }}
+
+      <div class="close-btn" @click="deleteComment(comment._id)">
+        <span class="material-symbols-outlined"> close </span>
+      </div>
+
+      [b] - {{ comment._id.slice(-5) }} - {{ comment.content }}
 
       <recursive-comment v-bind="{ comment: comment }" />
 
     </div>
-
 
     <pre>{{ allComments }}</pre>
 
@@ -61,5 +56,17 @@ const addCommentToComment = (commentId, comment) => {
 <style scoped>
 .comment {
   outline: 1px solid black;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 16px;
 }
 </style>

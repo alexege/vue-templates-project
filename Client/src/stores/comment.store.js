@@ -57,6 +57,11 @@ export const useCommentStore = defineStore('comment', {
       this.loading = true
       this.error = null
       try {
+        //Controller Logic
+        await axios.delete(`${API_URL}/comments/${commentId}`)
+
+        //Pinia Logic to delete Comment
+        this.comments = this.comments.filter((comment) => comment._id !== commentId)
       } catch (error) {
         this.error = error
       } finally {
