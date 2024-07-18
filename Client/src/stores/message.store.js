@@ -5,7 +5,6 @@
 import axios from 'axios'
 import { defineStore, storeToRefs } from 'pinia'
 import { useAuthStore } from './auth.store'
-import { findLastChildReply } from '@/helpers/findLastChildReply'
 const API_URL = 'http://localhost:8080/api'
 export const useMessageStore = defineStore('message', {
   state: () => ({
@@ -80,6 +79,8 @@ export const useMessageStore = defineStore('message', {
       try {
         await axios.delete(`${API_URL}/messages/${messageId}`)
         this.messages = this.messages.filter((message) => message._id !== messageId)
+
+        //Delete all Reply Objects associated with the Parent Message
       } catch (error) {
         this.error = error
       } finally {
@@ -147,7 +148,7 @@ export const useMessageStore = defineStore('message', {
         console.log('message:', message)
 
         //Find the current Reply in the Message's replies list
-        const currentReply = findLastChildReply(this.messages, replyId)
+        const currentReply = this.findLastChildReply(this.messages, replyId)
         console.log('child:', currentReply)
 
         // console.log('finall is: ', newReply)
@@ -161,47 +162,22 @@ export const useMessageStore = defineStore('message', {
         this.loading = false
       }
     },
-    // async addReplyToReply(replyId, reply) {
-    //   console.log(`replyId:${replyId}`)
-    //   console.log(`reply:${JSON.stringify(reply)}`)
-    //   this.loading = true
-    //   this.error = null
-    //   try {
-    //     //Post new reply to server
-    //     const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply) //Add new Reply to Reply list
-    //     const newReply = response.data
-    //     console.log('newReply:', newReply)
 
-    //     // Find the parent reply and update its replies list
-    //     const updateReplies = (replies, replyId, newReply) => {
-    //       for (let i = 0; i < replies.length; i++) {
-    //         if (replies[i]._id === replyId) {
-    //           replies[i].replies.push(newReply)
-    //           return true
-    //         } else if (replies[i].replies.length > 0) {
-    //           const updated = updateReplies(replies[i].replies, replyId, newReply)
-    //           if (updated) return true
-    //         }
-    //       }
-    //       return false
-    //     }
-    //     updateReplies(this.replies, replyId, newReply)
+    findLastChildReply(messages, replyId) {
+      for (let message of messages) {
+        if (message._id === replyId) {
+          return message
+        }
+        if (message.replies && message.replies.length > 0) {
+          let found = this.findLastChildReply(message.replies, replyId)
+          if (found) {
+            return found
+          }
+        }
+      }
+      return null
+    },
 
-    //     const updateMessageReplies = (messages, replyId, newReply) => {
-    //       for (let i = 0; i < messages.length; i++) {
-    //         const updated = updateReplies(messages[i].replies, replyId, newReply)
-    //         if (updated) return true
-    //       }
-    //       return false
-    //     }
-
-    //     updateMessageReplies(this.messages, replyId, newReply)
-    //   } catch (error) {
-    //     this.error = error
-    //   } finally {
-    //     this.loading = false
-    //   }
-    // },
     async findReplyToDelete(replyId, replies) {
       for (let i = 0; i < replies.length; i++) {
         if (replies[i].id === replyId) {

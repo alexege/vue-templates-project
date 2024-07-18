@@ -35,7 +35,7 @@ const addReply_ToMessage = (messageId, idx) => {
     content: messageReply.content,
     replies: [],
     parentId: null,
-    sourceId: null,
+    sourceId: null, //This value is updated in Controller
     depth: 1,
     author: JSON.parse(localStorage.getItem('user')).id || null
   }
@@ -58,7 +58,7 @@ const nextId = (id) => {
 //Delete Message
 const deleteMessage = (messageId) => {
   if (confirm(`Sure you want to delete: ${messageId}`)) {
-    messageStore.deleteMessage(messageId)
+    messageStore.deleteMessageById(messageId)
   }
 }
 
@@ -78,7 +78,7 @@ const { user } = storeToRefs(authStore)
     </div>
     <ul v-for="(message, index) in allMessages" :key="index" class="post">
       <!-- Message_id: {{ message.id }} -->
-      <div class="close-btn" @click="deleteMessage(message.id)">
+      <div class="close-btn" @click="deleteMessage(message._id)">
         <span class="material-symbols-outlined"> close </span>
       </div>
       <div class="message">
@@ -133,11 +133,11 @@ const { user } = storeToRefs(authStore)
         </div>
       </div>
     </ul>
-
+    <!-- 
     Messages:
     <pre>{{ messageStore.messages }}</pre>
     Replies:
-    <pre>{{ messageStore.replies }}</pre>
+    <pre>{{ messageStore.replies }}</pre> -->
   </div>
 </template>
 <style scoped>
