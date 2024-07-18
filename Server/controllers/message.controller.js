@@ -28,6 +28,7 @@ const createMessage = async (req, res) => {
 };
 const getAllMessages = async (req, res) => {
   try {
+    //Populate all Reply Objects nested within each Message Object
     const messages = await Message.find().populate("replies");
 
     for (const message of messages) {
@@ -57,8 +58,9 @@ async function populateReplies(message) {
 const getMessageById = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundMessage = await Message.findById(id).populate("replies");
-    // .populate("author");
+    const foundMessage = await Message.findById(id)
+      .populate("replies")
+      .populate("author");
     if (!foundMessage)
       return res.status(404).json({ error: "Message not found" });
     res.status(200).json(foundMessage);
@@ -129,21 +131,20 @@ const deleteMessageById = async (req, res) => {
     if (!deletedMessage) {
       return res.status(404).json({ message: "Message not found" });
     }
-    console.log(`deleteDmsg: ${JSON.stringify(deletedMessage, null, 2)}`);
     const result = await Reply.deleteMany({
       sourceId: deletedMessage._id,
     });
 
     res.status(200).json({
-      message: `Message deleted successfully, ${result.deletedCount}`,
+      message: `Deleted Message successfully and ${result.deletedCount} associated Replies`,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
 const addReplyToMessage = async (req, res) => {
-  console.log("Getting to reply to message: ", req.body);
   const authorId = req.body.author;
   try {
     //Create a new reply
@@ -154,14 +155,17 @@ const addReplyToMessage = async (req, res) => {
     if (!author) return res.status(404).json({ message: "Author not found" });
     newReply.author = author;
 
-    const savedReply = await newReply.save(); //Add the reply to the message's replies array
-
+    //Find the source Message
     const currentMessageId = req.params.id;
     const currentMessage = await Message.findById(currentMessageId);
 
     if (!currentMessage) {
       return res.status(404).json({ message: "Message not found!" });
     }
+
+    //Update the newReply's sourceId so we can delete it later
+    newReply.sourceId = currentMessage._id;
+    const savedReply = await newReply.save(); //Add the reply to the message's replies array
 
     currentMessage.replies.push(savedReply._id);
     await currentMessage.save();
@@ -173,8 +177,6 @@ const addReplyToMessage = async (req, res) => {
 };
 
 const addReplyToReply = async (req, res) => {
-  console.log("Getting to reply to reply: ", req.body);
-  console.log("id:", req.params.id);
   const authorId = req.body.author;
   try {
     //Create a new reply
@@ -198,74 +200,12 @@ const addReplyToReply = async (req, res) => {
     currentReply.replies.push(savedReply._id);
     await currentReply.save();
 
-    // console.log("---currentReply is:---", JSON.stringify(currentReply));
     res.status(200).json(savedReply);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// const addReplyToReply = async (req, res) => {
-//   console.log("Getting to reply to reply: ", req.body);
-//   const authorId = req.body.author;
-//   try {
-//     //Create a new reply
-//     const newReply = new Reply(req.body); //Save the reply
-
-//     //Populate the author
-//     const author = await User.findById(authorId);
-//     if (!author) return res.status(404).json({ message: "Author not found" });
-//     newReply.author = author;
-
-//     const savedReply = await newReply.save(); //Add the reply to the source reply's replies array
-
-//     const parentReply = await Reply.findById(req.params.id);
-//     if (!parentReply) {
-//       return res.status(404).json({ message: "Parent reply not found" });
-//     }
-
-//     parentReply.replies.push(savedReply._id);
-//     await parentReply.save();
-
-//     const topLevelReplyId = req.params.id;
-
-//     populateReplies(topLevelReplyId)
-//       .then((populatedReply) => {
-//         console.log("Populated reply:", populatedReply);
-//       })
-//       .catch((error) => {
-//         console.error("Error:", error);
-//       });
-
-//     // await Reply.findByIdAndUpdate(
-//     //   req.params.id,
-//     //   {
-//     //     $push: {
-//     //       replies: newReply._id,
-//     //     },
-//     //   },
-//     //   {
-//     //     new: true,
-//     //     useFindAndModify: false,
-//     //   }
-//     // ).populate("replies");
-//     //   .populate("author")
-//     //   .populate("replies");
-//     // console.log("rep - sending back: ", savedReply);
-//     // console.log("rep - sending back: ", newReply);
-
-//     const populatedReply = await Reply.findById(savedReply._id).populate(
-//       "author"
-//     );
-//     console.log("rep - sending back: ", populatedReply);
-
-//     res.status(201).json(populatedReply);
-//     // res.status(201).json(savedReply);
-//     // res.status(201).json(newReply);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 module.exports = {
   createMessage,
   getAllMessages,
