@@ -34,6 +34,8 @@ const addReply_ToMessage = (messageId, idx) => {
   const reply = {
     content: messageReply.content,
     replies: [],
+    parentId: null,
+    sourceId: null,
     depth: 1,
     author: JSON.parse(localStorage.getItem('user')).id || null
   }

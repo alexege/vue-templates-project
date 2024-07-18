@@ -12,15 +12,19 @@ const replyData = {
 }
 
 const addReply_ToReply = (replyId, idx) => {
+
+  console.log(`dpeth is: ${props.depth}`)
   toggleStates[idx] = true
   const reply = {
     content: replyData.content,
     depth: props.depth + 1,
-    parentId: props.depth == 0 ? null : props.parentId,
+    parentId: props.parentId,
     sourceId: props.sourceId,
     replies: [],
     author: JSON.parse(localStorage.getItem('user')).id || null
   }
+
+  // parentId: props.depth == 0 ? null : props.parentId,
 
   console.log("depth:", props.depth)
   console.log("parentId:", reply.parentId)
@@ -71,6 +75,7 @@ const deleteReply = (messageId, reply, replyId, depth) => {
               {{ message.content }}
             </div>
             <pre>{{ message._id }}</pre>
+            [R]
             source: {{ props.sourceId }} <br />
             parent: {{ props.parentId }} <br />
             depth: {{ props.depth }}

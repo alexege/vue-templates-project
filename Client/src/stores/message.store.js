@@ -128,7 +128,7 @@ export const useMessageStore = defineStore('message', {
       console.log(`----------------Add Reply To Reply----------------`)
       console.log(`sourceId: ${sourceId}`)
       console.log(`replyId: ${replyId}`)
-      console.log(`reply: ${JSON.stringify(reply)}`)
+      // console.log(`reply: ${JSON.stringify(reply)}`)
 
       this.loading = true
       this.error = null
@@ -136,7 +136,7 @@ export const useMessageStore = defineStore('message', {
         //Controller Logic
         const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply)
         const newReply = response.data
-        // console.log(`new reply is: ${JSON.stringify(newReply, null, 2)}`)
+        console.log(`new reply is: ${JSON.stringify(newReply, null, 2)}`)
 
         //Pinia Logic
 
@@ -147,10 +147,10 @@ export const useMessageStore = defineStore('message', {
         console.log('message:', message)
 
         //Find the current Reply in the Message's replies list
-        const currentReply = findLastChildReply(message, replyId)
+        const currentReply = findLastChildReply(this.messages, replyId)
         console.log('child:', currentReply)
 
-        console.log('finall is: ', newReply)
+        // console.log('finall is: ', newReply)
 
         currentReply.replies.push(newReply)
 
