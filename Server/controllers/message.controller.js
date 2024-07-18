@@ -13,9 +13,9 @@ const createMessage = async (req, res) => {
 
     //Find author by authorId and set new Message's author to that author Object
     // const { author } = req.body;
-    const author = await User.findById(authorId);
-    if (!author) return res.status(404).json({ message: "Author not found" });
-    message.author = author;
+    // const author = await User.findById(authorId);
+    // if (!author) return res.status(404).json({ message: "Author not found" });
+    // message.author = author;
     await message.save();
 
     console.log("message:", message);
@@ -42,7 +42,8 @@ const getAllMessages = async (req, res) => {
 // Helper function to recursively populate replies
 async function populateReplies(message) {
   // Populate replies of the current message
-  await Message.populate(message, [{ path: "replies" }, { path: "author" }]);
+  await Message.populate(message, [{ path: "replies" }]);
+  // , { path: "author" }
 
   // Recursively populate each reply's replies
   if (message.replies && message.replies.length > 0) {
@@ -56,9 +57,8 @@ async function populateReplies(message) {
 const getMessageById = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundMessage = await Message.findById(id)
-      .populate("replies")
-      .populate("author");
+    const foundMessage = await Message.findById(id).populate("replies");
+    // .populate("author");
     if (!foundMessage)
       return res.status(404).json({ error: "Message not found" });
     res.status(200).json(foundMessage);
@@ -143,9 +143,9 @@ const addReplyToMessage = async (req, res) => {
     const newReply = new Reply(req.body); //Save the reply
 
     //Populate the author
-    const author = await User.findById(authorId);
-    if (!author) return res.status(404).json({ message: "Author not found" });
-    newReply.author = author;
+    // const author = await User.findById(authorId);
+    // if (!author) return res.status(404).json({ message: "Author not found" });
+    // newReply.author = author;
 
     await newReply.save(); //Add the reply to the message's replies array
 
@@ -160,7 +160,10 @@ const addReplyToMessage = async (req, res) => {
         new: true, //Returns updated document instead of original
         useFindAndModify: false, //Tells MongoDB to use native MongoDB
       }
-    ).populate("author"); //Return the updated document //Alternative option
+    );
+    // .populate("author");
+
+    //Return the updated document //Alternative option
     /*
      *   const message = await Message.findById(messageId)
      *   if (!message) {
@@ -181,8 +184,10 @@ const addReplyToMessage = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 const addReplyToReply = async (req, res) => {
   console.log("Getting to reply to reply: ", req.body);
+  console.log("id:", req.params.id);
   const authorId = req.body.author;
   try {
     //Create a new reply
@@ -195,6 +200,18 @@ const addReplyToReply = async (req, res) => {
 
     const savedReply = await newReply.save(); //Add the reply to the source reply's replies array
 
+    //Add new reply to existing reply
+    const currentReplyId = req.params.id;
+    const currentReply = await Reply.findById(currentReplyId);
+
+    if (!currentReply) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    currentReply.replies.push(savedReply._id);
+    await currentReply.save();
+
+    // console.log("---currentReply is:---", JSON.stringify(currentReply));
     res.status(200).json(savedReply);
   } catch (error) {
     res.status(500).json({ message: error.message });

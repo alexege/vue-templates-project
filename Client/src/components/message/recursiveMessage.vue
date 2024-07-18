@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
-const props = defineProps(['replies', 'message', 'depth', 'id', 'msgId', 'sourceId'])
+const props = defineProps(['replies', 'message', 'depth', 'id', 'msgId', 'sourceId', 'parentId'])
 
 //Store Imports
 import { useMessageStore } from '@/stores/message.store';
@@ -16,9 +16,15 @@ const addReply_ToReply = (replyId, idx) => {
   const reply = {
     content: replyData.content,
     depth: props.depth + 1,
+    parentId: props.depth == 0 ? null : props.parentId,
+    sourceId: props.sourceId,
     replies: [],
     author: JSON.parse(localStorage.getItem('user')).id || null
   }
+
+  console.log("depth:", props.depth)
+  console.log("parentId:", reply.parentId)
+
   messageStore.addReplyToReply(props.sourceId, replyId, reply)
   replyData.content = ''
 }
@@ -64,6 +70,10 @@ const deleteReply = (messageId, reply, replyId, depth) => {
             <div class="message-body">
               {{ message.content }}
             </div>
+            <pre>{{ message._id }}</pre>
+            source: {{ props.sourceId }} <br />
+            parent: {{ props.parentId }} <br />
+            depth: {{ props.depth }}
             <div class="message-footer">
               <!-- {{ new Date().toLocaleTimeString() }} -->
             </div>
@@ -80,7 +90,8 @@ const deleteReply = (messageId, reply, replyId, depth) => {
             <recursiveMessage v-bind="{
               message: message,
               replies: message.replies
-            }" :depth="props.depth + 1" :id="nextId(index)" :msgId="props.msgId" :sourceId="props.sourceId" />
+            }" :depth="props.depth + 1" :id="nextId(index)" :msgId="props.msgId" :parentId="message._id"
+              :sourceId="props.sourceId" />
 
 
           </div>

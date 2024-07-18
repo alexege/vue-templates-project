@@ -5,6 +5,7 @@
 import axios from 'axios'
 import { defineStore, storeToRefs } from 'pinia'
 import { useAuthStore } from './auth.store'
+import { findLastChildReply } from '@/helpers/findLastChildReply'
 const API_URL = 'http://localhost:8080/api'
 export const useMessageStore = defineStore('message', {
   state: () => ({
@@ -101,6 +102,9 @@ export const useMessageStore = defineStore('message', {
       }
     },
     async addReplyToMessage(messageId, reply) {
+      console.log(`----------------Add Message To Reply----------------`)
+      console.log(`messageId: ${messageId}`)
+      console.log(`reply: ${JSON.stringify(reply)}`)
       this.loading = true
       this.error = null
       try {
@@ -121,15 +125,36 @@ export const useMessageStore = defineStore('message', {
       }
     },
     async addReplyToReply(sourceId, replyId, reply) {
+      console.log(`----------------Add Reply To Reply----------------`)
+      console.log(`sourceId: ${sourceId}`)
+      console.log(`replyId: ${replyId}`)
+      console.log(`reply: ${JSON.stringify(reply)}`)
+
       this.loading = true
       this.error = null
       try {
         //Controller Logic
         const response = await axios.post(`${API_URL}/replies/${replyId}/reply`, reply)
         const newReply = response.data
-        console.log(`new reply is: ${JSON.stringify(newReply, null, 2)}`)
+        // console.log(`new reply is: ${JSON.stringify(newReply, null, 2)}`)
 
         //Pinia Logic
+
+        //Find the current reply
+
+        //Find the base Message
+        const message = this.messages.find((message) => message._id === sourceId)
+        console.log('message:', message)
+
+        //Find the current Reply in the Message's replies list
+        const currentReply = findLastChildReply(message, replyId)
+        console.log('child:', currentReply)
+
+        console.log('finall is: ', newReply)
+
+        currentReply.replies.push(newReply)
+
+        //Add the newReply to its replies
       } catch (error) {
         this.error = error
       } finally {

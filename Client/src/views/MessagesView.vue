@@ -92,6 +92,8 @@ const { user } = storeToRefs(authStore)
           <div class="message-body">
             {{ message.content }}
             <span v-if="message.replies">- len({{ message.replies.length }})</span>
+            <!-- <pre>{{ message }}</pre> -->
+
           </div>
           <div class="message-footer">
             <!-- {{ new Date().toLocaleTimeString() }} -->
@@ -110,7 +112,7 @@ const { user } = storeToRefs(authStore)
             <recursiveMessage v-bind="{
               message: message,
               replies: message.replies
-            }" :depth="0" :id="nextId(index)" :msgId="message.id" :sourceId="message._id" />
+            }" :depth="0" :id="nextId(index)" :msgId="message.id" :parentId="message._id" :sourceId="message._id" />
           </div>
         </TransitionExpand>
         <!-- Add Reply -->

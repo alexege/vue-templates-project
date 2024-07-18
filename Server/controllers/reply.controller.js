@@ -21,7 +21,7 @@ const getAllReplies = (req, res) => {
   try {
     Reply.find()
       .populate("replies")
-      .populate("author")
+      // .populate("author")
       .then((replies) => {
         res.status(200).json(replies);
       });
@@ -32,9 +32,8 @@ const getAllReplies = (req, res) => {
 const getReplyById = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundReply = await Reply.findById(id)
-      .populate("replies")
-      .populate("author");
+    const foundReply = await Reply.findById(id).populate("replies");
+    // .populate("author");
     if (!foundReply) return res.status(404).json({ error: "Reply not found" }); // Success
     res.status(200).json(foundReply);
   } catch (error) {

@@ -35,6 +35,12 @@ const Reply = mongoose.model(
       depth: {
         type: Number,
       },
+      parentId: {
+        type: String,
+      },
+      sourceId: {
+        type: String,
+      },
       message: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Message",
