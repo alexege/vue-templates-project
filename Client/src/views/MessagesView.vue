@@ -18,7 +18,6 @@ const newMessage = {
 const addMessage = () => {
   const data = {
     content: newMessage.content,
-    depth: 0,
     replies: [],
     author: JSON.parse(localStorage.getItem('user')).id || null
   }
@@ -36,7 +35,6 @@ const addReply_ToMessage = (messageId, idx) => {
     replies: [],
     parentId: null,
     sourceId: null, //This value is updated in Controller
-    depth: 1,
     author: JSON.parse(localStorage.getItem('user')).id || null
   }
   messageStore.addReplyToMessage(messageId, reply)
@@ -46,7 +44,7 @@ const addReply_ToMessage = (messageId, idx) => {
 import TransitionExpand from '@/components/transitions/TransitionExpand.vue'
 const toggleStates = reactive({})
 if (!toggleStates[0]) {
-  toggleStates[0] = ref(true)
+  toggleStates[0] = ref(false)
 }
 const toggle = (id) => {
   toggleStates[id] = !toggleStates[id]
@@ -114,7 +112,7 @@ const { user } = storeToRefs(authStore)
             <recursiveMessage v-bind="{
               message: message,
               replies: message.replies
-            }" :depth="0" :id="nextId(index)" :msgId="message.id" :parentId="message._id" :sourceId="message._id" />
+            }" :id="nextId(index)" :parentId="message._id" :sourceId="message._id" />
           </div>
         </TransitionExpand>
         <!-- Add Reply -->

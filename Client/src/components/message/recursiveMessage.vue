@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
-const props = defineProps(['replies', 'message', 'depth', 'id', 'msgId', 'sourceId', 'parentId'])
+const props = defineProps(['replies', 'message', 'id', 'sourceId', 'parentId'])
 
 //Store Imports
 import { useMessageStore } from '@/stores/message.store';
@@ -13,21 +13,14 @@ const replyData = {
 
 const addReply_ToReply = (replyId, idx) => {
 
-  console.log(`dpeth is: ${props.depth}`)
   toggleStates[idx] = true
   const reply = {
     content: replyData.content,
-    depth: props.depth + 1,
     parentId: props.parentId,
     sourceId: props.sourceId,
     replies: [],
     author: JSON.parse(localStorage.getItem('user')).id || null
   }
-
-  // parentId: props.depth == 0 ? null : props.parentId,
-
-  console.log("depth:", props.depth)
-  console.log("parentId:", reply.parentId)
 
   messageStore.addReplyToReply(props.sourceId, replyId, reply)
   replyData.content = ''
@@ -38,7 +31,7 @@ import TransitionExpand from '../transitions/TransitionExpand.vue'
 //Set initial state
 const toggleStates = reactive({})
 if (!toggleStates[props.id]) {
-  toggleStates[props.id] = ref(true)
+  toggleStates[props.id] = ref(false)
 }
 const toggle = (id) => {
   toggleStates[id] = !toggleStates[id]
@@ -46,10 +39,9 @@ const toggle = (id) => {
 const nextId = () => {
   return `${props.id}-child` // Example of generating unique IDs
 }
-const deleteReply = (messageId, reply, replyId, depth) => {
+const deleteReply = (messageId, reply, replyId) => {
+  // if (confirm(`${messageId}, replyId: ${replyId}`) == true) {
   messageStore.deleteReplyById(messageId, replyId)
-  // messageStore.deleteReplyById(messageId, reply, replyId, depth)
-  // if (confirm(`msgId: ${messageId}, replyId: ${replyId}`) == true) {
   // }
 }
 </script>
@@ -58,7 +50,7 @@ const deleteReply = (messageId, reply, replyId, depth) => {
     <ul class="replies" v-if="props.replies && props.replies.length">
       <div v-for="(message, index) in props.message.replies" :key="index" class="reply">
         <div class="message">
-          <div class="close-btn" @click="deleteReply(props.message._id, props.message, message._id, depth)">
+          <div class="close-btn" @click="deleteReply(props.message._id, props.message, message._id)">
             <span class="material-symbols-outlined"> close </span>
           </div>
           <div class="user-prof">
@@ -74,11 +66,6 @@ const deleteReply = (messageId, reply, replyId, depth) => {
             <div class="message-body">
               {{ message.content }}
             </div>
-            <pre>{{ message._id }}</pre>
-            [R]
-            source: {{ props.sourceId }} <br />
-            parent: {{ props.parentId }} <br />
-            depth: {{ props.depth }}
             <div class="message-footer">
               <!-- {{ new Date().toLocaleTimeString() }} -->
             </div>
@@ -95,8 +82,7 @@ const deleteReply = (messageId, reply, replyId, depth) => {
             <recursiveMessage v-bind="{
               message: message,
               replies: message.replies
-            }" :depth="props.depth + 1" :id="nextId(index)" :msgId="props.msgId" :parentId="message._id"
-              :sourceId="props.sourceId" />
+            }" :id="nextId(index)" :parentId="message._id" :sourceId="props.sourceId" />
 
 
           </div>

@@ -7,9 +7,6 @@ const Message = mongoose.model(
       content: {
         type: String,
       },
-      depth: {
-        type: Number,
-      },
       replies: [
         {
           type: mongoose.Schema.Types.ObjectId,
@@ -31,9 +28,6 @@ const Reply = mongoose.model(
     {
       content: {
         type: String,
-      },
-      depth: {
-        type: Number,
       },
       parentId: {
         type: String,

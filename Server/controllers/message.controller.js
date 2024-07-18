@@ -7,19 +7,16 @@ const { Message, Reply } = require("../models/message.model");
 const messageRoutes = require("../routes/message.routes");
 
 const createMessage = async (req, res) => {
-  console.log("req.body: ", req.body);
   const authorId = req.body.author;
   try {
     const message = new Message(req.body); //Add author to message
 
     //Find author by authorId and set new Message's author to that author Object
     // const { author } = req.body;
-    // const author = await User.findById(authorId);
-    // if (!author) return res.status(404).json({ message: "Author not found" });
-    // message.author = author;
+    const author = await User.findById(authorId);
+    if (!author) return res.status(404).json({ message: "Author not found" });
+    message.author = author;
     await message.save();
-
-    console.log("message:", message);
 
     res.status(201).json(message);
   } catch (error) {

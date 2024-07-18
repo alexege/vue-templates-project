@@ -50,7 +50,6 @@ require("./routes/timer.routes")(app);
 require("./routes/category.routes")(app);
 require("./routes/message.routes")(app);
 require("./routes/reply.routes")(app);
-require("./routes/comment.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
