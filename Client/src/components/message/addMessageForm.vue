@@ -28,7 +28,7 @@ const addMessage = () => {
     <div class="add-message">
         <h3>Add A Message</h3>
         <input type="text" v-model="newMessage.title" placeholder="Message Title">
-        <textarea v-model="newMessage.content" @keydown.enter="addMessage" placeholder="Message Body"></textarea>
+        <textarea v-model="newMessage.content" placeholder="Message Body"></textarea>
         <button @click="addMessage" class="add-message-btn">Add</button>
     </div>
 </template>

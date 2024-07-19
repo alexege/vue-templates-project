@@ -97,7 +97,7 @@ const updateMessage = (message) => {
           <div class="message-body">
             <template v-if="editMode">
               <!-- <input type="text" v-model="message.content" @keydown.enter="updateMessage(message._id)"> -->
-              <textarea rows="3" v-model="message.content" @keydown.enter="updateMessage(message)"
+              <textarea v-model="message.content" @keydown.enter="updateMessage(message)"
                 @keydown.esc="editMode = false" />
             </template>
             <template v-else>
@@ -220,6 +220,7 @@ const updateMessage = (message) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  align-self: center;
   flex: 1;
 }
 
@@ -244,7 +245,7 @@ const updateMessage = (message) => {
 .message-header {
   font-size: 0.75em;
   font-weight: bold;
-  flex: 1;
+  /* flex: 1; */
 }
 
 .message-header input[type=text] {
@@ -260,22 +261,25 @@ const updateMessage = (message) => {
   font-size: 0.75em;
   flex: 2;
   margin-right: 15px;
+  padding: 5px;
+  white-space: pre;
 }
 
 .message-body textarea {
   width: 100%;
+  height: 100%;
   resize: none;
   border: none;
   background-color: #e2dede;
   font-family: 'Poppins', sans-serif;
   font-size: 1em;
   border-radius: 5px;
-  padding: 5px;
+  padding: -5px;
 }
 
 .message-footer {
   font-size: 0.65em;
-  flex: 1;
+  /* flex: 1; */
 }
 
 .message-container {
