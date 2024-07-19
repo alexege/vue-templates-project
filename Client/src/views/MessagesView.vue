@@ -2,6 +2,7 @@
 // https://blog.logrocket.com/rendering-nested-comments-recursive-components-vue/?ref=dailydev
 import { ref, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
+import addMessageForm from "@/components/message/addMessageForm.vue"
 
 //Store Imports
 import recursiveMessage from '@/components/message/recursiveMessage.vue'
@@ -10,20 +11,6 @@ const messageStore = useMessageStore()
 messageStore.getAllMessages()
 messageStore.getAllReplies()
 const { allMessages } = storeToRefs(useMessageStore())
-
-//Add a new Message
-const newMessage = {
-  content: '',
-}
-const addMessage = () => {
-  const data = {
-    content: newMessage.content,
-    replies: [],
-    author: JSON.parse(localStorage.getItem('user')).id || null
-  }
-  messageStore.createMessage(data)
-  newMessage.content = ''
-}
 
 const messageReply = {
   content: '',
@@ -65,20 +52,32 @@ import { useAuthStore } from '@/stores/auth.store';
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
 
+//Edit Message Logic
+const editMode = ref(false)
+const updateMessage = (message) => {
+  messageStore.updateMessageById(message._id, message)
+  editMode.value = false;
+}
+
 </script>
 <template>
   <div class="message-container">
-    <!-- <pre>{{ allMessages }}</pre> -->
-    <!-- <pre v-for="message in allMessages" :key="message.id">{{ message.replies }}</pre> -->
-    <div class="add-message">
-      <input type="text" v-model="newMessage.content" @keydown.enter="addMessage" placeholder="Add Message" />
-      <button @click="addMessage">Add</button>
-    </div>
+    <!-- <div class="add-message"> -->
+    <!-- <div class="add-message-title">
+        <input type="text" v-model="newMessage.title" placeholder="Message Title">
+      </div>
+      <div class="add-message-body">
+        <input type="text" v-model="newMessage.content" @keydown.enter="addMessage" placeholder="Message Body" />
+        <textarea v-model="newMessage.content" @keydown.enter="addMessage" placeholder="Message Body"></textarea>
+        <button @click="addMessage">Add</button>
+      </div> -->
+    <!-- </div> -->
+
+    <add-message-form />
+
+    <!-- Display Messages -->
     <ul v-for="(message, index) in allMessages" :key="index" class="post">
       <!-- Message_id: {{ message.id }} -->
-      <div class="close-btn" @click="deleteMessage(message._id)">
-        <span class="material-symbols-outlined"> close </span>
-      </div>
       <div class="message">
         <div class="user-prof">
           <span class="author" v-if="message.author && message.author.username">{{ message.author.username }}</span>
@@ -88,15 +87,39 @@ const { user } = storeToRefs(authStore)
           </div>
         </div>
         <div class="message-box">
-          <div class="message-header"></div>
-          <div class="message-body">
-            {{ message.content }}
-            <span v-if="message.replies">- len({{ message.replies.length }})</span>
-            <!-- <pre>{{ message }}</pre> -->
+          <div class="message-header">
 
+            <input v-if="editMode" type="text" v-model="message.title">
+            <h2 v-else class="message-title">{{ message.title }}</h2>
           </div>
+
+          <!-- Message Body -->
+          <div class="message-body">
+            <template v-if="editMode">
+              <!-- <input type="text" v-model="message.content" @keydown.enter="updateMessage(message._id)"> -->
+              <textarea rows="3" v-model="message.content" @keydown.enter="updateMessage(message)"
+                @keydown.esc="editMode = false" />
+            </template>
+            <template v-else>
+              {{ message.content }}
+            </template>
+          </div>
+
+
           <div class="message-footer">
             <!-- {{ new Date().toLocaleTimeString() }} -->
+          </div>
+        </div>
+        <div class="message-actions">
+          <div class="action-buttons">
+            <div class="" @click="editMode = !editMode">
+              <span class="material-symbols-outlined">
+                edit
+              </span>
+            </div>
+            <div class="close-btn" @click="deleteMessage(message._id)">
+              <span class="material-symbols-outlined"> close </span>
+            </div>
           </div>
         </div>
       </div>
@@ -175,6 +198,7 @@ const { user } = storeToRefs(authStore)
 }
 
 .message {
+  min-height: 7em;
   display: flex;
   gap: 0.25em;
   border-bottom: 1px solid black;
@@ -223,10 +247,30 @@ const { user } = storeToRefs(authStore)
   flex: 1;
 }
 
+.message-header input[type=text] {
+  border: none;
+  background-color: #e2dede;
+}
+
+.message-title {
+  /* text-align: center; */
+}
+
 .message-body {
   font-size: 0.75em;
   flex: 2;
   margin-right: 15px;
+}
+
+.message-body textarea {
+  width: 100%;
+  resize: none;
+  border: none;
+  background-color: #e2dede;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1em;
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .message-footer {
@@ -239,12 +283,6 @@ const { user } = storeToRefs(authStore)
   width: 80%;
   margin: 0 auto;
   max-width: 75em;
-}
-
-.add-message {
-  display: flex;
-  min-height: 30px;
-  padding: 1em;
 }
 
 .message-container input {
@@ -309,13 +347,26 @@ const { user } = storeToRefs(authStore)
 
 /* Delete Message Button */
 .close-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
+  /* position: absolute; */
+  /* top: 5px; */
+  /* right: 5px; */
   background: none;
   border: none;
   cursor: pointer;
   color: #999;
   font-size: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  /* position: absolute; */
+  /* top: 5px; */
+  /* right: 5px; */
+}
+
+.action-buttons span:hover {
+  cursor: pointer;
+  color: gray;
 }
 </style>

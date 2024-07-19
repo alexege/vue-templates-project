@@ -50,21 +50,34 @@ const deleteReply = (messageId, reply, replyId) => {
     <ul class="replies" v-if="props.replies && props.replies.length">
       <div v-for="(message, index) in props.message.replies" :key="index" class="reply">
         <div class="message">
-          <div class="close-btn" @click="deleteReply(props.message._id, props.message, message._id)">
-            <span class="material-symbols-outlined"> close </span>
+          <div class="action-buttons">
+            <div class="" @click="editMode = !editMode">
+              <span class="material-symbols-outlined"> edit </span>
+            </div>
+            <div class="close-btn" @click="deleteReply(props.message._id, props.message, message._id)">
+              <span class="material-symbols-outlined"> close </span>
+            </div>
           </div>
           <div class="user-prof">
             <span class="author" v-if="message.author">{{ message.author ? message.author.username : 'Author Name'
               }}</span>
             <span class="material-symbols-outlined icon"> account_circle </span>
-            <div class="message-footer">
+            <div class="author-footer">
               <span v-if="message.createdAt">{{ new Date(message.createdAt).toLocaleTimeString() }}</span>
             </div>
           </div>
           <div class="message-box">
             <div class="message-header"></div>
+
+            <!-- Reply Body -->
             <div class="message-body">
-              {{ message.content }}
+              <template v-if="editMode">
+                <textarea rows="3" v-model="message.content" @keydown.enter="updateReply(message)"
+                  @keydown.esc="editMode = false" />
+              </template>
+              <template v-else>
+                {{ message.content }}
+              </template>
             </div>
             <div class="message-footer">
               <!-- {{ new Date().toLocaleTimeString() }} -->
@@ -185,6 +198,18 @@ li {
   font-size: 3em;
 }
 
+.user-prof .author {
+  flex: 1;
+}
+
+.user-prof .icon {
+  flex: 1;
+}
+
+.user-pro .author-footer {
+  flex: 1;
+}
+
 .message .message-box {
   flex: 7;
 }
@@ -193,6 +218,10 @@ li {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.message-body textarea {
+  width: 100%;
 }
 
 .message-header {
@@ -269,13 +298,26 @@ li {
 
 /* Delete Message Button */
 .close-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
+  /* position: absolute; */
+  /* top: 5px; */
+  /* right: 5px; */
   background: none;
   border: none;
   cursor: pointer;
   color: #999;
   font-size: 16px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.action-buttons span:hover {
+  cursor: pointer;
+  color: gray;
 }
 </style>

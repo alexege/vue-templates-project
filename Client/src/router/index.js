@@ -8,7 +8,6 @@ import Profile from '../views/Profile.vue'
 import NotesView from '@/views/NotesView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import MessagesView from '@/views/MessagesView.vue'
-import MessagesView2 from '@/views/MessagesView2.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import LoginRegView from '@/views/LoginRegView.vue'
@@ -79,11 +78,6 @@ const router = createRouter({
       path: '/messages',
       name: 'messages',
       component: MessagesView
-    },
-    {
-      path: '/messages2',
-      name: 'messages2',
-      component: MessagesView2
     },
     {
       path: '/settings',
