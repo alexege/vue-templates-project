@@ -1,7 +1,7 @@
 <script setup>
 import BaseModal from '@/components/modals/BaseModal.vue'
 
-defineProps(['show'])
+defineProps(['show', 'item'])
 
 const emit = defineEmits(['e', 'value', 'result'])
 
@@ -26,7 +26,12 @@ function emitResult(value) {
 
         <!-- Body slot to customize the content -->
         <slot name="body">
-          <div class="confirmation">Are you sure?</div>
+          <div class="confirmation">Are you sure you want to delete:
+            <span v-if="item.username">{{ item.username }}</span>
+            <span v-if="item.name">{{ item.name }}</span>
+            <span v-if="item.title">{{ item.title }}</span>
+            ?
+          </div>
         </slot>
 
         <span class="material-symbols-outlined close" @click="emitResult(false)">

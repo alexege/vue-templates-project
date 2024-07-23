@@ -10,19 +10,18 @@ const { users } = storeToRefs(userStore);
 const { getAll } = useUsersStore();
 getAll();
 
-const userIdToDelete = ref()
+const userToDelete = ref()
 const showUserDialog = ref(false)
-const deleteAUser = (userId) => {
+const deleteAUser = (user) => {
   showUserDialog.value = true;
   // userStore.deleteUser(userId);
-  userIdToDelete.value = userId
+  userToDelete.value = user
 };
 
 const dialogConfirmUsers = (confirm) => {
-  console.log("Dialog sent back: ", confirm);
   if (!confirm) showUserDialog.value = false;
   else {
-    userStore.deleteUser(userIdToDelete.value)
+    userStore.deleteUser(userToDelete.value._id)
     showUserDialog.value = false;
   }
 }
@@ -34,19 +33,18 @@ const { todoList } = storeToRefs(todoStore);
 const { fetchTodos } = useTodoListStore();
 fetchTodos();
 
-const todoIdToDelete = ref()
+const todoToDelete = ref()
 const showTodoDialog = ref(false)
-const deleteATodo = (todoId) => {
+const deleteATodo = (todo) => {
   showTodoDialog.value = true;
   // todoStore.deleteTodo(todoId);
-  todoIdToDelete.value = todoId
+  todoToDelete.value = todo
 };
 
 const dialogConfirmTodos = (confirm) => {
-  console.log("Dialog sent back: ", confirm);
   if (!confirm) showTodoDialog.value = false;
   else {
-    todoStore.deleteTodo(todoIdToDelete.value)
+    todoStore.deleteTodo(todoToDelete.value._id)
     showTodoDialog.value = false
   }
 }
@@ -58,19 +56,18 @@ const { allTimers } = storeToRefs(timerStore);
 const { fetchTimers } = useTimerStore();
 fetchTimers();
 
-const timerIdToDelete = ref()
+const timerToDelete = ref()
 const showTimerDialog = ref(false)
-const deleteATimer = (timerId) => {
+const deleteATimer = (timer) => {
   showTimerDialog.value = true;
   // timerStore.deleteTimer(timerId);
-  timerIdToDelete.value = timerId
+  timerToDelete.value = timer
 }
 
 const dialogConfirmTimers = (confirm) => {
-  console.log("Dialog sent back: ", confirm);
   if (!confirm) showTimerDialog.value = false;
   else {
-    timerStore.deleteTimer(timerIdToDelete.value)
+    timerStore.deleteTimer(timerToDelete.value._id)
     showTimerDialog.value = false;
   }
 }
@@ -79,14 +76,9 @@ const dialogConfirmTimers = (confirm) => {
 <template>
   <div class="main">
 
-    <ConfirmationDialog :show="showUserDialog" @result="dialogConfirmUsers">
-    </ConfirmationDialog>
-
-    <ConfirmationDialog :show="showTodoDialog" @result="dialogConfirmTodos">
-    </ConfirmationDialog>
-
-    <ConfirmationDialog :show="showTimerDialog" @result="dialogConfirmTimers">
-    </ConfirmationDialog>
+    <ConfirmationDialog :item="userToDelete" :show="showUserDialog" @result="dialogConfirmUsers" />
+    <ConfirmationDialog :item="todoToDelete" :show="showTodoDialog" @result="dialogConfirmTodos" />
+    <ConfirmationDialog :item="timerToDelete" :show="showTimerDialog" @result="dialogConfirmTimers" />
 
     Admin Dashboard
 
@@ -106,7 +98,7 @@ const dialogConfirmTimers = (confirm) => {
         <td>{{ user.email }}</td>
         <td v-if="user.roles">{{ user.roles[0].name }}</td>
         <td>
-          <a @click="deleteAUser(user._id)">Delete</a>
+          <a @click="deleteAUser(user)">Delete</a>
         </td>
       </tr>
     </table>
@@ -132,7 +124,7 @@ const dialogConfirmTimers = (confirm) => {
         </td>
         <td>{{ todo.createdAt }}</td>
         <td>
-          <a @click="deleteATodo(todo._id)">Delete</a>
+          <a @click="deleteATodo(todo)">Delete</a>
         </td>
       </tr>
     </table>
@@ -167,7 +159,7 @@ const dialogConfirmTimers = (confirm) => {
         </td>
         <td>{{ timer.createdAt }}</td>
         <td>
-          <a @click="deleteATimer(timer._id)">Delete</a>
+          <a @click="deleteATimer(timer)">Delete</a>
         </td>
       </tr>
     </table>
