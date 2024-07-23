@@ -1,46 +1,77 @@
 <script setup>
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
+import ConfirmationDialog from "@/components/modals/ConfirmationDialog.vue";
+
+//Users
 import { useUsersStore } from "@/stores/user.store";
 const userStore = useUsersStore();
 const { users } = storeToRefs(userStore);
 const { getAll } = useUsersStore();
 getAll();
 
+const userIdToDelete = ref()
+const showUserDialog = ref(false)
 const deleteAUser = (userId) => {
-  userStore.deleteUser(userId);
+  showUserDialog.value = true;
+  // userStore.deleteUser(userId);
+  userIdToDelete.value = userId
 };
 
+const dialogConfirmUsers = (confirm) => {
+  console.log("Dialog sent back: ", confirm);
+  if (!confirm) showUserDialog.value = false;
+  else {
+    userStore.deleteUser(userIdToDelete.value)
+    showUserDialog.value = false;
+  }
+}
+
+//Todos
 import { useTodoListStore } from "@/stores/todo.store";
 const todoStore = useTodoListStore();
 const { todoList } = storeToRefs(todoStore);
 const { fetchTodos } = useTodoListStore();
 fetchTodos();
 
+const todoIdToDelete = ref()
+const showTodoDialog = ref(false)
 const deleteATodo = (todoId) => {
-  todoStore.deleteTodo(todoId);
+  showTodoDialog.value = true;
+  // todoStore.deleteTodo(todoId);
+  todoIdToDelete.value = todoId
 };
+
+const dialogConfirmTodos = (confirm) => {
+  console.log("Dialog sent back: ", confirm);
+  if (!confirm) showTodoDialog.value = false;
+  else {
+    todoStore.deleteTodo(todoIdToDelete.value)
+    showTodoDialog.value = false
+  }
+}
 
 //Timers
 import { useTimerStore } from "@/stores/timer.store";
-import ConfirmationDialog from "@/components/modals/ConfirmationDialog.vue";
 const timerStore = useTimerStore();
-const { fetchTimers } = useTimerStore();
 const { allTimers } = storeToRefs(timerStore);
-fetchTimers()
+const { fetchTimers } = useTimerStore();
+fetchTimers();
 
-const showDialog = ref(false)
+const timerIdToDelete = ref()
+const showTimerDialog = ref(false)
 const deleteATimer = (timerId) => {
-  showDialog.value = true;
-
-  timerStore.deleteTimer(timerId);
+  showTimerDialog.value = true;
+  // timerStore.deleteTimer(timerId);
+  timerIdToDelete.value = timerId
 }
 
-const dialogConfirm = (confirm) => {
+const dialogConfirmTimers = (confirm) => {
   console.log("Dialog sent back: ", confirm);
-  if (!confirm) showDialog.value = false;
+  if (!confirm) showTimerDialog.value = false;
   else {
-    timerStore.deleteTimer(timerId)
+    timerStore.deleteTimer(timerIdToDelete.value)
+    showTimerDialog.value = false;
   }
 }
 
@@ -48,7 +79,13 @@ const dialogConfirm = (confirm) => {
 <template>
   <div class="main">
 
-    <ConfirmationDialog :show="showDialog" @result="dialogConfirm">
+    <ConfirmationDialog :show="showUserDialog" @result="dialogConfirmUsers">
+    </ConfirmationDialog>
+
+    <ConfirmationDialog :show="showTodoDialog" @result="dialogConfirmTodos">
+    </ConfirmationDialog>
+
+    <ConfirmationDialog :show="showTimerDialog" @result="dialogConfirmTimers">
     </ConfirmationDialog>
 
     Admin Dashboard
