@@ -46,7 +46,7 @@ defineProps(['show'])
   color: white;
   background-color: rgb(16, 15, 28);
   width: 50%;
-  height: 50%;
+  height: 15vh;
   border-radius: 10px;
 }
 </style>

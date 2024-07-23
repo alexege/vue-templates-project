@@ -84,17 +84,22 @@ const { allCategories } = storeToRefs(useCategoryStore());
 const todoCategories = ref([])
 
 const addTodoCategory = () => {
-  if (selectedOption.value !== "custom" && selectedOption.value !== "All" && selectedOption.value !== "None") {
-    todoCategories.value.push(selectedOption.value)
-  }
 
-  if (customValue.value.name) {
-    todoCategories.value.push(customValue.value.name)
-  }
+  if (!todoCategories.value.includes(selectedOption.value)) {
 
-  // if (customValue.value.name !== null) {
-  //   todoCategories.value.push(customValue.value)
-  // }
+
+    if (selectedOption.value !== "custom" && selectedOption.value !== "All" && selectedOption.value !== "None") {
+      todoCategories.value.push(selectedOption.value)
+    }
+
+    if (customValue.value.name) {
+      todoCategories.value.push(customValue.value.name)
+    }
+
+    // if (customValue.value.name !== null) {
+    //   todoCategories.value.push(customValue.value)
+    // }
+  }
 }
 
 const removeCategory = (category) => {
@@ -158,7 +163,7 @@ const permissionToManage = (category) => {
 
       <div class="category-list">
         <div class="category" v-for="category in todoCategories" :key="category._id">
-          <a :href="`/todo/category/${category.name}`">
+          <a>
             <span>{{ category }}</span>
             <span v-if="permissionToManage(category)" @click.prevent="removeCategory(category)">
               <span class="material-symbols-outlined">cancel</span>

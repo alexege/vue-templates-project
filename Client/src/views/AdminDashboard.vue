@@ -29,7 +29,7 @@ const { fetchTimers } = useTimerStore();
 const { allTimers } = storeToRefs(timerStore);
 fetchTimers()
 
-const showDialog = ref(true)
+const showDialog = ref(false)
 const deleteATimer = (timerId) => {
   showDialog.value = true;
 
@@ -38,10 +38,10 @@ const deleteATimer = (timerId) => {
 
 const dialogConfirm = (confirm) => {
   console.log("Dialog sent back: ", confirm);
-  // if (!confirm) showDialog.value = false;
-  // else {
-  //   timerStore.deleteTimer(timerId)
-  // }
+  if (!confirm) showDialog.value = false;
+  else {
+    timerStore.deleteTimer(timerId)
+  }
 }
 
 </script>
@@ -158,7 +158,7 @@ td {
 }
 
 td {
-  color: white;
+  /* color: white; */
 }
 
 th {

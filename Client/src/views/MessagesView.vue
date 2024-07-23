@@ -246,6 +246,7 @@ const updateMessage = (message) => {
   font-size: 0.75em;
   font-weight: bold;
   /* flex: 1; */
+  padding: 0 5px;
 }
 
 .message-header input[type=text] {
@@ -274,7 +275,7 @@ const updateMessage = (message) => {
   font-family: 'Poppins', sans-serif;
   font-size: 1em;
   border-radius: 5px;
-  padding: -5px;
+  padding: 5px;
 }
 
 .message-footer {

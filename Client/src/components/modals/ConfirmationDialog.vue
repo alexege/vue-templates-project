@@ -81,7 +81,7 @@ function emitResult(value) {
   cursor: pointer;
   border-radius: 10px;
   padding: .5em 1em;
-
+  min-width: 6em;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -92,11 +92,21 @@ function emitResult(value) {
 }
 
 .actions .confirm {
+  box-sizing: border-box;
   color: lime;
 }
 
+.actions .confirm:hover {
+  border: 1px solid lime;
+}
+
 .actions .deny {
+  box-sizing: border-box;
   color: red;
+}
+
+.actions .deny:hover {
+  border: 1px solid red;
 }
 
 .confirmation {
