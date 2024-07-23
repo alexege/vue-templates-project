@@ -72,6 +72,29 @@ const dialogConfirmTimers = (confirm) => {
   }
 }
 
+//Messages
+import { useMessageStore } from "@/stores/message.store";
+const messageStore = useMessageStore();
+const { allMessages } = storeToRefs(messageStore);
+const { getAllMessages } = useMessageStore();
+getAllMessages();
+
+const messageToDelete = ref()
+const showMessageDialog = ref(false)
+const deleteAMessage = (timer) => {
+  showMessageDialog.value = true;
+  // messageStore.deleteTimer(timerId);
+  messageToDelete.value = timer
+}
+
+const dialogConfirmMessages = (confirm) => {
+  if (!confirm) showMessageDialog.value = false;
+  else {
+    messageStore.deleteMessageById(messageToDelete.value._id)
+    showMessageDialog.value = false;
+  }
+}
+
 </script>
 <template>
   <div class="main">
@@ -79,6 +102,7 @@ const dialogConfirmTimers = (confirm) => {
     <ConfirmationDialog :item="userToDelete" :show="showUserDialog" @result="dialogConfirmUsers" />
     <ConfirmationDialog :item="todoToDelete" :show="showTodoDialog" @result="dialogConfirmTodos" />
     <ConfirmationDialog :item="timerToDelete" :show="showTimerDialog" @result="dialogConfirmTimers" />
+    <ConfirmationDialog :item="messageToDelete" :show="showMessageDialog" @result="dialogConfirmMessages" />
 
     Admin Dashboard
 
@@ -164,6 +188,39 @@ const dialogConfirmTimers = (confirm) => {
       </tr>
     </table>
 
+    <h3>All Messages:</h3>
+    <table>
+      <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>content</th>
+        <th>replies</th>
+        <th>author</th>
+        <th>endDateTime</th>
+        <th>creator</th>
+        <th>img</th>
+        <th>createdAt</th>
+        <th>actions</th>
+      </tr>
+      <tr v-for="message in allMessages" :key="message._id">
+        <td v-if="message._id">{{ message._id.slice(-5) }}</td>
+        <td>{{ message.title }}</td>
+        <td>{{ message.content }}</td>
+        <td>{{ message.replies.length }}</td>
+        <td>{{ message.author.username }}</td>
+        <td>{{ message.endDateTime }}</td>
+        <td>{{ message.img }}</td>
+        <td>
+          <span v-if="message.author">{{ message.author.username }}</span>
+          <span v-else>-</span>
+        </td>
+        <td>{{ message.createdAt }}</td>
+        <td>
+          <a @click="deleteAMessage(message)">Delete</a>
+        </td>
+      </tr>
+    </table>
+
     <!-- <pre>{{ users }}</pre> -->
   </div>
 </template>
@@ -178,6 +235,7 @@ const dialogConfirmTimers = (confirm) => {
 
 table {
   border-collapse: collapse;
+  margin-bottom: 2em;
 }
 
 th,
