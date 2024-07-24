@@ -190,13 +190,13 @@ onMounted(() => {
           </a>
           <span class="tooltip">Messages</span>
         </li>
-        <li>
+        <!-- <li>
           <a href="#">
             <i class="bx bx-pie-chart-alt-2"></i>
             <span class="links_name">Analytics</span>
           </a>
           <span class="tooltip">Analytics</span>
-        </li>
+        </li> -->
         <li>
           <a href="#">
             <i class="bx bx-folder"></i>

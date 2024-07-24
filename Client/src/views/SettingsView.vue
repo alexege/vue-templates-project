@@ -19,9 +19,25 @@ const toggleLightMode = () => {
 }
 
 const switch1 = ref(false)
-const switch2 = ref(false)
-const switch3 = ref(false)
-const switch4 = ref(false)
+
+//Color Picker
+import ColorPicker from '@/components/color/ColorPicker.vue'
+
+const backgroundColor = ref()
+const fontColor = ref()
+const themeChoice = ref('dark')
+
+const updateBackgroundColor = (color) => {
+  backgroundColor.value = color;
+}
+
+const updateFontColor = (color) => {
+  fontColor.value = color;
+}
+
+const updateColors = () => {
+  console.log(`sending values to database: ${backgroundColor} and ${fontColor}`)
+}
 
 </script>
 <template>
@@ -31,55 +47,97 @@ const switch4 = ref(false)
       <h2 class="title">Settings</h2>
 
       <div class="setting">
-        <span class="material-symbols-outlined icon">
-          contrast
-        </span>
-        <div class="body">Toggle
+        <div class="left">
+          <span class="material-symbols-outlined icon">
+            contrast
+          </span>
+        </div>
+        <div class="middle">
+          Toggle
           <span :class="{ active: !switch1 }">Light</span>
           /
           <span :class="{ active: switch1 }">Dark</span>
           Mode
         </div>
-        <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @change="toggleLightMode">
-          Toggle Lock mode
-        </Toggle>
+        <div class="right">
+          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @change="toggleLightMode">
+            Toggle Lock mode
+          </Toggle>
+        </div>
       </div>
 
       <div class="setting">
-        <span class="material-symbols-outlined icon">
-          lock
-        </span>
-        <div class="body">Example Setting Placeholder</div>
-        <Toggle uid="2" v-model="switch2" label="lock-mode" class="toggle">
-          Toggle Lock mode
-        </Toggle>
+        <div class="left">
+          <span class="material-symbols-outlined icon">
+            lock
+          </span>
+        </div>
+        <div class="middle">
+          Selected Theme
+        </div>
+        <div class="right">
+          <select v-model="themeChoice">
+            <option value="light">light</option>
+            <option value="dark">dark</option>
+          </select>
+        </div>
       </div>
 
       <div class="setting">
-        <span class="material-symbols-outlined icon">
-          lock
-        </span>
-        <div class="body">Example Setting Placeholder</div>
-        <Toggle uid="3" v-model="switch3" label="lock-mode" class="toggle">
-          Toggle Lock mode
-        </Toggle>
+        <div class="left">
+          <span class="material-symbols-outlined icon">
+            lock
+          </span>
+        </div>
+        <div class="middle">
+          Background Color
+        </div>
+        <div class="right">
+          <color-picker @color="updateBackgroundColor" />
+        </div>
       </div>
 
       <div class="setting">
-        <span class="material-symbols-outlined icon">
-          lock
-        </span>
-        <div class="body">Example Setting Placeholder</div>
-        <Toggle uid="4" v-model="switch4" label="lock-mode" class="toggle">
-          Toggle Lock mode
-        </Toggle>
+        <div class="left">
+          <span class="material-symbols-outlined icon">
+            lock
+          </span>
+        </div>
+        <div class="middle">
+          Font Color
+        </div>
+        <div class="right">
+          <color-picker @color="updateFontColor" />
+
+        </div>
       </div>
+
+
+      Color:{{ fontColor }} <br />
+      Background: {{ backgroundColor }}
 
     </div>
 
   </div>
 </template>
 <style scoped>
+.left {
+  flex: 1;
+}
+
+.middle {
+  flex: 1;
+}
+
+.right {
+  flex: 1;
+  text-align: right;
+}
+
+.right select {
+  width: 50%;
+}
+
 .active {
   color: #42b883;
 }
