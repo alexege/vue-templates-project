@@ -2,8 +2,10 @@ import { defineStore } from 'pinia'
 
 export const useThemeStore = defineStore('theme', {
   state: () => ({
-    themes: ['light', 'dark'],
-    theme: localStorage.getItem('theme') || 'light'
+    themes: ['light', 'dark', 'custom'],
+    theme: localStorage.getItem('theme') || 'light',
+    foregroundColor: 'white',
+    backgroundColor: 'black'
   }),
   actions: {
     toggleTheme() {
@@ -16,6 +18,7 @@ export const useThemeStore = defineStore('theme', {
       }
     },
     setTheme(value) {
+      console.log('Setting theme: ', value)
       this.theme = value
       localStorage.setItem('theme', value)
     }

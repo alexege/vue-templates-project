@@ -10,12 +10,12 @@ import { useThemeStore } from '@/stores/theme.store'
 const themeStore = useThemeStore()
 
 const toggleLightMode = () => {
-  console.log('toggling light mode', switch1.value)
-  if (switch1.value) {
-    themeStore.setTheme('light')
-  } else {
-    themeStore.setTheme('dark')
-  }
+  // console.log('toggling light mode', switch1.value)
+  // if (switch1.value) {
+  //   themeStore.setTheme('light')
+  // } else {
+  //   themeStore.setTheme('dark')
+  // }
 }
 
 const switch1 = ref(false)
@@ -39,6 +39,24 @@ const updateColors = () => {
   console.log(`sending values to database: ${backgroundColor} and ${fontColor}`)
 }
 
+const handleToggle = (value) => {
+  console.log("Value is: ", value)
+  value ? themeStore.setTheme('dark') : themeStore.setTheme('light')
+}
+
+const handleThemeSelection = () => {
+  if (themeChoice.value === 'light') {
+    console.log("Light mode selected")
+    themeStore.setTheme('light')
+  } else if (themeChoice.value === 'dark') {
+    console.log("Dark mode selected")
+    themeStore.setTheme('dark')
+  } else if (themeChoice.value === 'custom') {
+    console.log("Custom mode selected")
+    themeStore.setTheme('custom')
+  }
+}
+
 </script>
 <template>
   <div>
@@ -60,7 +78,8 @@ const updateColors = () => {
           Mode
         </div>
         <div class="right">
-          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @change="toggleLightMode">
+          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @change="toggleLightMode"
+            @toggle="handleToggle">
             Toggle Lock mode
           </Toggle>
         </div>
@@ -76,9 +95,10 @@ const updateColors = () => {
           Selected Theme
         </div>
         <div class="right">
-          <select v-model="themeChoice">
+          <select v-model="themeChoice" @change="handleThemeSelection">
             <option value="light">light</option>
             <option value="dark">dark</option>
+            <option value="custom">custom</option>
           </select>
         </div>
       </div>

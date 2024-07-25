@@ -17,7 +17,8 @@ console.log('toggleId: ', toggleId)
 const toggle = (event) => {
     console.log('toggling')
     isChecked.value = event.target.checked
-    emit('update:modelValue', isChecked.value)
+    // emit('update:modelValue', isChecked.value)
+    emit('toggle', isChecked.value)
 }
 </script>
 <template>
