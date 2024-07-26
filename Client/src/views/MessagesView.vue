@@ -81,7 +81,7 @@ const updateMessage = (message) => {
       <div class="message">
         <div class="user-prof">
           <span class="author" v-if="message.author && message.author.username">{{ message.author.username }}</span>
-          <span class="material-symbols-outlined icon"> account_circle </span>
+          <i class='bx bxs-user-circle'></i>
           <div class="message-footer">
             {{ new Date(message.createdAt).toLocaleTimeString() }}
           </div>
@@ -113,12 +113,10 @@ const updateMessage = (message) => {
         <div class="message-actions">
           <div class="action-buttons">
             <div class="" @click="editMode = !editMode">
-              <span class="material-symbols-outlined">
-                edit
-              </span>
+              <i class='bx bx-edit'></i>
             </div>
             <div class="close-btn" @click="deleteMessage(message._id)">
-              <span class="material-symbols-outlined"> close </span>
+              <i class='bx bx-x'></i>
             </div>
           </div>
         </div>
@@ -141,7 +139,7 @@ const updateMessage = (message) => {
         <!-- Add Reply -->
         <div class="reply-box">
           <div class="user-icon">
-            <span class="material-symbols-outlined"> account_circle </span>
+            <i class='bx bxs-user-circle'></i>
           </div>
           <div class="add-reply">
             <input type="text" v-model="messageReply.content" placeholder="Add Reply to Message"
@@ -228,7 +226,7 @@ const updateMessage = (message) => {
   font-size: 0.75em;
 }
 
-.message .user-prof .icon {
+.message .user-prof i {
   font-size: 3em;
 }
 

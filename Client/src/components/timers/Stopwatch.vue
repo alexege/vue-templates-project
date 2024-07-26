@@ -87,12 +87,12 @@ async function updateTimerName() {
             <template v-if="editTimerName">
                 <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName"
                     autofocus @focus="$event.target.select()">
-                <span class="material-symbols-outlined" @click="updateTimerName">save</span>
+                <i @click="updateTimerName" class='bx bx-save'></i>
             </template>
             <template v-else>
                 <span @dblclick="editTimerName = true">{{ timer.name }}</span>
             </template>
-            <span @click="deleteTimer(timer._id)" class="material-symbols-outlined close">close</span>
+            <i @click="deleteTimer(timer._id)" class='bx bx-x close'></i>
         </div>
         <div class="timer-middle">
             <span class="time-elapsed"
@@ -101,9 +101,9 @@ async function updateTimerName() {
         </div>
         <div class="timer-bottom">
             <div class="btn-container">
-                <span @click="start" class="material-symbols-outlined" v-if="!running">play_arrow</span>
-                <span @click="stop" class="material-symbols-outlined" v-else> pause </span>
-                <span @click="reset" class="material-symbols-outlined"> replay </span>
+                <i v-if="!running" @click="start" class='bx bx-play-circle'></i>
+                <i v-else @click="stop" class='bx bx-pause-circle'></i>
+                <i @click="reset" class='bx bx-reset'></i>
 
             </div>
         </div>
@@ -178,7 +178,7 @@ async function updateTimerName() {
     padding: 10px 0;
 }
 
-.timer-bottom .btn-container span {
+.timer-bottom .btn-container i {
     padding: .10em .25em;
     font-size: 20px;
     cursor: pointer;

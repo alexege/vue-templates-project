@@ -52,16 +52,16 @@ const deleteReply = (messageId, reply, replyId) => {
         <div class="message">
           <div class="action-buttons">
             <div class="" @click="editMode = !editMode">
-              <span class="material-symbols-outlined"> edit </span>
+              <i class='bx bx-edit'></i>
             </div>
             <div class="close-btn" @click="deleteReply(props.message._id, props.message, message._id)">
-              <span class="material-symbols-outlined"> close </span>
+              <i class='bx bx-x'></i>
             </div>
           </div>
           <div class="user-prof">
             <span class="author" v-if="message.author">{{ message.author ? message.author.username : 'Author Name'
               }}</span>
-            <span class="material-symbols-outlined icon"> account_circle </span>
+            <i class='bx bxs-user-circle'></i>
             <div class="author-footer">
               <span v-if="message.createdAt">{{ new Date(message.createdAt).toLocaleTimeString() }}</span>
             </div>
@@ -103,7 +103,7 @@ const deleteReply = (messageId, reply, replyId) => {
         <!-- Add Reply -->
         <div class="reply-box">
           <div class="user-icon">
-            <span class="material-symbols-outlined"> account_circle </span>
+            <i class="bx bxs-user-circle"></i>
           </div>
 
           <div class="add-reply">
@@ -194,7 +194,7 @@ li {
   font-size: 0.75em;
 }
 
-.message .user-prof .icon {
+.message .user-prof i {
   font-size: 3em;
 }
 
@@ -202,7 +202,7 @@ li {
   flex: 1;
 }
 
-.user-prof .icon {
+.user-prof i {
   flex: 1;
 }
 
