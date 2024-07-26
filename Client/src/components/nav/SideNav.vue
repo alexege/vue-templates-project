@@ -75,21 +75,8 @@ onMounted(() => {
           <i v-else class='bx bx-lock-open'></i>
         </span>
 
-        <!-- <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock">
-          {{ isNavLocked ? 'lock' : 'lock_open' }}
-        </span> -->
       </div>
-      <!-- <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn" @click="toggleNavLock">
-            <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock()">
-              {{ isNavLocked ? 'lock_open' : 'lock' }}
-            </span>
-          </i> -->
     </div>
-    <!-- <ul style="height: 80%; overflow: auto;">
-          <li v-for="n in 20" :key="n">Item one</li>
-          <li>Item two</li>
-          <li>Last</li>
-        </ul> -->
     <ul class="nav-list" :class="{ sideNavScrollBar: !openSideNav }">
       <li>
         <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>

@@ -34,9 +34,7 @@ function emitResult(value) {
           </div>
         </slot>
 
-        <span class="material-symbols-outlined close" @click="emitResult(false)">
-          close
-        </span>
+        <i @click="emitResult(false)" class="bx-x"></i>
 
         <!-- Actions slot, to customize the dialog buttons -->
         <slot name="actions" :emit-result="emitResult">

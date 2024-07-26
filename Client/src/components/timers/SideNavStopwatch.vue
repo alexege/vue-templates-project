@@ -85,64 +85,16 @@ async function updateTimerName() {
     <div class="container" @mouseover="isHovering = true" @mouseleave="isHovering = false">
         <div class="timer-controls" v-if="isHovering">
 
-            <span @click="onReset()" class="material-symbols-outlined">replay</span>
+            <i @click="onReset()" class="bx bx-reset"></i>
 
-            <template v-if="timerActive">
-                <span @click="onPause()" class="material-symbols-outlined">
-                    pause
-                </span>
-            </template>
-
-            <template v-else>
-                <span @click="onStart()" class="material-symbols-outlined" :class="{ disabled: timeRemaining <= 0 }">
-                    play_arrow
-                </span>
-            </template>
-
-            <i class="bx bx-cog material-symbols-outlined"></i>
+            <i v-if="timerActive" @click="onPause()" class="bx bx-pause-circle"></i>
+            <i v-else @click="onStart()" class="bx bx-play-circle" :class="{ disabled: timeRemaining <= 0 }"></i>
         </div>
         <div v-else class="timer-body">
             <div class="title">{{ timer.name }}</div>
             <div class="time">{{ time }}</div>
         </div>
     </div>
-
-    <!-- <div class="stopwatch-timer">
-        <div class="timer-middle">
-            {{ timer.name }}
-            <div class="time-elapsed">
-                {{ time }}
-            </div>
-
-        </div>
-
-    </div> -->
-
-    <!-- <div class="stopwatch-timer">
-        <div class="timer-top">
-            <template v-if="editTimerName">
-                <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName"
-                    autofocus @focus="$event.target.select()">
-                <span class="material-symbols-outlined" @click="updateTimerName">save</span>
-            </template>
-<template v-else>
-                <span @dblclick="editTimerName = true">{{ timer.name }}</span>
-            </template>
-<span @click="deleteTimer(timer._id)" class="material-symbols-outlined close">close</span>
-</div>
-<div class="timer-middle">
-    <span class="time-elapsed" :style="[{ borderBottom: `2px solid white` }, { borderTop: `2px solid white` }]">{{
-        time }}</span>
-</div>
-<div class="timer-bottom">
-    <div class="btn-container">
-        <span @click="start" class="material-symbols-outlined" v-if="!running">play_arrow</span>
-        <span @click="stop" class="material-symbols-outlined" v-else> pause </span>
-        <span @click="reset" class="material-symbols-outlined"> replay </span>
-
-    </div>
-</div>
-</div> -->
 </template>
 <style scoped>
 .container {
@@ -159,7 +111,7 @@ async function updateTimerName() {
     box-sizing: border-box;
 }
 
-.material-symbols-outlined,
+i,
 .bx-cog {
     cursor: pointer;
     color: white;

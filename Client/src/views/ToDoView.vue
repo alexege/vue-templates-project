@@ -140,7 +140,8 @@ const activeCategory = (cat) => {
           <a @click.prevent="activeCategory(category.name)">
             <span>{{ category.name }}</span>
             <span v-if="permissionToManage(category)" @click.prevent="deleteCategory(category._id)">
-              <span class="material-symbols-outlined">cancel</span>
+              <i class="bx bx-x"></i>
+
             </span>
           </a>
         </template>
@@ -253,7 +254,7 @@ const activeCategory = (cat) => {
   align-items: center;
 }
 
-.material-symbols-outlined {
+i {
   padding: .10em .25em;
   font-size: 20px;
   cursor: pointer;
@@ -262,7 +263,7 @@ const activeCategory = (cat) => {
   justify-content: center;
 }
 
-.material-symbols-outlined:hover {
+i:hover {
   color: red;
 }
 </style>

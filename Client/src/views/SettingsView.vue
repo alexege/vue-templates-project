@@ -66,9 +66,7 @@ const handleThemeSelection = () => {
 
       <div class="setting">
         <div class="left">
-          <span class="material-symbols-outlined icon">
-            contrast
-          </span>
+          <i class='bx bx-sun'></i>
         </div>
         <div class="middle">
           Toggle
@@ -87,9 +85,7 @@ const handleThemeSelection = () => {
 
       <div class="setting">
         <div class="left">
-          <span class="material-symbols-outlined icon">
-            lock
-          </span>
+          <i class='bx bx-lock'></i>
         </div>
         <div class="middle">
           Selected Theme
@@ -105,9 +101,7 @@ const handleThemeSelection = () => {
 
       <div class="setting">
         <div class="left">
-          <span class="material-symbols-outlined icon">
-            lock
-          </span>
+          <i class='bx bx-lock'></i>
         </div>
         <div class="middle">
           Background Color
@@ -119,9 +113,7 @@ const handleThemeSelection = () => {
 
       <div class="setting">
         <div class="left">
-          <span class="material-symbols-outlined icon">
-            lock
-          </span>
+          <i class='bx bx-lock'></i>
         </div>
         <div class="middle">
           Font Color

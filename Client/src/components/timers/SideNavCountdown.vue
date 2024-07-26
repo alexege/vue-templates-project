@@ -263,27 +263,13 @@ const progressColor = computed(() => {
 
         <div class=" timer-controls" v-if="isHovering">
 
-            <span @click="onReset()" class="material-symbols-outlined">
-                replay
-            </span>
+            <i @click="onReset()" class="bx bx-reset"></i>
+            <i v-if="timerActive" @click="onPause()" class='bx bx-pause-circle'></i>
+            <i v-else @click="onStart()" class='bx bx-play-circle' :class="{ disabled: timeRemaining <= 0 }"></i>
 
-            <template v-if="timerActive">
-                <span @click="onPause()" class="material-symbols-outlined">
-                    pause
-                </span>
-            </template>
+            <i @click="onPause()" class='bx bx-pause-circle'></i>
 
-            <template v-else>
-                <span @click="onStart()" class="material-symbols-outlined" :class="{ disabled: timeRemaining <= 0 }">
-                    play_arrow
-                </span>
-            </template>
-
-            <span @click="onClear()" class="material-symbols-outlined">
-                close
-            </span>
-
-            <i class="bx bx-cog material-symbols-outlined"></i>
+            <i @click="onClear()" class='bx bx-x'></i>
 
         </div>
         <div v-else class="timer-body">
@@ -298,7 +284,6 @@ const progressColor = computed(() => {
                 <!-- {{ props.timer.duration }} -->
                 <!-- 00:00:00:00 -->
             </div>
-            <!-- <i class="bx bx-cog material-symbols-outlined"></i> -->
         </div>
 
         <div class="progressbar">
@@ -338,7 +323,7 @@ const progressColor = computed(() => {
     box-sizing: border-box;
 }
 
-.material-symbols-outlined,
+i,
 .bx-cog {
     cursor: pointer;
     color: white;

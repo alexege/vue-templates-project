@@ -166,7 +166,7 @@ const permissionToManage = (category) => {
           <a>
             <span>{{ category }}</span>
             <span v-if="permissionToManage(category)" @click.prevent="removeCategory(category)">
-              <span class="material-symbols-outlined">cancel</span>
+              <i class='bx bx-x'></i>
             </span>
           </a>
         </div>
@@ -247,7 +247,7 @@ form {
   align-items: center;
 }
 
-.material-symbols-outlined {
+i {
   padding: .10em .25em;
   font-size: 20px;
   cursor: pointer;
@@ -256,7 +256,7 @@ form {
   justify-content: center;
 }
 
-.material-symbols-outlined:hover {
+i:hover {
   color: red;
 }
 </style>
