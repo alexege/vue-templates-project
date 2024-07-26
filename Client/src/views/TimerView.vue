@@ -124,7 +124,7 @@ async function add(type) {
     gap: 1em;
     max-width: 75vw;
     margin: 0 auto;
-    padding: 2em;
+    /* padding: 2em; */
     border-radius: 5px;
     background: rgba(19, 21, 27, 0.315);
 }

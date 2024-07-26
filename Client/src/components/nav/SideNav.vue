@@ -1,14 +1,6 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-
-import { useThemeStore } from '../../stores/theme.store'
-const themeStore = useThemeStore()
-
-const theme = computed(() => {
-  return themeStore.theme
-})
 
 const openSideNav = ref(false)
 
@@ -67,21 +59,7 @@ onMounted(() => {
 
 </script>
 <template>
-  <html lang="en" dir="ltr">
-
-  <head>
-    <meta charset="UTF-8" />
-    <title>Responsive Sidebar Menu | CodingLab</title>
-    <link rel="stylesheet" href="style.css" />
-
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <!-- Boxicons CDN Link -->
-    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-
-  <body>
+  <div>
     <div class="sidebar" :class="{ open: openSideNav }" @mouseover="showNav" @mouseleave="hideNav">
       <div class="logo-details">
         <i class="bx bxl-c-plus-plus icon"></i>
@@ -95,16 +73,16 @@ onMounted(() => {
           </span>
         </div>
         <!-- <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn" @click="toggleNavLock">
-          <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock()">
-            {{ isNavLocked ? 'lock_open' : 'lock' }}
-          </span>
-        </i> -->
+            <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock()">
+              {{ isNavLocked ? 'lock_open' : 'lock' }}
+            </span>
+          </i> -->
       </div>
       <!-- <ul style="height: 80%; overflow: auto;">
-        <li v-for="n in 20" :key="n">Item one</li>
-        <li>Item two</li>
-        <li>Last</li>
-      </ul> -->
+          <li v-for="n in 20" :key="n">Item one</li>
+          <li>Item two</li>
+          <li>Last</li>
+        </ul> -->
       <ul class="nav-list" :class="{ sideNavScrollBar: !openSideNav }">
         <li>
           <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>
@@ -191,12 +169,12 @@ onMounted(() => {
           <span class="tooltip">Messages</span>
         </li>
         <!-- <li>
-          <a href="#">
-            <i class="bx bx-pie-chart-alt-2"></i>
-            <span class="links_name">Analytics</span>
-          </a>
-          <span class="tooltip">Analytics</span>
-        </li> -->
+            <a href="#">
+              <i class="bx bx-pie-chart-alt-2"></i>
+              <span class="links_name">Analytics</span>
+            </a>
+            <span class="tooltip">Analytics</span>
+          </li> -->
         <li>
           <a href="#">
             <i class="bx bx-folder"></i>
@@ -238,13 +216,7 @@ onMounted(() => {
         </li>
       </ul>
     </div>
-    <div id="modals"></div>
-    <section class="home-section" :class="theme">
-      <RouterView />
-    </section>
-  </body>
-
-  </html>
+  </div>
 </template>
 <style scoped>
 .sideNavScrollBar {
@@ -262,10 +234,11 @@ onMounted(() => {
 }
 
 .sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
+  position: relative;
+  /* position: fixed; */
+  /* left: 0; */
+  /* top: 0; */
+  /* height: 100%; */
   width: 78px;
   background: #11101d;
   /* background: #209fe954; */
@@ -341,7 +314,10 @@ onMounted(() => {
 
 .sidebar .nav-list {
   /* margin-top: 20px; */
-  height: calc(100% - 140px);
+  height: 100%;
+  /* height: calc(100% - 140px); */
+
+
   /* overflow-y: scroll; */
   overflow-x: hidden;
   /* overflow: auto; */
@@ -608,17 +584,6 @@ onMounted(() => {
   .sidebar li .tooltip {
     display: none;
   }
-}
-
-/* Light / Dark  */
-.dark {
-  background-color: black;
-  color: black;
-}
-
-.light {
-  background-color: white;
-  color: black;
 }
 
 /* Scrollbar */
