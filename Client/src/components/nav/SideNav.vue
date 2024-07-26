@@ -59,164 +59,170 @@ onMounted(() => {
 
 </script>
 <template>
-  <div>
-    <div class="sidebar" :class="{ open: openSideNav }" @mouseover="showNav" @mouseleave="hideNav">
-      <div class="logo-details">
-        <i class="bx bxl-c-plus-plus icon"></i>
-        <div class="logo_name">Templates</div>
-        <div class="nav-icons">
-          <span class="material-symbols-outlined" @click="openSideNav = !openSideNav">
-            {{ openSideNav ? 'chevron_left' : 'chevron_right' }}
-          </span>
-          <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock">
-            {{ isNavLocked ? 'lock' : 'lock_open' }}
-          </span>
-        </div>
-        <!-- <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn" @click="toggleNavLock">
+  <aside class="sidebar" :class="{ open: openSideNav }" @mouseover="showNav" @mouseleave="hideNav">
+    <div class="logo-details">
+      <i class="bx bxl-c-plus-plus icon"></i>
+      <div class="logo_name">Templates</div>
+      <div class="nav-icons">
+
+
+        <span class="material-symbols-outlined" @click="openSideNav = !openSideNav">
+          {{ openSideNav ? 'chevron_left' : 'chevron_right' }}
+        </span>
+
+        <span @click="toggleNavLock">
+          <i v-if="isNavLocked" class='bx bx-lock'></i>
+          <i v-else class='bx bx-lock-open'></i>
+        </span>
+
+        <!-- <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock">
+          {{ isNavLocked ? 'lock' : 'lock_open' }}
+        </span> -->
+      </div>
+      <!-- <i :class="[[openSideNav ? 'bx-menu' : 'bx-menu-alt-right'], 'bx']" id="btn" @click="toggleNavLock">
             <span class="material-symbols-outlined toggle-btn" @click="toggleNavLock()">
               {{ isNavLocked ? 'lock_open' : 'lock' }}
             </span>
           </i> -->
-      </div>
-      <!-- <ul style="height: 80%; overflow: auto;">
+    </div>
+    <!-- <ul style="height: 80%; overflow: auto;">
           <li v-for="n in 20" :key="n">Item one</li>
           <li>Item two</li>
           <li>Last</li>
         </ul> -->
-      <ul class="nav-list" :class="{ sideNavScrollBar: !openSideNav }">
-        <li>
-          <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>
-          <input type="text" placeholder="Search..." v-model="sideNavSearch" />
-          <span class="tooltip">Search</span>
-        </li>
-        <li v-if="showAdminPage">
-          <a href="#">
-            <RouterLink to="/admin">
-              <i class="bx bx-grid-alt"></i>
-              <span class="links_name">Admin Dashboard</span>
+    <ul class="nav-list" :class="{ sideNavScrollBar: !openSideNav }">
+      <li>
+        <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>
+        <input type="text" placeholder="Search..." v-model="sideNavSearch" />
+        <span class="tooltip">Search</span>
+      </li>
+      <li v-if="showAdminPage">
+        <a href="#">
+          <RouterLink to="/admin">
+            <i class="bx bx-grid-alt"></i>
+            <span class="links_name">Admin Dashboard</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">Admin Dashboard</span>
+      </li>
+      <li>
+        <a href="#">
+          <RouterLink to="/">
+            <i class="bx bx-grid-alt"></i>
+            <span class="links_name">Dashboard</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">Dashboard</span>
+      </li>
+      <li>
+        <div style="display: flex;">
+          <a href="#" id="">
+            <RouterLink to="/timers" id="sideNavTimers" :class="{ sideNavTimersExpanded: openSideNav }">
+              <i class="bx bx-timer"></i>
+              <span class="links_name">Timers</span>
             </RouterLink>
           </a>
-          <span class="tooltip">Admin Dashboard</span>
-        </li>
-        <li>
-          <a href="#">
-            <RouterLink to="/">
-              <i class="bx bx-grid-alt"></i>
-              <span class="links_name">Dashboard</span>
-            </RouterLink>
-          </a>
-          <span class="tooltip">Dashboard</span>
-        </li>
-        <li>
-          <div style="display: flex;">
-            <a href="#" id="">
-              <RouterLink to="/timers" id="sideNavTimers" :class="{ sideNavTimersExpanded: openSideNav }">
-                <i class="bx bx-timer"></i>
-                <span class="links_name">Timers</span>
-              </RouterLink>
-            </a>
-            <span @click="toggleTimersView" class="timer-extend" v-if="openSideNav">
-              <span class="material-symbols-outlined" v-if="!showTimers">
-                arrow_drop_down
-              </span>
-              <span class="material-symbols-outlined" v-else>
-                arrow_drop_up
-              </span>
+          <span @click="toggleTimersView" class="timer-extend" v-if="openSideNav">
+            <span class="material-symbols-outlined" v-if="!showTimers">
+              arrow_drop_down
             </span>
+            <span class="material-symbols-outlined" v-else>
+              arrow_drop_up
+            </span>
+          </span>
+        </div>
+        <span class="tooltip">Timers</span>
+        <TransitionExpand class="accordion">
+          <div v-if="showTimers">
+            <!-- <SideNavTimerContainer style="overflow: auto; overflow-x: hidden; height: 300px;" /> -->
+            <SideNavTimerContainer style="overflow-y: scroll; overflow-x: hidden;" />
           </div>
-          <span class="tooltip">Timers</span>
-          <TransitionExpand class="accordion">
-            <div v-if="showTimers">
-              <!-- <SideNavTimerContainer style="overflow: auto; overflow-x: hidden; height: 300px;" /> -->
-              <SideNavTimerContainer style="overflow-y: scroll; overflow-x: hidden;" />
-            </div>
-          </TransitionExpand>
-        </li>
-        <li>
-          <a href=" #">
-            <RouterLink to="/user">
-              <i class="bx bx-user"></i>
-              <span class="links_name">User</span>
-            </RouterLink>
-          </a>
-          <span class="tooltip">User</span>
-        </li>
-        <li>
-          <a href="#">
-            <RouterLink to="/todo">
-              <i class="bx bx-list-ul"></i>
-              <span class="links_name">Todo</span>
-            </RouterLink>
-          </a>
-          <span class="tooltip">Todo</span>
-        </li>
-        <li>
-          <a href="#">
-            <RouterLink to="/notes">
-              <i class="bx bx-edit"></i>
-              <span class="links_name">Notes</span>
-            </RouterLink>
-          </a>
-          <span class="tooltip">Notes</span>
-        </li>
-        <li>
-          <a href="#">
-            <RouterLink to="/messages">
-              <i class="bx bx-chat"></i>
-              <span class="links_name">Messages</span>
-            </RouterLink>
-          </a>
-          <span class="tooltip">Messages</span>
-        </li>
-        <!-- <li>
+        </TransitionExpand>
+      </li>
+      <li>
+        <a href=" #">
+          <RouterLink to="/user">
+            <i class="bx bx-user"></i>
+            <span class="links_name">User</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">User</span>
+      </li>
+      <li>
+        <a href="#">
+          <RouterLink to="/todo">
+            <i class="bx bx-list-ul"></i>
+            <span class="links_name">Todo</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">Todo</span>
+      </li>
+      <li>
+        <a href="#">
+          <RouterLink to="/notes">
+            <i class="bx bx-edit"></i>
+            <span class="links_name">Notes</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">Notes</span>
+      </li>
+      <li>
+        <a href="#">
+          <RouterLink to="/messages">
+            <i class="bx bx-chat"></i>
+            <span class="links_name">Messages</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">Messages</span>
+      </li>
+      <!-- <li>
             <a href="#">
               <i class="bx bx-pie-chart-alt-2"></i>
               <span class="links_name">Analytics</span>
             </a>
             <span class="tooltip">Analytics</span>
           </li> -->
-        <li>
-          <a href="#">
-            <i class="bx bx-folder"></i>
-            <span class="links_name">File Manager</span>
-          </a>
-          <span class="tooltip">Files</span>
-        </li>
-        <li>
-          <a href="#">
-            <i class="bx bx-cart-alt"></i>
-            <span class="links_name">Order</span>
-          </a>
-          <span class="tooltip">Order</span>
-        </li>
-        <li>
-          <a href="#">
-            <i class="bx bx-heart"></i>
-            <span class="links_name">Saved</span>
-          </a>
-          <span class="tooltip">Saved</span>
-        </li>
-        <li>
-          <a href="#">
-            <RouterLink to="/settings">
-              <i class="bx bx-cog"></i>
-              <span class="links_name">Setting</span>
-            </RouterLink>
-          </a>
-          <span class="tooltip">Setting</span>
-        </li>
-        <li class="profile">
-          <div class="profile-details">
-            <div class="name_job">
-              <div class="name" v-if="user && user.username">{{ user.username }}</div>
-              <div class="job">Software Developer</div>
-            </div>
+      <li>
+        <a href="#">
+          <i class="bx bx-folder"></i>
+          <span class="links_name">File Manager</span>
+        </a>
+        <span class="tooltip">Files</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bx bx-cart-alt"></i>
+          <span class="links_name">Order</span>
+        </a>
+        <span class="tooltip">Order</span>
+      </li>
+      <li>
+        <a href="#">
+          <i class="bx bx-heart"></i>
+          <span class="links_name">Saved</span>
+        </a>
+        <span class="tooltip">Saved</span>
+      </li>
+      <li>
+        <a href="#">
+          <RouterLink to="/settings">
+            <i class="bx bx-cog"></i>
+            <span class="links_name">Setting</span>
+          </RouterLink>
+        </a>
+        <span class="tooltip">Setting</span>
+      </li>
+      <li class="profile">
+        <div class="profile-details">
+          <div class="name_job">
+            <div class="name" v-if="user && user.username">{{ user.username }}</div>
+            <div class="job">Software Developer</div>
           </div>
-          <i class="bx bx-log-out" id="log_out" @click="logout"></i>
-        </li>
-      </ul>
-    </div>
-  </div>
+        </div>
+        <i class="bx bx-log-out" id="log_out" @click="logout"></i>
+      </li>
+    </ul>
+  </aside>
 </template>
 <style scoped>
 .sideNavScrollBar {
@@ -231,6 +237,23 @@ onMounted(() => {
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+
+  width: calc(2rem + 48px);
+  overflow: hidden;
+  min-height: 100vh;
+  padding: 1rem;
+
+  transition: 0.2 ease-in-out;
+}
+
+.sidebar-container {
+  position: fixed;
+  height: 100%;
 }
 
 .sidebar {

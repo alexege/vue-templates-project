@@ -15,24 +15,37 @@ const theme = computed(() => themeStore.theme);
 </script>
 
 <template>
-  <div class="main" :class="theme">
-    <SideNav class="side-nav" />
+  <div class="app" :class="theme">
+    <SideNav />
     <RouterView class="router-view" />
   </div>
 </template>
 
 <style scoped>
-.main {
-  display: flex;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .router-view {
-  /* height: 100vh; */
-  width: 100%;
+  flex: 1 1 0;
 }
 
-.side-nav {
-  background: rgb(16, 15, 28);
+.app {
+  display: flex;
+}
+
+.app main {
+  flex: 1 1 0;
+  padding: 2rem;
+
+}
+
+@media (max-width: 1024px) {
+  .app {
+    padding-left: 6rem;
+  }
 }
 
 /* Default (Light Mode) Theme */

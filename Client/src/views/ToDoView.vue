@@ -189,6 +189,7 @@ const activeCategory = (cat) => {
 .todo-container {
   text-align: center;
   color: white;
+  height: 100%;
   /* padding: 1em; */
 }
 

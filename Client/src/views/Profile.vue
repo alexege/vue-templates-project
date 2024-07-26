@@ -37,7 +37,7 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
 
 </script>
 <template>
-  <div class="container">
+  <div class="main">
     <div class="card profile">
       <span class="profile-image">
         <img :src="authStore.user.img" alt="">
@@ -124,14 +124,14 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
   font-family: 'Poppins', sans-serif;
 }
 
-.container {
+.main {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: minmax(150px, auto);
   justify-items: center;
   gap: 1em;
-  padding: 2em;
-  height: 100vh;
+  margin: 2em;
+  flex: 1 1 0;
 }
 
 .card {
