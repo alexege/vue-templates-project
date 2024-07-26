@@ -65,12 +65,12 @@ onMounted(() => {
       <div class="logo_name">Templates</div>
       <div class="nav-icons">
 
-
-        <span class="material-symbols-outlined" @click="openSideNav = !openSideNav">
-          {{ openSideNav ? 'chevron_left' : 'chevron_right' }}
+        <span @click="openSideNav = !openSideNav">
+          <i v-if="openSideNav" class='bx bx-chevron-left'></i>
+          <i v-else class='bx bx-chevron-right'></i>
         </span>
 
-        <span @click="toggleNavLock">
+        <span @click="toggleNavLock" style="outline: 1px solid lime;">
           <i v-if="isNavLocked" class='bx bx-lock'></i>
           <i v-else class='bx bx-lock-open'></i>
         </span>
@@ -123,11 +123,9 @@ onMounted(() => {
             </RouterLink>
           </a>
           <span @click="toggleTimersView" class="timer-extend" v-if="openSideNav">
-            <span class="material-symbols-outlined" v-if="!showTimers">
-              arrow_drop_down
-            </span>
-            <span class="material-symbols-outlined" v-else>
-              arrow_drop_up
+            <span>
+              <i v-if="!showTimers" class='bx bx-chevron-down'></i>
+              <i v-else class='bx bx-chevron-up'></i>
             </span>
           </span>
         </div>
