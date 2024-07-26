@@ -268,14 +268,14 @@ const progressColor = computed(() => {
                 <template v-if="isEditTimerName">
                     <input type="text" v-model="editTimer.name" @blur="updateTimerName" @keydown.enter="updateTimerName"
                         autofocus @focus="$event.target.select()" />
-                    <span class="material-symbols-outlined" @click="updateTimerName">save</span>
+                    <i class='bx bx-save' @click="updateTimerName"></i>
                 </template>
                 <template v-else>
                     <span @dblclick="isEditTimerName = true">{{ timer.name }}</span>
                 </template>
             </div>
             <div class="controls">
-                <span @click="deleteTimer" class="material-symbols-outlined">close</span>
+                <i @click="deleteTimer" class='bx bx-x'></i>
             </div>
         </div>
 
@@ -319,20 +319,17 @@ const progressColor = computed(() => {
         <!-- Bottom -->
         <div class="timer-bottom">
             <div class="timer-controls">
-                <span @click="onReset()" class="material-symbols-outlined"> replay </span>
+                <i @click="onReset()" class='bx bx-rewind-circle'></i>
                 <template v-if="timerActive">
-                    <span @click="onPause()" class="material-symbols-outlined"> pause </span>
+                    <i @click="onPause()" class='bx bx-pause-circle'></i>
                 </template>
                 <template v-else>
-                    <span @click="onStart()" class="material-symbols-outlined"
-                        :class="{ disabled: timeRemaining <= 0 }">
-                        play_arrow
-                    </span>
+                    <i @click="onStart()" class='bx bx-play-circle' :class="{ disabled: timeRemaining <= 0 }"></i>
                 </template>
 
-                <span @click="editTime" class="material-symbols-outlined">edit</span>
+                <i @click="editTime" class='bx bx-edit'></i>
 
-                <span @click="onClear()" class="material-symbols-outlined"> delete_forever </span>
+                <i @click="onClear()" class='bx bx-x'></i>
 
             </div>
         </div>
@@ -340,7 +337,7 @@ const progressColor = computed(() => {
         <div class="time-up-overlay" v-if="timerComplete">
             <h2>{{ timer.name }}</h2>
             <h2>Timer is Up!</h2>
-            <span @click="onReset(); timerComplete = false" class="material-symbols-outlined"> replay </span>
+            <i @click="onReset(); timerComplete = false" class='bx bx-reset'></i>
 
         </div>
 
@@ -393,11 +390,11 @@ const progressColor = computed(() => {
 }
 
 /* Generic */
-.material-symbols-outlined {
+i {
     cursor: pointer;
 }
 
-.material-symbols-outlined:hover {
+i:hover {
     color: white;
 }
 
@@ -425,8 +422,8 @@ const progressColor = computed(() => {
     display: flex;
     /* outline: 1px solid white; */
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 5px;
+    right: 5px;
 }
 
 /* Middle */
@@ -468,7 +465,7 @@ const progressColor = computed(() => {
     width: 40px;
 }
 
-.timer-middle .timer-controls .material-symbols-outlined {
+.timer-middle .timer-controls i {
     padding: 0.1em 0.25em;
     font-size: 20px;
 }
@@ -479,7 +476,7 @@ const progressColor = computed(() => {
     padding: 10px 0;
 }
 
-.timer-bottom .timer-controls .material-symbols-outlined {
+.timer-bottom .timer-controls i {
     margin: 0 10px;
 }
 
