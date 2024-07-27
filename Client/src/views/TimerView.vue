@@ -126,7 +126,7 @@ async function add(type) {
     margin: 0 auto;
     /* padding: 2em; */
     border-radius: 5px;
-    background: rgba(19, 21, 27, 0.315);
+    /* background: rgba(19, 21, 27, 0.315); */
 }
 
 .timer-grid {

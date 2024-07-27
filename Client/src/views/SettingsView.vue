@@ -28,32 +28,41 @@ const fontColor = ref()
 const themeChoice = ref('dark')
 
 const updateBackgroundColor = (color) => {
+  themeChoice.value = 'custom'
+  themeStore.setTheme('custom-mode')
+  themeStore.setCustomColors(fontColor.value, color)
   backgroundColor.value = color;
+
+  localStorage.setItem('bgColor', color)
+  localStorage.setItem('fgColor', fontColor.value)
 }
 
 const updateFontColor = (color) => {
+  themeChoice.value = 'custom'
+  themeStore.setTheme('custom-mode')
+  themeStore.setCustomColors(color, backgroundColor.value)
   fontColor.value = color;
-}
 
-const updateColors = () => {
-  console.log(`sending values to database: ${backgroundColor} and ${fontColor}`)
+  localStorage.setItem('bgColor', backgroundColor.value)
+  localStorage.setItem('fgColor', color)
 }
 
 const handleToggle = (value) => {
   console.log("Value is: ", value)
-  value ? themeStore.setTheme('dark') : themeStore.setTheme('light')
+  value ? themeStore.setTheme('dark-mode') : themeStore.setTheme('light-mode')
 }
 
 const handleThemeSelection = () => {
   if (themeChoice.value === 'light') {
     console.log("Light mode selected")
-    themeStore.setTheme('light')
+    themeStore.setTheme('light-mode')
   } else if (themeChoice.value === 'dark') {
     console.log("Dark mode selected")
-    themeStore.setTheme('dark')
+    themeStore.setTheme('dark-mode')
   } else if (themeChoice.value === 'custom') {
     console.log("Custom mode selected")
-    themeStore.setTheme('custom')
+    themeStore.setTheme('custom-mode')
+    themeStore.setCustomColors(fontColor.value, backgroundColor.value)
   }
 }
 
@@ -120,7 +129,6 @@ const handleThemeSelection = () => {
         </div>
         <div class="right">
           <color-picker @color="updateFontColor" />
-
         </div>
       </div>
 

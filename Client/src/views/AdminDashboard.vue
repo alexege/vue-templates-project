@@ -122,7 +122,9 @@ const dialogConfirmMessages = (confirm) => {
         <td>{{ user.email }}</td>
         <td v-if="user.roles">{{ user.roles[0].name }}</td>
         <td>
-          <a @click="deleteAUser(user)">Delete</a>
+          <a @click="deleteAUser(user)">
+            <i class="bx bx-trash"></i>
+          </a>
         </td>
       </tr>
     </table>
@@ -148,7 +150,10 @@ const dialogConfirmMessages = (confirm) => {
         </td>
         <td>{{ todo.createdAt }}</td>
         <td>
-          <a @click="deleteATodo(todo)">Delete</a>
+          <a @click="deleteATodo(todo)">
+            <i class="bx bx-trash"></i>
+
+          </a>
         </td>
       </tr>
     </table>
@@ -183,7 +188,9 @@ const dialogConfirmMessages = (confirm) => {
         </td>
         <td>{{ timer.createdAt }}</td>
         <td>
-          <a @click="deleteATimer(timer)">Delete</a>
+          <a @click="deleteATimer(timer)">
+            <i class="bx bx-trash"></i>
+          </a>
         </td>
       </tr>
     </table>
@@ -216,7 +223,9 @@ const dialogConfirmMessages = (confirm) => {
         </td>
         <td>{{ message.createdAt }}</td>
         <td>
-          <a @click="deleteAMessage(message)">Delete</a>
+          <a @click="deleteAMessage(message)">
+            <i class="bx bx-trash"></i>
+          </a>
         </td>
       </tr>
     </table>
@@ -250,5 +259,9 @@ td {
 
 th {
   background-color: rgba(0, 0, 0, 0.274);
+}
+
+i:hover {
+  cursor: pointer;
 }
 </style>

@@ -11,13 +11,16 @@ getAll()
 import { useThemeStore } from './stores/theme.store';
 const themeStore = useThemeStore()
 const theme = computed(() => themeStore.theme);
+const color = computed(() => themeStore.foregroundColor);
+const background = computed(() => themeStore.backgroundColor)
+themeStore.getTheme()
 
 </script>
 
 <template>
   <div class="app" :class="theme">
     <SideNav />
-    <RouterView class="router-view" />
+    <RouterView class="router-view" :style="{ color: color, backgroundColor: background }" />
   </div>
 </template>
 
@@ -72,7 +75,7 @@ const theme = computed(() => themeStore.theme);
   /* Background color for dark mode */
 }
 
-.main {
+.app {
   color: var(--font-color);
   background-color: var(--background-color);
 }
