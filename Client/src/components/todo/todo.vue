@@ -150,6 +150,9 @@ const permissionToManage = (todo) => {
         <i class="bx bx-trash"></i>
       </span>
     </div>
+    <div v-else class="todo-actions">
+      <span></span>
+    </div>
 
   </div>
 

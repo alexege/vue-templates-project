@@ -143,7 +143,6 @@ async function add(type) {
 }
 
 button {
-    color: white;
     background: none;
     border: none;
 }
@@ -198,7 +197,6 @@ button:hover {
 
 h2 {
     text-align: center;
-    color: white;
     font-size: 36px;
 }
 

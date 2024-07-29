@@ -1,5 +1,6 @@
 <template>
     <div>
+        {{ color }}
         <input type="color" id="colorPicker" v-model="color" @input="handleInput" />
     </div>
 </template>
@@ -7,10 +8,13 @@
 <script setup>
 import { ref, watch } from 'vue';
 const emit = defineEmits(['color'])
+const props = defineProps(['provided'])
 
 // Reactive state for the color
 const color = ref('#ff0000');
 const throttledColor = ref('');
+
+color.value = props.provided
 
 const emitColorSelection = () => {
     emit('color', throttledColor.value)

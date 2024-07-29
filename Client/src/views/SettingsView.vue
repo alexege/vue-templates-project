@@ -1,32 +1,28 @@
 <script setup>
 import Toggle from '@/components/toggle/toggle.vue'
-import { ref, computed } from 'vue'
-const dataToggle = ref()
-const checkVal = (val) => {
-  console.log('checked value is: ', val)
-}
+import { ref, computed, onMounted, watch } from 'vue'
+
+
+const fgColor = ref("white");
+const bgColor = ref("black");
 
 import { useThemeStore } from '@/stores/theme.store'
 const themeStore = useThemeStore()
-
-const toggleLightMode = () => {
-  // console.log('toggling light mode', switch1.value)
-  // if (switch1.value) {
-  //   themeStore.setTheme('light')
-  // } else {
-  //   themeStore.setTheme('dark')
-  // }
-}
-
 const switch1 = ref(false)
 
 //Color Picker
 import ColorPicker from '@/components/color/ColorPicker.vue'
 
-const backgroundColor = ref()
 const fontColor = ref()
+const backgroundColor = ref()
 const themeChoice = ref('dark')
 
+onMounted(() => {
+  fgColor.value = themeStore.fontColor
+  bgColor.value = themeStore.backgroundColor
+});
+
+//Background Color Selected
 const updateBackgroundColor = (color) => {
   themeChoice.value = 'custom'
   themeStore.setTheme('custom-mode')
@@ -37,6 +33,7 @@ const updateBackgroundColor = (color) => {
   localStorage.setItem('fgColor', fontColor.value)
 }
 
+//Font Color Selected
 const updateFontColor = (color) => {
   themeChoice.value = 'custom'
   themeStore.setTheme('custom-mode')
@@ -47,11 +44,14 @@ const updateFontColor = (color) => {
   localStorage.setItem('fgColor', color)
 }
 
+//Toggle Dark / Light
 const handleToggle = (value) => {
   console.log("Value is: ", value)
   value ? themeStore.setTheme('dark-mode') : themeStore.setTheme('light-mode')
+  value ? themeStore.setCustomColors('white', 'black') : themeStore.setCustomColors('black', 'white')
 }
 
+//Handle DropDown Theme Selection
 const handleThemeSelection = () => {
   if (themeChoice.value === 'light') {
     console.log("Light mode selected")
@@ -85,8 +85,7 @@ const handleThemeSelection = () => {
           Mode
         </div>
         <div class="right">
-          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @change="toggleLightMode"
-            @toggle="handleToggle">
+          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @toggle="handleToggle">
             Toggle Lock mode
           </Toggle>
         </div>
@@ -99,6 +98,7 @@ const handleThemeSelection = () => {
         <div class="middle">
           Selected Theme
         </div>
+        {{ themeChoice }}
         <div class="right">
           <select v-model="themeChoice" @change="handleThemeSelection">
             <option value="light">light</option>
@@ -116,7 +116,7 @@ const handleThemeSelection = () => {
           Background Color
         </div>
         <div class="right">
-          <color-picker @color="updateBackgroundColor" />
+          <color-picker @color="updateBackgroundColor" :provided="themeStore.backgroundColor" />
         </div>
       </div>
 
@@ -128,10 +128,11 @@ const handleThemeSelection = () => {
           Font Color
         </div>
         <div class="right">
-          <color-picker @color="updateFontColor" />
+          <color-picker @color="updateFontColor" :provided="themeStore.foregroundColor" />
         </div>
       </div>
 
+      <pre>{{ themeStore }}</pre>
 
       Color:{{ fontColor }} <br />
       Background: {{ backgroundColor }}

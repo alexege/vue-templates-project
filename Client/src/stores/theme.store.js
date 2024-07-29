@@ -27,6 +27,8 @@ export const useThemeStore = defineStore('theme', {
       } else {
         this.foregroundColor = localStorage.getItem('fgColor') || 'white'
         this.backgroundColor = localStorage.getItem('bgColor') || 'black'
+        document.documentElement.style.setProperty('--font-color', this.foregroundColor)
+        document.documentElement.style.setProperty('--bg-color', this.backgroundColor)
       }
       console.log('Setting theme: ', value)
       this.theme = value
