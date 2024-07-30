@@ -1,7 +1,7 @@
 <template>
     <div>
         {{ color }}
-        <input type="color" id="colorPicker" v-model="color" @input="handleInput" />
+        <input type="color" id="colorPicker" v-model="color" @input="handleInput" @blur="setColor" />
     </div>
 </template>
 
@@ -11,13 +11,17 @@ const emit = defineEmits(['color'])
 const props = defineProps(['provided'])
 
 // Reactive state for the color
-const color = ref('#ff0000');
+const color = ref('');
 const throttledColor = ref('');
 
 color.value = props.provided
 
 const emitColorSelection = () => {
     emit('color', throttledColor.value)
+}
+
+const setColor = () => {
+    emitColorSelection(color.value)
 }
 
 // Custom throttle function
@@ -37,7 +41,7 @@ function throttle(func, delay) {
 const updateValue = throttle((value) => {
     throttledColor.value = value;
     emitColorSelection();
-}, 1000)
+}, 500);
 
 const handleInput = (event) => {
     updateValue(event.target.value)

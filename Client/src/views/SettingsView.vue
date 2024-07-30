@@ -3,67 +3,111 @@ import Toggle from '@/components/toggle/toggle.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 
 
-const fgColor = ref("white");
-const bgColor = ref("black");
+const fgColor = ref("#fff");
+const bgColor = ref("#000");
 
 import { useThemeStore } from '@/stores/theme.store'
 const themeStore = useThemeStore()
 const switch1 = ref(false)
-
-//Color Picker
-import ColorPicker from '@/components/color/ColorPicker.vue'
 
 const fontColor = ref()
 const backgroundColor = ref()
 const themeChoice = ref('dark')
 
 onMounted(() => {
-  fgColor.value = themeStore.fontColor
+  themeStore.foregroundColor = localStorage.getItem('fgColor') || '#ffffff'
+  themeStore.backgroundColor = localStorage.getItem('bgColor') || '#000000'
+  fgColor.value = themeStore.foregroundColor
   bgColor.value = themeStore.backgroundColor
-});
+  themeStore.getTheme()
+})
 
 //Background Color Selected
-const updateBackgroundColor = (color) => {
+const updateBackgroundColor = () => {
   themeChoice.value = 'custom'
   themeStore.setTheme('custom-mode')
-  themeStore.setCustomColors(fontColor.value, color)
-  backgroundColor.value = color;
+  themeStore.setCustomColors(fontColor.value, bgColor.value)
+  backgroundColor.value = bgColor.value;
 
-  localStorage.setItem('bgColor', color)
+  localStorage.setItem('theme', 'custom-mode')
+  localStorage.setItem('bgColor', bgColor.value)
   localStorage.setItem('fgColor', fontColor.value)
 }
 
 //Font Color Selected
-const updateFontColor = (color) => {
+const updateFontColor = () => {
   themeChoice.value = 'custom'
   themeStore.setTheme('custom-mode')
-  themeStore.setCustomColors(color, backgroundColor.value)
-  fontColor.value = color;
+  themeStore.setCustomColors(fgColor.value, backgroundColor.value)
+  fontColor.value = fgColor.value;
 
+  localStorage.setItem('theme', 'custom-mode')
   localStorage.setItem('bgColor', backgroundColor.value)
-  localStorage.setItem('fgColor', color)
+  localStorage.setItem('fgColor', fgColor.value)
 }
 
 //Toggle Dark / Light
 const handleToggle = (value) => {
   console.log("Value is: ", value)
   value ? themeStore.setTheme('dark-mode') : themeStore.setTheme('light-mode')
-  value ? themeStore.setCustomColors('white', 'black') : themeStore.setCustomColors('black', 'white')
+  value ? themeStore.setCustomColors('#ffffff', '#000000') : themeStore.setCustomColors('#000000', '#ffffff')
 }
 
 //Handle DropDown Theme Selection
 const handleThemeSelection = () => {
   if (themeChoice.value === 'light') {
     console.log("Light mode selected")
+    fgColor.value = '#ffffff'
+    bgColor.value = '#000000'
     themeStore.setTheme('light-mode')
+    themeStore.setCustomColors('#000000', '#ffffff')
+    localStorage.setItem('fgColor', '#ffffff')
+    localStorage.setItem('bgColor', '#000000')
+    localStorage.setItem('theme', 'light-mode')
   } else if (themeChoice.value === 'dark') {
     console.log("Dark mode selected")
+    fgColor.value = '#000000'
+    bgColor.value = '#ffffff'
     themeStore.setTheme('dark-mode')
+    themeStore.setCustomColors('#ffffff', '#000000')
+    localStorage.setItem('fgColor', '#000000')
+    localStorage.setItem('bgColor', '#ffffff')
+    localStorage.setItem('theme', 'dark-mode')
   } else if (themeChoice.value === 'custom') {
     console.log("Custom mode selected")
     themeStore.setTheme('custom-mode')
     themeStore.setCustomColors(fontColor.value, backgroundColor.value)
+    localStorage.setItem('fgColor', fontColor.value)
+    localStorage.setItem('bgColor', backgroundColor.value)
+    localStorage.setItem('theme', 'custom-mode')
   }
+}
+
+//Throttle Color Picker
+function throttle(func, delay) {
+  let lastCall = 0;
+  let timeoutId;
+
+  return function (...args) {
+    const now = new Date().getTime();
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      func(...args);
+    }
+  };
+}
+
+const updateValue = throttle((value) => {
+  throttledColor.value = value;
+  emitColorSelection();
+}, 500);
+
+// watch(color, (newValue) => {
+//   throttledColor.value = newValue;
+// })
+
+const handleInput = () => {
+  console.log("Input is updating")
 }
 
 </script>
@@ -116,7 +160,8 @@ const handleThemeSelection = () => {
           Background Color
         </div>
         <div class="right">
-          <color-picker @color="updateBackgroundColor" :provided="themeStore.backgroundColor" />
+          {{ bgColor }}
+          <input type="color" v-model="bgColor" @input="handleInput" @change="updateBackgroundColor">
         </div>
       </div>
 
@@ -128,7 +173,8 @@ const handleThemeSelection = () => {
           Font Color
         </div>
         <div class="right">
-          <color-picker @color="updateFontColor" :provided="themeStore.foregroundColor" />
+          {{ fgColor }}
+          <input type="color" v-model="fgColor" @input="handleInput" @change="updateFontColor">
         </div>
       </div>
 
