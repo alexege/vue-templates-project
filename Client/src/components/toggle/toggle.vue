@@ -10,16 +10,32 @@ const props = defineProps({
         default: false
     }
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'toggle'])
 const isChecked = ref(props.initialValue)
 const toggleId = `toggle-${Math.random().toString(36).substr(2, 9)}`
-console.log('toggleId: ', toggleId)
 const toggle = (event) => {
-    console.log('toggling')
     isChecked.value = event.target.checked
     // emit('update:modelValue', isChecked.value)
     emit('toggle', isChecked.value)
 }
+
+// Theme Store
+import { useThemeStore } from '@/stores/theme.store';
+const themeStore = useThemeStore();
+
+isChecked.value = themeStore.theme == 'dark-mode' ? true : false
+
+const activeTheme = () => {
+    if (themeStore.theme == 'dark-mode') {
+        isChecked.value = true
+    } else if (themeStore.theme == 'light-mode') {
+        isChecked.value = false
+    } else {
+        isChecked.value = false
+    }
+    return themeStore.theme
+}
+
 </script>
 <template>
     <div class="theme-switch-wrapper">

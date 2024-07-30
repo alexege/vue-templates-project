@@ -1,89 +1,80 @@
 <script setup>
-import Toggle from '@/components/toggle/toggle.vue'
-import { ref, computed, onMounted, watch } from 'vue'
+import Toggle from '@/components/toggle/toggle.vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useThemeStore } from '@/stores/theme.store';
 
+// Reactive variables
+const fgColor = ref(localStorage.getItem('fgColor') || '#ffffff');
+const bgColor = ref(localStorage.getItem('bgColor') || '#000000');
+const switch1 = ref(false);
+const themeChoice = ref(localStorage.getItem('theme') || 'dark-mode');
 
-const fgColor = ref("#fff");
-const bgColor = ref("#000");
+// Theme Store
+const themeStore = useThemeStore();
 
-import { useThemeStore } from '@/stores/theme.store'
-const themeStore = useThemeStore()
-const switch1 = ref(false)
+// Computed properties
+const fontColor = computed(() => fgColor.value);
+const backgroundColor = computed(() => bgColor.value);
 
-const fontColor = ref()
-const backgroundColor = ref()
-const themeChoice = ref('dark')
-
+// On component mount
 onMounted(() => {
-  themeStore.foregroundColor = localStorage.getItem('fgColor') || '#ffffff'
-  themeStore.backgroundColor = localStorage.getItem('bgColor') || '#000000'
-  fgColor.value = themeStore.foregroundColor
-  bgColor.value = themeStore.backgroundColor
-  themeStore.getTheme()
-})
+  themeStore.foregroundColor = fgColor.value;
+  themeStore.backgroundColor = bgColor.value;
 
-//Background Color Selected
-const updateBackgroundColor = () => {
-  themeChoice.value = 'custom'
-  themeStore.setTheme('custom-mode')
-  themeStore.setCustomColors(fontColor.value, bgColor.value)
-  backgroundColor.value = bgColor.value;
-
-  localStorage.setItem('theme', 'custom-mode')
-  localStorage.setItem('bgColor', bgColor.value)
-  localStorage.setItem('fgColor', fontColor.value)
-}
-
-//Font Color Selected
-const updateFontColor = () => {
-  themeChoice.value = 'custom'
-  themeStore.setTheme('custom-mode')
-  themeStore.setCustomColors(fgColor.value, backgroundColor.value)
-  fontColor.value = fgColor.value;
-
-  localStorage.setItem('theme', 'custom-mode')
-  localStorage.setItem('bgColor', backgroundColor.value)
-  localStorage.setItem('fgColor', fgColor.value)
-}
-
-//Toggle Dark / Light
-const handleToggle = (value) => {
-  console.log("Value is: ", value)
-  value ? themeStore.setTheme('dark-mode') : themeStore.setTheme('light-mode')
-  value ? themeStore.setCustomColors('#ffffff', '#000000') : themeStore.setCustomColors('#000000', '#ffffff')
-}
-
-//Handle DropDown Theme Selection
-const handleThemeSelection = () => {
-  if (themeChoice.value === 'light') {
-    console.log("Light mode selected")
-    fgColor.value = '#ffffff'
-    bgColor.value = '#000000'
-    themeStore.setTheme('light-mode')
-    themeStore.setCustomColors('#000000', '#ffffff')
-    localStorage.setItem('fgColor', '#ffffff')
-    localStorage.setItem('bgColor', '#000000')
-    localStorage.setItem('theme', 'light-mode')
-  } else if (themeChoice.value === 'dark') {
-    console.log("Dark mode selected")
-    fgColor.value = '#000000'
-    bgColor.value = '#ffffff'
-    themeStore.setTheme('dark-mode')
-    themeStore.setCustomColors('#ffffff', '#000000')
-    localStorage.setItem('fgColor', '#000000')
-    localStorage.setItem('bgColor', '#ffffff')
-    localStorage.setItem('theme', 'dark-mode')
-  } else if (themeChoice.value === 'custom') {
-    console.log("Custom mode selected")
-    themeStore.setTheme('custom-mode')
-    themeStore.setCustomColors(fontColor.value, backgroundColor.value)
-    localStorage.setItem('fgColor', fontColor.value)
-    localStorage.setItem('bgColor', backgroundColor.value)
-    localStorage.setItem('theme', 'custom-mode')
+  if (localStorage.getItem('theme') === 'light-mode') {
+    switch1.value = false;
+    localStorage.setItem('theme', 'light-mode');
+  } else if (localStorage.getItem('theme') === 'dark-mode') {
+    switch1.value = true;
+    localStorage.setItem('theme', 'dark-mode');
   }
-}
+});
 
-//Throttle Color Picker
+// Update theme in local storage and store
+const updateTheme = (mode, fg, bg) => {
+  themeStore.setTheme(mode);
+  themeStore.setCustomColors(fg, bg);
+  localStorage.setItem('theme', mode);
+  localStorage.setItem('fgColor', fg);
+  localStorage.setItem('bgColor', bg);
+};
+
+// Background Color Selected
+const updateBackgroundColor = () => {
+  themeChoice.value = 'custom-mode';
+  updateTheme('custom-mode', fontColor.value, bgColor.value);
+};
+
+// Font Color Selected
+const updateFontColor = () => {
+  themeChoice.value = 'custom-mode';
+  updateTheme('custom-mode', fgColor.value, backgroundColor.value);
+};
+
+// Toggle Dark / Light
+const handleToggle = (value) => {
+  const mode = value ? 'dark-mode' : 'light-mode';
+  const fg = value ? '#ffffff' : '#000000';
+  const bg = value ? '#000000' : '#ffffff';
+  updateTheme(mode, fg, bg);
+  value ? switch1.value = true : switch1.value = false;
+};
+
+// Handle DropDown Theme Selection
+const handleThemeSelection = () => {
+  const modes = {
+    'light-mode': { fg: '#000000', bg: '#ffffff' },
+    'dark-mode': { fg: '#ffffff', bg: '#000000' },
+    'custom-mode': { fg: fontColor.value, bg: backgroundColor.value }
+  };
+
+  const selected = modes[themeChoice.value];
+  if (selected) {
+    updateTheme(themeChoice.value, selected.fg, selected.bg);
+  }
+};
+
+// Throttle Color Picker
 function throttle(func, delay) {
   let lastCall = 0;
   let timeoutId;
@@ -93,28 +84,35 @@ function throttle(func, delay) {
     if (now - lastCall >= delay) {
       lastCall = now;
       func(...args);
+    } else {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay - (now - lastCall));
     }
   };
 }
 
+// Throttled color update
+const throttledColor = ref();
 const updateValue = throttle((value) => {
   throttledColor.value = value;
   emitColorSelection();
 }, 500);
 
-// watch(color, (newValue) => {
-//   throttledColor.value = newValue;
-// })
-
+// Handle Input
 const handleInput = () => {
-  console.log("Input is updating")
-}
+  console.log('Input is updating');
+};
 
+if (localStorage.getItem('theme') === 'light-mode') {
+
+}
 </script>
+
 <template>
   <div>
     <div class="settings-grid">
-
       <h2 class="title">Settings</h2>
 
       <div class="setting">
@@ -129,7 +127,8 @@ const handleInput = () => {
           Mode
         </div>
         <div class="right">
-          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @toggle="handleToggle">
+          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @toggle="handleToggle"
+            :initial-value="switch1">
             Toggle Lock mode
           </Toggle>
         </div>
@@ -142,17 +141,16 @@ const handleInput = () => {
         <div class="middle">
           Selected Theme
         </div>
-        {{ themeChoice }}
         <div class="right">
           <select v-model="themeChoice" @change="handleThemeSelection">
-            <option value="light">light</option>
-            <option value="dark">dark</option>
-            <option value="custom">custom</option>
+            <option value="light-mode">light</option>
+            <option value="dark-mode">dark</option>
+            <option value="custom-mode">custom</option>
           </select>
         </div>
       </div>
 
-      <div class="setting">
+      <div class="setting" v-if="themeChoice === 'custom-mode'">
         <div class="left">
           <i class='bx bx-lock'></i>
         </div>
@@ -160,12 +158,11 @@ const handleInput = () => {
           Background Color
         </div>
         <div class="right">
-          {{ bgColor }}
           <input type="color" v-model="bgColor" @input="handleInput" @change="updateBackgroundColor">
         </div>
       </div>
 
-      <div class="setting">
+      <div class="setting" v-if="themeChoice === 'custom-mode'">
         <div class="left">
           <i class='bx bx-lock'></i>
         </div>
@@ -173,27 +170,21 @@ const handleInput = () => {
           Font Color
         </div>
         <div class="right">
-          {{ fgColor }}
           <input type="color" v-model="fgColor" @input="handleInput" @change="updateFontColor">
         </div>
       </div>
 
-      <pre>{{ themeStore }}</pre>
-
-      Color:{{ fontColor }} <br />
-      Background: {{ backgroundColor }}
-
     </div>
-
   </div>
 </template>
+
 <style scoped>
 .left {
   flex: 1;
 }
 
 .middle {
-  flex: 1;
+  flex: 2;
 }
 
 .right {
@@ -214,7 +205,6 @@ const handleInput = () => {
   width: 40%;
   margin: 0 auto;
   display: grid;
-  /* grid-template-columns: 1fr 1fr; */
   gap: 10px;
 }
 
@@ -223,7 +213,6 @@ const handleInput = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* padding: 20px; */
   min-height: 30px;
   padding: 5px;
   border-radius: 5px;
@@ -236,10 +225,6 @@ const handleInput = () => {
   font-size: 1em;
 }
 
-.setting .body {
-  /* flex: 3; */
-}
-
 .setting .toggle {
   flex: 1;
   justify-content: end;
@@ -247,10 +232,9 @@ const handleInput = () => {
 
 .settings-grid .title {
   margin: 0 auto;
-  color: white;
 }
 
-/*Simple css to style it like a toggle switch*/
+/* Simple css to style it like a toggle switch */
 .theme-switch-wrapper {
   display: flex;
   align-items: center;
