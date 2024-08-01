@@ -132,6 +132,7 @@ const { uploadFiles } = createUploader('YOUR URL HERE')
   gap: 1em;
   margin: 2em;
   flex: 1 1 0;
+  color: black;
 }
 
 .card {

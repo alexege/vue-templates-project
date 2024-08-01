@@ -12,7 +12,8 @@ const newTodo = ref({
   title: "",
   completed: false,
   author: "",
-  category: []
+  category: [],
+  priority: "low",
 });
 
 const addItemAndClear = () => {
@@ -138,12 +139,18 @@ const permissionToManage = (category) => {
     <div class="top">
       <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
 
-      <select v-model="newTodo.author" placeholder="Author">
+      <select name="priority" id="priority" v-model="newTodo.priority">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+
+      <!-- <select v-model="newTodo.author" placeholder="Author">
         <option value="">None</option>
         <option value="" v-for="author in userStore.users" :key="author._id">
           {{ author.username }}
         </option>
-      </select>
+      </select> -->
       <!-- <input type="checkbox" v-model="newTodo.completed"> -->
       <button :disabled="newTodo.title == ''">Add</button>
     </div>

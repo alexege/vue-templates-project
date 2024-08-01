@@ -122,6 +122,8 @@ const permissionToManage = (todo) => {
           {{ todo.author.username }}
         </template>
 
+        <span class="priority">{{ todo.priority }}</span>
+
         <!-- Created At Time Since Display -->
         <div class="created-at">
           <template v-if="timeDiff(new Date(), new Date(todo.createdAt)).hours">
@@ -283,4 +285,6 @@ const permissionToManage = (todo) => {
 .todo-body {
   flex: 2;
 }
+
+.priority {}
 </style>
