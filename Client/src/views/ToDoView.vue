@@ -157,6 +157,14 @@ const activeCategory = (cat) => {
 
     <!-- Incomplete Todos -->
 
+    <ul>
+      <li>Completion</li>
+      <li>Category</li>
+      <li>Priority</li>
+      <li>Content</li>
+      <li>Author</li>
+      <li>Actions</li>
+    </ul>
     <div class="incomplete-items" v-if="filteredTodosIncomplete.length">
       <div v-for="todo in filteredTodosIncomplete" :key="todo._id">
         <Todo :todo="todo" @category="activeCategory" />
@@ -190,7 +198,7 @@ const activeCategory = (cat) => {
 .todo-container {
   text-align: center;
   color: white;
-  /* height: 100%; */
+  height: 100%;
   /* padding: 1em; */
 }
 

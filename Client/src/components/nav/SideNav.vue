@@ -57,6 +57,11 @@ onMounted(() => {
   isNavLocked.value = JSON.parse(localStorage.getItem('isNavLocked'))
 })
 
+const toggleNav = () => {
+  console.log("toggling side nav")
+  openSideNav.value = !openSideNav.value
+}
+
 </script>
 <template>
   <aside class="sidebar" :class="{ open: openSideNav }" @mouseover="showNav" @mouseleave="hideNav">
@@ -65,7 +70,7 @@ onMounted(() => {
       <div class="logo_name">Templates</div>
       <div class="nav-icons">
 
-        <span @click="openSideNav = !openSideNav">
+        <span @click="toggleNav()">
           <i v-if="openSideNav" class='bx bx-chevron-left'></i>
           <i v-else class='bx bx-chevron-right'></i>
         </span>

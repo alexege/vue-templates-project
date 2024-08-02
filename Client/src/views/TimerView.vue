@@ -48,15 +48,15 @@ async function add(type) {
         <h2>Timers</h2>
 
         <div class="timer-filter-buttons">
-            <button @click="activeButton = 'countdowns'" :class="{ 'active-button': activeButton == 'countdowns' }">
+            <a @click="activeButton = 'countdowns'" :class="{ 'active-button': activeButton == 'countdowns' }">
                 Countdowns
-            </button>
-            <button @click="activeButton = 'both'" :class="{ 'active-button': activeButton == 'both' }">
+            </a>
+            <a @click="activeButton = 'both'" :class="{ 'active-button': activeButton == 'both' }">
                 Both
-            </button>
-            <button @click="activeButton = 'stopwatches'" :class="{ 'active-button': activeButton == 'stopwatches' }">
+            </a>
+            <a @click="activeButton = 'stopwatches'" :class="{ 'active-button': activeButton == 'stopwatches' }">
                 Stopwatches
-            </button>
+            </a>
         </div>
 
         <!-- Stopwatches -->

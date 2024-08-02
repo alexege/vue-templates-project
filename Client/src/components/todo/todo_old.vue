@@ -81,24 +81,6 @@ const permissionToManage = (todo) => {
 <template>
   <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
 
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Created</th>
-          <th>Updated</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ todo.title }}</td>
-          <td>{{ todo.createdAt }}</td>
-          <td>{{ todo.updatedAt }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-
     <div class="todo-left">
       <!-- Checkbox -->
       <input type="checkbox" v-if="permissionToManage(todo)" class="checkbox" @click="toggleCompleted(todo)"

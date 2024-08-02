@@ -54,6 +54,7 @@ themeStore.getTheme()
 /* Default (Light Mode) Theme */
 :root {
   --font-color: #fff;
+  --card-bg: #333;
   /* Default text color for light mode */
   --background-color: #34363b;
   /* Background color for light mode */
@@ -62,8 +63,9 @@ themeStore.getTheme()
 /* Dark Mode Theme */
 .dark-mode {
   --font-color: #ddd;
+  --card-bg: #333;
   /* Text color for dark mode */
-  --background-color: #333;
+  --background-color: #000000;
   /* Background color for dark mode */
 }
 

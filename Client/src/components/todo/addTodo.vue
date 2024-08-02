@@ -140,9 +140,9 @@ const permissionToManage = (category) => {
       <input class="form-input" type="text" v-model="newTodo.title" placeholder="Title" />
 
       <select name="priority" id="priority" v-model="newTodo.priority">
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
       </select>
 
       <!-- <select v-model="newTodo.author" placeholder="Author">
