@@ -1,78 +1,32 @@
 <script setup>
 import Toggle from '@/components/toggle/toggle.vue';
-import { ref, computed, onMounted, watch } from 'vue';
-import { useThemeStore } from '@/stores/theme.store';
+import { ref, onMounted } from 'vue';
 
-// Reactive variables
-const fgColor = ref(localStorage.getItem('fgColor') || '#ffffff');
-const bgColor = ref(localStorage.getItem('bgColor') || '#000000');
-const switch1 = ref(false);
-const themeChoice = ref(localStorage.getItem('theme') || 'dark-mode');
+// New Color Scheme Logic
+const primaryColor = ref('#000000');
+const secondaryColor = ref('#ffffff');
+const thirdColor = ref('#000000');
+const fourthColor = ref('#000000');
 
-// Theme Store
-const themeStore = useThemeStore();
+// Get theme from localStorage or default to 'dark'
+const theme = ref(localStorage.getItem('theme') || 'dark');
+console.log("starting value for theme is: ", theme.value);
 
-// Computed properties
-const fontColor = computed(() => fgColor.value);
-const backgroundColor = computed(() => bgColor.value);
+const isToggled = ref(theme.value === 'dark');
 
-// On component mount
 onMounted(() => {
-  themeStore.foregroundColor = fgColor.value;
-  themeStore.backgroundColor = bgColor.value;
+  primaryColor.value = localStorage.getItem('--primary-color');
+  secondaryColor.value = localStorage.getItem('--secondary-color');
+  thirdColor.value = localStorage.getItem('--third-color');
+  fourthColor.value = localStorage.getItem('--fourth-color');
 
-  if (localStorage.getItem('theme') === 'light-mode') {
-    switch1.value = false;
-    localStorage.setItem('theme', 'light-mode');
-  } else if (localStorage.getItem('theme') === 'dark-mode') {
-    switch1.value = true;
-    localStorage.setItem('theme', 'dark-mode');
-  }
-});
+  //Update the toggle switch status
+  const toggleStatus = localStorage.getItem('theme');
+  console.log("toggleStatus:", toggleStatus)
+  isToggled.value = toggleStatus === 'dark';
+})
+console.log("isToggled value is: ", isToggled.value)
 
-// Update theme in local storage and store
-const updateTheme = (mode, fg, bg) => {
-  themeStore.setTheme(mode);
-  themeStore.setCustomColors(fg, bg);
-  localStorage.setItem('theme', mode);
-  localStorage.setItem('fgColor', fg);
-  localStorage.setItem('bgColor', bg);
-};
-
-// Background Color Selected
-const updateBackgroundColor = () => {
-  themeChoice.value = 'custom-mode';
-  updateTheme('custom-mode', fontColor.value, bgColor.value);
-};
-
-// Font Color Selected
-const updateFontColor = () => {
-  themeChoice.value = 'custom-mode';
-  updateTheme('custom-mode', fgColor.value, backgroundColor.value);
-};
-
-// Toggle Dark / Light
-const handleToggle = (value) => {
-  const mode = value ? 'dark-mode' : 'light-mode';
-  const fg = value ? '#ffffff' : '#000000';
-  const bg = value ? '#000000' : '#ffffff';
-  updateTheme(mode, fg, bg);
-  value ? switch1.value = true : switch1.value = false;
-};
-
-// Handle DropDown Theme Selection
-const handleThemeSelection = () => {
-  const modes = {
-    'light-mode': { fg: '#000000', bg: '#ffffff' },
-    'dark-mode': { fg: '#ffffff', bg: '#000000' },
-    'custom-mode': { fg: fontColor.value, bg: backgroundColor.value }
-  };
-
-  const selected = modes[themeChoice.value];
-  if (selected) {
-    updateTheme(themeChoice.value, selected.fg, selected.bg);
-  }
-};
 
 // Throttle Color Picker
 function throttle(func, delay) {
@@ -95,19 +49,78 @@ function throttle(func, delay) {
 
 // Throttled color update
 const throttledColor = ref();
-const updateValue = throttle((value) => {
-  throttledColor.value = value;
-  emitColorSelection();
-}, 500);
 
 // Handle Input
-const handleInput = () => {
-  console.log('Input is updating');
+const handleInput = (event, type) => {
+  updateValue(event.target.value, type)
 };
 
-if (localStorage.getItem('theme') === 'light-mode') {
+const updateValue = throttle((value, type) => {
+  throttledColor.value = value;
+  setUpdatedColor(value, type);
+}, 500);
 
+// Set updated color
+const setUpdatedColor = (value, type) => {
+  localStorage.setItem(type, value);
+  document.documentElement.style.setProperty(type, value);
 }
+
+const handleToggle = (event) => {
+  console.log("toggle value is: ", event)
+  if (event) {
+    theme.value = 'dark';
+    localStorage.setItem('theme', 'dark');
+    setDarkMode();
+    isToggled.value = true
+  } else {
+    theme.value = 'light';
+    localStorage.setItem('theme', 'light');
+    setLightMode();
+    isToggled.value = false
+  }
+}
+
+const handleThemeSelection = () => {
+  if (theme.value === 'dark') {
+    localStorage.setItem('theme', 'dark');
+    setDarkMode();
+    isToggled.value = true
+  } else if (theme.value === 'light') {
+    localStorage.setItem('theme', 'light');
+    setLightMode();
+    isToggled.value = false
+  } else if (theme.value === 'custom') {
+    localStorage.setItem('theme', 'custom');
+    setCustomMode();
+    isToggled.value = false
+  }
+}
+
+const setLightMode = () => {
+  document.documentElement.style.setProperty('--primary-color', '#000000');
+  document.documentElement.style.setProperty('--secondary-color', '#ffffff');
+  document.documentElement.style.setProperty('--third-color', '#000000');
+  document.documentElement.style.setProperty('--fourth-color', '#000000');
+  // localStorage.setItem('theme', 'dark');
+}
+
+const setDarkMode = () => {
+  console.log("setting dark mode")
+  document.documentElement.style.setProperty('--primary-color', '#ffffff');
+  document.documentElement.style.setProperty('--secondary-color', '#000000');
+  document.documentElement.style.setProperty('--third-color', '#ffffff');
+  document.documentElement.style.setProperty('--fourth-color', '#ffffff');
+  // localStorage.setItem('theme', 'light');
+}
+
+const setCustomMode = () => {
+  document.documentElement.style.setProperty('--primary-color', primaryColor.value);
+  document.documentElement.style.setProperty('--secondary-color', secondaryColor.value);
+  document.documentElement.style.setProperty('--third-color', thirdColor.value);
+  document.documentElement.style.setProperty('--fourth-color', fourthColor.value);
+}
+
 </script>
 
 <template>
@@ -121,14 +134,14 @@ if (localStorage.getItem('theme') === 'light-mode') {
         </div>
         <div class="middle">
           Toggle
-          <span :class="{ active: !switch1 }">Light</span>
+          <span :class="{ active: !isToggled }">Light</span>
           /
-          <span :class="{ active: switch1 }">Dark</span>
+          <span :class="{ active: isToggled }">Dark</span>
           Mode
         </div>
         <div class="right">
-          <Toggle uid="1" v-model="switch1" label="lock-mode" class="toggle" @toggle="handleToggle"
-            :initial-value="switch1">
+          <Toggle uid="1" :isToggled="isToggled" label="lock-mode" class="toggle" @toggle="handleToggle"
+            :initial-value="isToggled">
             Toggle Lock mode
           </Toggle>
         </div>
@@ -142,37 +155,74 @@ if (localStorage.getItem('theme') === 'light-mode') {
           Selected Theme
         </div>
         <div class="right">
-          <select v-model="themeChoice" @change="handleThemeSelection">
-            <option value="light-mode">light</option>
-            <option value="dark-mode">dark</option>
-            <option value="custom-mode">custom</option>
+          <select v-model="theme" @change="handleThemeSelection">
+            <option value="light">light</option>
+            <option value="dark">dark</option>
+            <option value="custom">custom</option>
           </select>
         </div>
       </div>
 
-      <div class="setting" v-if="themeChoice === 'custom-mode'">
-        <div class="left">
-          <i class='bx bx-lock'></i>
-        </div>
-        <div class="middle">
-          Background Color
-        </div>
-        <div class="right">
-          <input type="color" v-model="bgColor" @input="handleInput" @change="updateBackgroundColor">
-        </div>
-      </div>
+      <template v-if="theme === 'custom'">
 
-      <div class="setting" v-if="themeChoice === 'custom-mode'">
-        <div class="left">
-          <i class='bx bx-lock'></i>
+        <!-- Font Colors -->
+        <div class="setting">
+          <div class="left">
+            <i class='bx bx-lock'></i>
+          </div>
+          <div class="middle">
+            Font Color
+          </div>
+          <div class="right">
+            {{ primaryColor }}
+            <input type="color" v-model="primaryColor" @input="handleInput($event, '--primary-color')">
+          </div>
         </div>
-        <div class="middle">
-          Font Color
+
+        <!-- Background Color -->
+        <div class="setting">
+          <div class="left">
+            <i class='bx bx-lock'></i>
+          </div>
+          <div class="middle">
+            Background Color
+          </div>
+          <div class="right">
+            {{ secondaryColor }}
+            <input type="color" v-model="secondaryColor" @input="handleInput($event, '--secondary-color')">
+          </div>
         </div>
-        <div class="right">
-          <input type="color" v-model="fgColor" @input="handleInput" @change="updateFontColor">
+
+        <!-- Third Color -->
+        <div class="setting">
+          <div class="left">
+            <i class='bx bx-lock'></i>
+          </div>
+          <div class="middle">
+            Third Color
+          </div>
+          <div class="right">
+            {{ thirdColor }}
+            <input type="color" v-model="thirdColor" @input="handleInput($event, '--third-color')">
+          </div>
         </div>
-      </div>
+
+        <!-- Fourth Color -->
+        <div class="setting">
+          <div class="left">
+            <i class='bx bx-lock'></i>
+          </div>
+          <div class="middle">
+            Third Color
+          </div>
+          <div class="right">
+            {{ fourthColor }}
+            <input type="color" v-model="fourthColor" @input="handleInput($event, '--fourth-color')">
+          </div>
+        </div>
+
+      </template>
+
 
     </div>
   </div>

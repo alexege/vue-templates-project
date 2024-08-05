@@ -1,11 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 const props = defineProps({
     label: {
         type: String,
         default: 'Toggle'
     },
     initialValue: {
+        type: Boolean,
+        default: false
+    },
+    isToggled: {
         type: Boolean,
         default: false
     }
@@ -19,25 +23,16 @@ const toggle = (event) => {
     emit('toggle', isChecked.value)
 }
 
-// Theme Store
-import { useThemeStore } from '@/stores/theme.store';
-const themeStore = useThemeStore();
+isChecked.value = props.initialValue
 
-isChecked.value = themeStore.theme == 'dark-mode' ? true : false
-
-const activeTheme = () => {
-    if (themeStore.theme == 'dark-mode') {
-        isChecked.value = true
-    } else if (themeStore.theme == 'light-mode') {
-        isChecked.value = false
-    } else {
-        isChecked.value = false
-    }
-    return themeStore.theme
-}
+// Flip toggle switch if prop changes
+watch(() => props.isToggled, (newValue) => {
+    isChecked.value = newValue
+});
 
 </script>
 <template>
+    <!-- {{ initialValue }} -->
     <div class="theme-switch-wrapper">
         <!-- Slider -->
         <label class="theme-switch" :for="toggleId">

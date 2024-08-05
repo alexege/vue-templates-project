@@ -75,7 +75,7 @@ const toggleNav = () => {
           <i v-else class='bx bx-chevron-right'></i>
         </span>
 
-        <span @click="toggleNavLock" style="outline: 1px solid lime;">
+        <span @click="toggleNavLock">
           <i v-if="isNavLocked" class='bx bx-lock'></i>
           <i v-else class='bx bx-lock-open'></i>
         </span>

@@ -7,20 +7,45 @@ const userStore = useUsersStore()
 const { getAll } = useUsersStore()
 getAll()
 
-//Theme Logic
-import { useThemeStore } from './stores/theme.store';
-const themeStore = useThemeStore()
-const theme = computed(() => themeStore.theme);
-const color = computed(() => themeStore.foregroundColor);
-const background = computed(() => themeStore.backgroundColor)
-themeStore.getTheme()
+import { onMounted } from 'vue'
+onMounted(() => {
+  console.log("App mounted")
+
+  //Color Logic
+  //Get theme from LocalStorage
+  const theme = localStorage.getItem('theme')
+  console.log("starting theme is: ", theme);
+  if (theme === 'light') {
+    document.documentElement.style.setProperty('--primary-color', '#000000');
+    document.documentElement.style.setProperty('--secondary-color', '#ffffff');
+    document.documentElement.style.setProperty('--third-color', '#000000');
+    document.documentElement.style.setProperty('--fourth-color', '#000000');
+  } else if (theme === 'dark') {
+    document.documentElement.style.setProperty('--primary-color', '#ffffff');
+    document.documentElement.style.setProperty('--secondary-color', '#000000');
+    document.documentElement.style.setProperty('--third-color', '#ffffff');
+    document.documentElement.style.setProperty('--fourth-color', '#ffffff');
+  } else if (theme === 'custom') {
+    const primaryColor = localStorage.getItem('--primary-color')
+    const secondaryColor = localStorage.getItem('--secondary-color')
+    const thirdColor = localStorage.getItem('--third-color')
+    const fourthColor = localStorage.getItem('--fourth-color')
+
+    //Set theme colors
+    if (primaryColor) document.documentElement.style.setProperty('--primary-color', primaryColor)
+    if (secondaryColor) document.documentElement.style.setProperty('--secondary-color', secondaryColor)
+    if (thirdColor) document.documentElement.style.setProperty('--third-color', thirdColor)
+    if (fourthColor) document.documentElement.style.setProperty('--fourth-color', fourthColor)
+  }
+
+})
 
 </script>
 
 <template>
-  <div class="app" :class="theme">
+  <div class="app">
     <SideNav />
-    <RouterView class="router-view" :style="{ color: color, backgroundColor: background }" />
+    <RouterView class="router-view" />
   </div>
 </template>
 
@@ -37,12 +62,13 @@ themeStore.getTheme()
 
 .app {
   display: flex;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
 }
 
 .app main {
   flex: 1 1 0;
   padding: 2rem;
-
 }
 
 @media (max-width: 1024px) {
@@ -51,34 +77,10 @@ themeStore.getTheme()
   }
 }
 
-/* Default (Light Mode) Theme */
 :root {
-  --font-color: #fff;
-  --card-bg: #333;
-  /* Default text color for light mode */
-  --background-color: #34363b;
-  /* Background color for light mode */
-}
-
-/* Dark Mode Theme */
-.dark-mode {
-  --font-color: #ddd;
-  --card-bg: #333;
-  /* Text color for dark mode */
-  --background-color: #000000;
-  /* Background color for dark mode */
-}
-
-/* Custom Mode Theme */
-.custom-mode {
-  --font-color: #ddd;
-  /* Text color for dark mode */
-  --background-color: #333;
-  /* Background color for dark mode */
-}
-
-.app {
-  color: var(--font-color);
-  background-color: var(--background-color);
+  --primary-color: #42b883;
+  --secondary-color: #35495e;
+  --third-color: #2c3e50;
+  --fourth-color: #f1f1f1;
 }
 </style>
