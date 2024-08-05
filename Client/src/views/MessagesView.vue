@@ -162,6 +162,10 @@ const updateMessage = (message) => {
   </div>
 </template>
 <style scoped>
+* {
+  color: var(--secondary-color);
+}
+
 .post {
   position: relative;
   display: flex;
@@ -182,6 +186,7 @@ const updateMessage = (message) => {
   width: 100%;
   text-align: center;
   font-size: 0.75em;
+  background-color: var(--third-color);
 }
 
 .post:hover .toggle {
@@ -191,6 +196,7 @@ const updateMessage = (message) => {
 .post .comments-toggle {
   display: flex;
   flex-direction: column;
+  background-color: var(--third-color);
   /* background: rgb(155, 155, 155); */
   /* justify-content: center; */
   /* align-items: center; */
@@ -202,7 +208,8 @@ const updateMessage = (message) => {
   display: flex;
   gap: 0.25em;
   border-bottom: 1px solid black;
-  background: white;
+  /* background: white; */
+  background: var(--third-color);
   /* background: rgb(155, 155, 155); */
   /* border: 1px solid black; */
   /* border-top: 1px solid black;
@@ -302,7 +309,7 @@ const updateMessage = (message) => {
 .reply-box {
   display: flex;
   flex-direction: row;
-  background: white;
+  /* background: white; */
   /* background: rgb(155, 155, 155); */
   /* outline: 1px solid red; */
   padding: 0.25em;

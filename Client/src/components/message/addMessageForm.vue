@@ -38,6 +38,7 @@ const addMessage = () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: var(--third-color);
     /* outline: 1px solid red; */
     margin: 1em;
     outline: 1px solid black;

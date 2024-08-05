@@ -170,7 +170,8 @@ li {
   gap: 0.25em;
   border-bottom: 1px solid black;
   margin-top: 5px;
-  background: white;
+  /* background: white; */
+  background: var(--third-color);
   /* background: rgb(155, 155, 155); */
   /* border-top: 1px solid black;
     border-left: 1px solid black;
@@ -250,7 +251,8 @@ li {
   flex-direction: row;
   /* outline: 1px solid red; */
   padding: 0.25em;
-  background: white;
+  /* background: white; */
+  background: var(--third-color);
   /* background: rgb(155, 155, 155); */
 }
 
