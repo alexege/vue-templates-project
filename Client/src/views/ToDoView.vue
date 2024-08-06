@@ -157,7 +157,7 @@ const activeCategory = (cat) => {
 
     <!-- Incomplete Todos -->
 
-    <ul>
+    <ul class="todo-headers">
       <li>Completion</li>
       <li>Category</li>
       <li>Priority</li>
@@ -185,6 +185,21 @@ const activeCategory = (cat) => {
   </div>
 </template>
 <style scoped>
+.todo-headers {
+  max-width: 80%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  justify-content: space-between;
+  padding: 0.5em;
+  border-bottom: 1px solid white;
+}
+
+.todo-headers li {
+  list-style: none;
+}
+
 .incomplete-items {
   /* max-height: 40vh; */
   overflow-y: scroll;
