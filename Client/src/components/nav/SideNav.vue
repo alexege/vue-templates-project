@@ -70,14 +70,15 @@ const toggleNav = () => {
       <div class="logo_name">Templates</div>
       <div class="nav-icons">
 
-        <span @click="toggleNav()">
-          <i v-if="openSideNav" class='bx bx-chevron-left'></i>
-          <i v-else class='bx bx-chevron-right'></i>
-        </span>
 
         <span @click="toggleNavLock">
           <i v-if="isNavLocked" class='bx bx-lock'></i>
           <i v-else class='bx bx-lock-open'></i>
+        </span>
+
+        <span @click="toggleNav()">
+          <i v-if="openSideNav" class='bx bx-chevron-left'></i>
+          <i v-else class='bx bx-chevron-right'></i>
         </span>
 
       </div>
