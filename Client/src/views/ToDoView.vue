@@ -198,6 +198,7 @@ const activeCategory = (cat) => {
 
 .todo-headers li {
   list-style: none;
+  color: red;
 }
 
 .incomplete-items {
