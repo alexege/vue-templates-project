@@ -187,6 +187,7 @@ const activeCategory = (cat) => {
 <style scoped>
 .todo-headers {
   max-width: 80%;
+
   margin: 0 auto;
   display: flex;
   flex-direction: row;
