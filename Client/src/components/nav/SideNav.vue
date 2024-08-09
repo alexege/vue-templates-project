@@ -180,7 +180,7 @@ const toggleNav = () => {
         </a>
         <span class="tooltip">Files</span>
       </li>
-      <li>
+      <!-- <li>
         <a href="#">
           <i class="bx bx-cart-alt"></i>
           <span class="links_name">Order</span>
@@ -193,7 +193,7 @@ const toggleNav = () => {
           <span class="links_name">Saved</span>
         </a>
         <span class="tooltip">Saved</span>
-      </li>
+      </li> -->
       <li>
         <a href="#">
           <RouterLink to="/settings">
