@@ -62,6 +62,12 @@ const toggleNav = () => {
   openSideNav.value = !openSideNav.value
 }
 
+const searchCategories = (query) => {
+  if (query.length > 0) {
+    console.log("query: ", query)
+  }
+}
+
 </script>
 <template>
   <aside class="sidebar" :class="{ open: openSideNav }" @mouseover="showNav" @mouseleave="hideNav">
@@ -83,6 +89,7 @@ const toggleNav = () => {
 
       </div>
     </div>
+    {{ sideNavSearch }}
     <ul class="nav-list" :class="{ sideNavScrollBar: !openSideNav }">
       <li>
         <i class="bx bx-search" @click="openSideNav = !openSideNav"></i>

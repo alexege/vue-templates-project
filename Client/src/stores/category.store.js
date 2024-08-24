@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:8080/api'
+const API_URL = 'http://127.0.0.1:8080/api'
 
 export const useCategoryStore = defineStore('category', {
   state: () => ({
@@ -18,7 +18,7 @@ export const useCategoryStore = defineStore('category', {
       this.categories = []
       this.loading = true
       try {
-        this.categories = await fetch(`${API_URL}/category/allCategories`).then((response) =>
+        this.categories = await fetch(`${API_URL}/categories`).then((response) =>
           response.json()
         )
       } catch (error) {
@@ -29,14 +29,14 @@ export const useCategoryStore = defineStore('category', {
     },
 
     async addCategory(category) {
-      const newCategory = await axios.post(`${API_URL}/category/addCategory`, category)
+      const newCategory = await axios.post(`${API_URL}/categories`, category)
       this.categories.push(newCategory.data)
     },
 
     async updateCategory(updatedCategory) {
       console.log('updatedCategory')
       try {
-        await axios.patch(`${API_URL}/category/update/${updatedCategory._id}`, updatedCategory)
+        await axios.patch(`${API_URL}/categories/${updatedCategory._id}`, updatedCategory)
 
         let categoryToUpdateIdx = this.categories.indexOf(
           this.categories.find((category) => category._id == updatedCategory._id)
@@ -55,7 +55,7 @@ export const useCategoryStore = defineStore('category', {
 
     async deleteCategory(id) {
       try {
-        await axios.delete(`${API_URL}/category/${id}`).then(() => {
+        await axios.delete(`${API_URL}/categories/${id}`).then(() => {
           let index = this.categories.findIndex((category) => category._id == id)
           this.categories.splice(index, 1)
         })

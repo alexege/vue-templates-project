@@ -252,16 +252,18 @@ const activeCategory = (cat) => {
 }
 
 .category {
-  background-color: #EEF;
-  border-radius: 15px;
+  /* background-color: #EEF; */
+  border-radius: 20px;
   border: 1px #CCF solid;
-  padding: 2px 5px;
+  /* padding: 2px 5px; */
+  padding: 8px 12px;
   /* display: inline; */
   display: flex;
   justify-content: center;
   font-size: .75em;
   cursor: pointer;
   min-width: 30px;
+  font-family: "Trip Sans VF","Trip Sans",Arial,sans-serif;
 }
 
 .category:hover {
@@ -269,9 +271,9 @@ const activeCategory = (cat) => {
 }
 
 .category a {
+  min-height: 20px;
   text-decoration: none;
-  color: black;
-  font-weight: bold;
+  /* color: black; */
   display: flex;
   flex-direction: row;
   justify-content: center;

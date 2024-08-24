@@ -228,14 +228,16 @@ form {
 }
 
 .category {
-  background-color: #EEF;
-  border-radius: 15px;
+  /* background-color: #EEF; */
+  border-radius: 20px;
   border: 1px #CCF solid;
-  padding: 2px 5px;
+  /* padding: 2px 5px; */
+  padding: 8px 12px;
   /* display: inline; */
   display: flex;
   justify-content: center;
-  font-size: .75em;
+  /* font-size: .75em; */
+  font-size: 1em;
   cursor: pointer;
   min-width: 30px;
 }
@@ -245,13 +247,14 @@ form {
 }
 
 .category a {
+  min-height: 20px;
   text-decoration: none;
-  color: black;
-  font-weight: bold;
+  /* color: black; */
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  font-family: "Trip Sans VF","Trip Sans",Arial,sans-serif;
 }
 
 i {

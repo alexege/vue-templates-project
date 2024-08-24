@@ -1,31 +1,7 @@
 const db = require("../models");
 const Timer = require("../models/timer.model");
-// const User = require("../models/user.model");
 
-exports.findAllTimers = (req, res) => {
-  Timer.find()
-    .then((timers) => {
-      res.status(200).send(timers);
-    })
-    .catch((error) => {
-      console.log("error:", error);
-      res.status(500).send({ message: error });
-    });
-};
-
-exports.findTimer = (req, res) => {
-  Timer.findOne({ _id: req.params.id })
-    .then((timer) => {
-      res.status(200).send(timer);
-    })
-    .catch((error) => {
-      console.log("error:", error);
-      res.status(500).send({ message: error });
-    });
-};
-
-exports.addTimer = (req, res) => {
-  console.log("req.body: ", req.body);
+exports.createTimer = (req, res) => {
   const newTimer = new Timer({
     name: req.body.name,
     type: req.body.type,
@@ -59,8 +35,29 @@ exports.addTimer = (req, res) => {
     });
 };
 
-exports.updateTimer = (req, res) => {
-  console.log("updateTimer:", req.body);
+exports.getAllTimers = (req, res) => {
+  Timer.find()
+    .then((timers) => {
+      res.status(200).send(timers);
+    })
+    .catch((error) => {
+      console.log("error:", error);
+      res.status(500).send({ message: error });
+    });
+};
+
+exports.getTimerById = (req, res) => {
+  Timer.findOne({ _id: req.params.id })
+    .then((timer) => {
+      res.status(200).send(timer);
+    })
+    .catch((error) => {
+      console.log("error:", error);
+      res.status(500).send({ message: error });
+    });
+};
+
+exports.updateTimerById = (req, res) => {
   const updateData = {
     name: req.body.name,
     duration: req.body.duration,
@@ -86,14 +83,3 @@ exports.deleteTimer = (req, res) => {
       res.status(500).send({ message: error });
     });
 };
-
-// exports.deleteTodo = (req, res) => {
-//     Todo.deleteOne({ _id: req.params.id })
-//     .then(() => {
-//         res.status(200).send({ message: "Todo deleted!" })
-//     })
-//     .catch((error) => {
-//         res.status(500).send({ message: error })
-//         return
-//     })
-// }

@@ -10,13 +10,20 @@ module.exports = function (app) {
     next();
   });
 
+  //Get User
   app.get(
     "/api/users/admin",
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.adminBoard
   );
+
+  //Get all Users
   app.get("/api/users/allUsers", controller.allUsers);
+
+  //Find User by Id
   app.get("/api/users/:id", controller.findById);
+
+  //Sign up user
   app.post(
     "/api/users/signup",
     [
@@ -25,5 +32,7 @@ module.exports = function (app) {
     ],
     controller.signup
   );
+
+  //Delete User
   app.delete("/api/users/:id", controller.deleteUser);
 };

@@ -10,7 +10,7 @@ module.exports = (app) => {
   //Add Message
   app.post("/api/messages", controller.createMessage);
 
-  //Get Message
+  //Get Messages
   app.get("/api/messages", controller.getAllMessages);
 
   //Get Message by Id

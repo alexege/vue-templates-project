@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-const API_URL = 'http://localhost:8080/api'
+const API_URL = 'http://127.0.0.1:8080/api'
 
 import { useUsersStore } from '@/stores/user.store'
 import { useAuthStore } from '@/stores/auth.store'
@@ -50,7 +50,7 @@ export const useTodoListStore = defineStore('todoList', {
   actions: {
     async fetchTodos() {
       try {
-        await axios.get(`${API_URL}/todo/allTodos`).then((res) => {
+        await axios.get(`${API_URL}/todo`).then((res) => {
           this.todoList = res.data
         })
       } catch (error) {
@@ -72,7 +72,7 @@ export const useTodoListStore = defineStore('todoList', {
       const author = useUsersStore().users.find((user) => user._id == todo.author)
       console.log('author:', author.username)
 
-      var todoItem = await axios.post(`${API_URL}/todo/addTodo`, todo)
+      var todoItem = await axios.post(`${API_URL}/todo`, todo)
 
       //Newly created todo will have author as an ID reference.
       //For the sake of functionality, we will add in the user object using the id
@@ -114,7 +114,7 @@ export const useTodoListStore = defineStore('todoList', {
     async editTodo(itemId, item) {
       //   this.todoList = this.todoList.filter((item) => item.id != itemId)
       console.log('Attempting to edit todo with id: ', itemId)
-      await axios.patch(`${API_URL}/todo/update/${itemId}`, item)
+      await axios.patch(`${API_URL}/todo/${itemId}`, item)
 
       const todoIndex = this.todoList.findIndex((todo) => todo._id === itemId)
       this.todoList.splice(todoIndex, 1, item)
@@ -123,7 +123,7 @@ export const useTodoListStore = defineStore('todoList', {
       const updateData = item
       updateData.completed = !updateData.completed
 
-      await axios.patch(`${API_URL}/todo/update/${item._id}`, updateData)
+      await axios.patch(`${API_URL}/todo/${item._id}`, updateData)
 
       const todo = this.todoList.find((todo) => todo.id === item._id)
       if (todo) {

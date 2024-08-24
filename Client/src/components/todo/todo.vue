@@ -80,7 +80,6 @@ const permissionToManage = (todo) => {
 
 <template>
   <div class="todo-container" :class="todo.completed ? 'is-completed' : 'is-incomplete'">
-
     <div class="todo-left">
       <!-- Checkbox -->
       <input type="checkbox" v-if="permissionToManage(todo)" class="checkbox" @click="toggleCompleted(todo)"
@@ -202,19 +201,44 @@ const permissionToManage = (todo) => {
 }
 
 .category {
-  background-color: #EEF;
-  border-radius: 3px;
+  /* background-color: #EEF; */
+  border-radius: 20px;
   border: 1px #CCF solid;
-  padding: 2px 5px;
-  display: inline;
+  /* padding: 2px 5px; */
+  padding: 8px 12px;
+  /* display: inline; */
+  display: flex;
+  justify-content: center;
   font-size: .75em;
   cursor: pointer;
+  min-width: 30px;
+}
+
+.category:hover {
+  outline: 1px solid lime;
 }
 
 .category a {
+  min-height: 20px;
   text-decoration: none;
-  color: black;
-  font-weight: bold;
+  /* color: black; */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+i {
+  padding: .10em .25em;
+  font-size: 20px;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+}
+
+i:hover {
+  color: red;
 }
 
 .todo-body input {

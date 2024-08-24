@@ -24,10 +24,3 @@ const Todo = mongoose.model(
 );
 
 module.exports = Todo;
-
-//TODO: Update existing comments from array of strings to array of Comment Objects
-
-// comments: [{
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'Comment'
-// }]

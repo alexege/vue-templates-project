@@ -8,18 +8,18 @@ module.exports = (app) => {
         next()
     })
 
-    //Get All Timers
-    app.get("/api/timer/allTimers", controller.findAllTimers)
-    
-    //Get a Timer by Id
-    app.get("/api/timer/:id", controller.findTimer)
+  //Add Timer
+  app.post("/api/timers", controller.createTimer);
 
-    //Add a Timer
-    app.post("/api/timer/addTimer", controller.addTimer)
-    
-    //Update a Timer
-    app.patch("/api/timer/update/:id", controller.updateTimer)
+  //Get Timers
+  app.get("/api/timers", controller.getAllTimers);
 
-    //Delete a Timer
-    app.delete("/api/timer/:id", controller.deleteTimer)
-}
+  //Get Timer by Id
+  app.get("/api/timers/:id", controller.getTimerById);
+
+  //Update Timer by Id
+  app.put("/api/timers/:id", controller.updateTimerById);
+
+  //Delete Timer
+  app.delete("/api/timers/:id", controller.deleteTimer);
+};

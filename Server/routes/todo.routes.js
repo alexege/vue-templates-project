@@ -8,18 +8,21 @@ module.exports = (app) => {
     next();
   });
 
-  //Get All Todos
-  app.get("/api/todo/allTodos", controller.findAllTodos);
+  //Add Todo
+  app.post("/api/todo", controller.createTodo);
 
-  //Get a Todo by Id
-  app.get("/api/todo/:id", controller.findById);
+  //Get Todos
+  app.get("/api/todo", controller.getAllTodos);
 
-  //Add a Todo
-  app.post("/api/todo/addTodo", controller.addTodo);
+  //Get Todo by Id
+  app.get("/api/todo/:id", controller.getTodoById);
 
-  //Update a Todo
-  app.patch("/api/todo/update/:id", controller.updateTodo);
-
-  //Delete a Todo
+  //Update Todo
+  app.put("/api/todo/:id", controller.updateTodoById);
+  
+  //Delete Todo
   app.delete("/api/todo/:id", controller.deleteTodo);
+
+  //Delete all Todos
+  app.delete("/api/todo/", controller.deleteAllTodos);
 };

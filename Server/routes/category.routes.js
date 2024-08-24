@@ -8,18 +8,18 @@ module.exports = (app) => {
     next();
   });
 
-  //Get All Categories
-  app.get("/api/category/allCategories", controller.findAllCategories);
+    //Add Category
+    app.post("/api/categories", controller.createCategory);
 
-  //Get a Category by Id
-  app.get("/api/category/:id", controller.findById);
-
-  //Add a Category
-  app.post("/api/category/addCategory", controller.addCategory);
-
-  //Update a Category
-  app.patch("/api/category/update/:id", controller.updateCategory);
-
-  //Delete a Category
-  app.delete("/api/category/:id", controller.deleteCategory);
+    //Get Categories
+    app.get("/api/categories", controller.getAllCategories);
+  
+    //Get Category by Id
+    app.get("/api/categories/:id", controller.getCategoryById);
+  
+    //Update Category by Id
+    app.put("/api/categories/:id", controller.updateCategoryById);
+  
+    //Delete Category
+    app.delete("/api/categories/:id", controller.deleteCategory);
 };
